@@ -49,7 +49,7 @@ function clearInvalid(element) {
     element.classList.remove("invalid");
 }
 function showModal() {
-    if (validateInfo()) { // if the email is good it will open the modal of the password
+    if (validateRegister()) { // if the email is good it will open the modal of the password
         const info = document.getElementById("mail").value.trim();
         document.getElementById("infoDisplay").innerText = info;
         passwordModal.show(); 
@@ -92,18 +92,15 @@ function upload_info() {
     //uploads the username and tag to the session storage
 }
 
-function toggleVisability() {
-    const passwordInput = document.getElementById("passwordInput");
-    const eyeIcon = document.getElementById("eyeIcon");
+function toggleVisibility(inputId, iconContainer) { //be able to see both passwords
+    const input = document.getElementById(inputId);
+    const icon = iconContainer.querySelector("i");
 
-    if (passwordInput.type === "password") {
-        passwordInput.type = "text";
-        // Swap to the eye-slash icon
-        eyeIcon.classList.replace("bi-eye", "bi-eye-slash");
+    if (input.type === "password") {
+        input.type = "text";
+        icon.classList.replace("bi-eye", "bi-eye-slash"); //change them
     } else {
-        passwordInput.type = "password";
-        // Swap back to the regular eye icon
-        eyeIcon.classList.replace("bi-eye-slash", "bi-eye");
+        input.type = "password";
+        icon.classList.replace("bi-eye-slash", "bi-eye");
     }
-    //changes the password from seen to dots
 }
