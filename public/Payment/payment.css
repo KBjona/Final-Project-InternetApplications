@@ -1,0 +1,144 @@
+@import url('../../General-files/variables.css');
+@import url('https://fonts.googleapis.com/css2?family=Monoton&display=swap');
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    font-family: sans-serif;
+}/*align the container and the text in the center and set a font*/
+
+h1{
+    color: var(--text-main);
+    font-weight: lighter;
+    font-family: 'Monoton',cursive;
+    font-size: 2rem;
+}/*make the top text have a special font and big*/
+
+#main-div {
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    max-width: 400px;
+    width: 100%;
+    border-radius: 25px;
+    box-shadow: 0 8px 30px var(--shadow-color-inverse);
+    background-color: var(--bg-main, #212529);
+    max-height: 700px;
+    box-sizing: border-box;
+}/*designs the main container and order the components and adds a cool shadow*/
+
+#products-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    margin: 0;
+    padding: 5px;
+    max-height: 500px;
+    width: 100%;
+    overflow-y: auto;
+    list-style: none;
+}/*makes the products appear one on top of the other with gaps and when there is overflow the scrollbar will appear*/
+
+#products-list::-webkit-scrollbar {
+    width: 6px;
+}/*sets the scrollbar width*/
+
+#products-list::-webkit-scrollbar-thumb {
+    background-color: var(--btn-secondary-bg);
+    border-radius: 10px;
+}/*sets the scrollbar thumb's color and radius*/
+
+#products-list::-webkit-scrollbar-track {
+    background: none;
+}/*makes the scrollbar track's invisible*/
+
+.product {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    min-height: 80px;
+    flex-shrink: 0;
+    border-radius: 20px;
+    background-color: var(--bg-container, #343a40);
+    padding: 12px 22px;
+    box-sizing: border-box;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}/*order the product's attributes in an elegant way, sets the height and width for the product and makes the transition smooth
+
+.product:hover {
+    transform: translateY(-2px);
+    background-color: var(--bg-container-hover, #3b4248);
+} /*changes the color and the position for a cool effect on hover*/
+
+.top-div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 4px;
+} /*aligns the items so the name is in the left side and the price in the right*/ 
+
+.product-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #f8f9fa;
+}/*designs the product name*/
+
+.product-price {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #198754;
+    margin-left: auto;
+}/*designs the product price*/
+
+.product-quantity {
+    align-self: flex-start;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #adb5bd;
+}/*designs the product quantity*/
+
+#puchase-section {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 10px 15px 0 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}/*aligns the total price and purchase button*/
+
+#total-price {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #f8f9fa;
+}/*designs the total price*/
+
+#purchase-button {
+    background-color: #0d6efd;
+    color: var(--text-main);
+    border: none;
+    border-radius: 50px;
+    padding: 10px 25px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}/*removes the border, make it bold, changes the cursor to pointerand makes smooth transition*/
+
+#purchase-button:hover {
+    background-color: #0b5ed7;
+}/*change color when hover*/
+
+#purchase-button:active {
+    transform: scale(0.9);
+}/*scales down on click*/

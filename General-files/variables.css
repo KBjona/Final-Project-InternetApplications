@@ -1,0 +1,23 @@
+:root, [data-bs-theme="dark"] {
+    --bg-main: #000000;
+    --bg-container: #344c8d;
+    --text-main: #ffffff;
+    --border-color: #2c2c2c;
+    --btn-secondary-bg: #ffffff;
+    --btn-post-text: #000000;
+    --secondary-color: #666968;
+    --shadow-color: rgba(0, 0, 0, 0.5);
+    --shadow-color-inverse: rgba(255, 255, 255, 0.5);
+} /* general rules for the dark theme*/
+
+[data-bs-theme="light"] {
+    --bg-main: #ffffff;
+    --bg-container: #67c9c9;
+    --text-main: #0f1419;
+    --border-color: #eff3f4;
+    --btn-secondary-bg: #1d9bf0; 
+    --btn-post-text: #ffffff;
+    --secondary-color: #cce4cd;
+    --shadow-color: rgba(255, 255, 255, 0.5);
+    --shadow-color-inverse: rgba(0, 0, 0, 0.5);
+} /* general rules for the light theme*/
