@@ -1,0 +1,78 @@
+#login-container {
+    background-color: black !important; 
+    max-width: 550px;
+    border-radius: 35px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+} /* The direct css for the Login container, the !important notation is to override all previous css styling and color*/
+
+.ButtonClass{
+    width: 55%;
+    height: 50%;
+    border-radius: 38px;
+} /* General class for all buttons, to have the same size and */
+/* Tell the placeholder to look for the custom CSS variable */
+#info::placeholder {
+    color: var(--placeholder-color, #777); /* Fallback to grey if variable isn't set */
+}
+.ButtonClass:hover{
+    filter: brightness(1.1);
+    transform: scale(1.03);
+} /* Hover on buttons */
+
+.ButtonClass:active{
+    transform: scale(0.95);
+} /* On press */
+
+#noAccountText{
+    text-align: left;
+    margin: 0%;
+    color: #777;
+}/*makes the text on the left without and margin and grey color*/
+
+#link{
+    display: block;
+    text-align: left;
+    margin-top: 0%;
+}/*makes the text on the left without and margin and grey color*/
+
+#info{
+    text-align: left;
+    background-color: #121212;
+    width: 60%;
+    margin-left: 20%;
+    height: 45px;
+    border: 1px solid #444;
+}/*makes the text on the left with border and width and height and background*/
+
+
+.logo{
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+}/*sets size and margin for the logo*/
+
+.modal-content {
+    border-radius: 20px;
+}/*sets the border to more round*/
+
+.modal-dialog {
+    width: 80vw;
+    height: 50vh;
+    max-width: 420px;
+    max-height: 200px;
+}/*sets the  size and max sizes for the password modal*/
+
+.modal-backdrop.show {
+    opacity: 0.7;
+}/*drops the opacity of the modal to 0.7*/
+
+.error-text {
+  color: #f4212e; /* X/Twitter's exact error red color */
+  font-size: 0.85rem;
+  margin-top: 8px;
+  text-align: left;
+  width: 85%;
+  margin-left: auto;
+  margin-right: auto;
+  display: none; /* Hidden by default */
+} /*the error div*/
