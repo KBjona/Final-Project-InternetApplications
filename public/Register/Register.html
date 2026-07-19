@@ -46,14 +46,19 @@
             <div class="modal-body text-center">  <!--the modal part for the password here there is use of many bootstrap classes-->
               <p id="infoDisplay" class="text-muted small mb-3"></p> 
               
-              <div class="input-group mx-auto" style="width: 85%;">
-                <input type="password" id="passwordInput" class="form-control bg-dark text-white border-secondary border-end-0" required placeholder="Password"> <!--the password field-->
-                
-                <span class="input-group-text bg-dark border-secondary border-start-0 text-secondary" id="togglePassword" onclick="toggleVisability()" style="cursor: pointer;">
-                  <i class="bi bi-eye" id="eyeIcon"></i> <!--the eye icon that shows you the password with function that shows or hides the password-->
+            <div class="input-group mb-3">
+                <input id="passwordInput" type="password" class="form-control">
+                <span class="input-group-text" onclick="toggleVisibility('passwordInput', this)">
+                    <i class="bi bi-eye"></i>
                 </span>
-              </div>
             </div>
+
+            <div class="input-group">
+                <input id="passwordConfirmation" type="password" class="form-control">
+                <span class="input-group-text" onclick="toggleVisibility('passwordConfirmation', this)">
+                    <i class="bi bi-eye"></i>
+                </span>
+            </div>            </div>
             <div id="passwordError" class="error-text">Password must be at least 8 characters, have 1 letter and 1 number at least</div> <!--error message for the password-->
             <div class="modal-footer">
               <button class="btn btn-primary" onclick="nextPage()">Login</button> <!--moves you to the feed page-->
