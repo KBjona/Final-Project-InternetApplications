@@ -6,33 +6,35 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"> <!--Import of bootstrap for nicer ui-->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="Login.js"></script>
-  <link rel="stylesheet" href="Login.css">
+  <script src="Register.js"></script>
+  <link rel="stylesheet" href="Register.css">
     <title>Login Page</title>
 </head> 
   <body>
-      <div class="container p-3 my-5 bg-black text-white text-center"id="login-container"><!--Bootstrap container with black background centered white text and a custom id -->
-        <img src="images/Logo.png" class="mx-auto d-block" style="max-width: 60%; max-height: 50%;"> <!--Centered logo image -->
-        <h3 id="text"> Sign in to nozama </h3>
-        <div class="d-grid ">
-          <button type="button" class="btn btn-light my-4 mx-auto d-block ButtonClass"> <!--Centered Bootstrap google button with custom ButtonClass-->
-            <img src="images/GoogleLogo.png" class="logo">
-            Sign in using Google
-          </button>
-          <button type="button" class="btn btn-light my-4 mx-auto d-block ButtonClass"> <!--Centered Bootstrap facebook button with custom ButtonClass-->
-            <img src="images/facebookLogo.png" class="logo">
-            Sign in using Facebook
-          </button>
-        </div>
-       <p>-----------------or-----------------</p>
+      <div class="container p-3 my-5 bg-black text-white text-left"id="login-container"><!--Bootstrap container with black background centered white text and a custom id -->
+        <img src="images/Logo.png" class="mx-auto d-block" style="max-width: 50%; max-height: 40%;"> <!--Centered logo image -->
+        <h3 id="text" style="text-align: center;"> Register to nozama </h3> <br>
         <form onsubmit="event.preventDefault(); showModal();">  <!--form to send the info and when you submit it shows the modal and let you fill the password if the email is entered correctly-->
-            <input type="text" id="info" class="form-control" required placeholder="Enter your email address please"><!--email field-->
-            
-            <button onclick="validateInfo()" type="submit" class="btn btn-light my-4 mx-auto d-block ButtonClass">Next</button> <!--next button with validation of the email when you click-->
+            <label for="fname" class="formLabel">First name</label>
+            <input type="text" id="fname" class="form-control formElement" required placeholder="Enter your first name"> <br>
+            <label for="lname" class="formLabel">Last name</label>
+            <input type="text" id="lname" class="form-control formElement" required placeholder="Enter your last name"> <br>
+            <label for="bday" class="formLabel">Birthday</label>
+            <input type="date" id="bday" class="form-control formElement" required placeholder="Enter your birthday"> <br>
+            <label>Gender</label> <br>
+            <input type="radio" id="male" name="gender" value="male">
+            <label for="male">Male</label><br>
+            <input type="radio" id="female" name="gender" value="female">
+            <label for="female">Female</label><br>
+            <input type="radio" id="other" name="gender" value="other">
+            <label for="other">Other</label> <br><br>
+            <label for="mail" class="formLabel">Mail</label> <br>
+            <input type="text" id="mail" class="form-control formElement" required placeholder="Enter your email address please"><!--email field-->            
+            <button onclick="validateRegister()" type="submit" class="btn btn-light my-4 mx-auto d-block ButtonClass">Next</button> <!--next button with validation of the email when you click-->
         </form> 
 
-       <p id="noAccountText"> Don't have an account?</p>
-       <a id = "link" href="../Register/Register.html"> Continue to registration</a>
+       <p id="noAccountText"> Already have an account?</p>
+       <a id = "link" href="../Login/Login.html"> Go to Sign in</a>
       </div>
       <div class="modal fade" id="PasswordModal" tabindex="-1" data-bs-backdrop="static" data-bs-keybored="false"> <!--Password modal-->
         <div class="modal-dialog modal-dialog-centered">
