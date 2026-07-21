@@ -1,0 +1,26 @@
+{
+  "name": "final-project-internetapplications",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Node.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KBjona/Final-Project-InternetApplications.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/KBjona/Final-Project-InternetApplications/issues"
+  },
+  "homepage": "https://github.com/KBjona/Final-Project-InternetApplications#readme",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mongodb": "^7.5.0"
+  }
+}
