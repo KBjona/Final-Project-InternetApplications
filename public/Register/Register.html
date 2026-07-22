@@ -6,13 +6,13 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"> <!--Import of bootstrap for nicer ui-->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="Register.js"></script>
-  <link rel="stylesheet" href="Register.css">
-    <title>Login Page</title>
+<script src="/Register/Register.js"></script>
+<link rel="stylesheet" href="/Register/Register.css">
+<title>Login Page</title>
 </head> 
   <body>
       <div class="container p-3 my-5 bg-black text-white text-left"id="login-container"><!--Bootstrap container with black background centered white text and a custom id -->
-        <img src="images/Logo.png" class="mx-auto d-block" style="max-width: 50%; max-height: 40%;"> <!--Centered logo image -->
+        <img src="/Register/images/Logo.png" class="mx-auto d-block" style="max-width: 50%; max-height: 40%;"> <!--Centered logo image -->
         <h3 id="text" style="text-align: center;"> Register to nozama </h3> <br>
         <form onsubmit="event.preventDefault(); showModal();">  <!--form to send the info and when you submit it shows the modal and let you fill the password if the email is entered correctly-->
             <label for="fname" class="formLabel">First name</label>
@@ -40,6 +40,7 @@
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content"> 
             <div class="modal-header"> <!--Header modal part-->
+              <form>
               <h5 class="modal-title">Enter Password</h5> <!-- Header text -->
               <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="closeModal()"></button> <!--Header button-->
             </div>
@@ -58,10 +59,11 @@
                 <span class="input-group-text" onclick="toggleVisibility('passwordConfirmation', this)">
                     <i class="bi bi-eye"></i>
                 </span>
-            </div>            </div>
+            </div>   
+          </form>        
             <div id="passwordError" class="error-text">Password must be at least 8 characters, have 1 letter and 1 number at least</div> <!--error message for the password-->
             <div class="modal-footer">
-              <button class="btn btn-primary" onclick="nextPage()">Login</button> <!--moves you to the feed page-->
+              <button type="submit" class="btn btn-primary " onclick="nextPage()">Login</button> <!--moves you to the feed page-->
             </div>
           </div>
         </div>
