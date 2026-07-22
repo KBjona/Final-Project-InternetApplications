@@ -81,13 +81,15 @@ async function nextPage() {
 }
 
 async function upload_info() {
-    const username = document.getElementById("mail").value.trim(); // read email
+    const fname = document.getElementById("fname").value.trim();
+    const lname = document.getElementById("lname").value.trim();
+    const mail = document.getElementById("mail").value.trim(); // read email
     const password = document.getElementById("passwordInput").value.trim(); // read pass
  
     const response = await fetch('/api/auth/register', { // send a fetch request to start the whole server auth process
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ mail, password })
     });
     const data = await response.json(); // store the response
     
