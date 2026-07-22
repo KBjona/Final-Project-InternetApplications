@@ -6,18 +6,18 @@ window.onload = function () {
 
 function validateInfo() {
     const email_regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; // email regex 
-    let info = document.getElementById("info").value.trim(); //gets the email string
+    let info = document.getElementById("mail").value.trim(); //gets the email string
     if (!email_regex.test(info)) { //tests if the email is in the correct email
-        document.getElementById("info").style.setProperty('--placeholder-color', 'red'); // sets the placeholder color to red
-        document.getElementById("info").value = ""; // clears the email field
-        document.getElementById("info").placeholder = "Invalid Email please try again"; //changes the placeholder text to an invaild message
+        document.getElementById("mail").style.setProperty('--placeholder-color', 'red'); // sets the placeholder color to red
+        document.getElementById("mail").value = ""; // clears the email field
+        document.getElementById("mail").placeholder = "Invalid Email please try again"; //changes the placeholder text to an invaild message
         return false;
     }
     return true;
 }
 function showModal() {
     if (validateInfo()) { // if the email is good it will open the modal of the password
-        const info = document.getElementById("info").value.trim();
+        const info = document.getElementById("mail").value.trim();
         document.getElementById("infoDisplay").innerText = info;
         passwordModal.show(); 
     }
@@ -25,7 +25,7 @@ function showModal() {
 function closeModal() { //hides the password modal
     passwordModal.hide();
 }
-function nextPage() { 
+async function nextPage() { 
     const passwordInput = document.getElementById("passwordInput");
     const errorText = document.getElementById("passwordError");
     let no_letters = true;
@@ -40,25 +40,46 @@ function nextPage() {
     }
     if (passwordInput.value.length < 8 || no_letters || no_numbers) { //if it isn't valid it shows the error message
         errorText.style.display = "block";
+        return
+    }
+    else if (!passwordInput.value) { 
+        errorText.textContent = "Please enter your password";
+        errorText.style.display = "block";
+        return;
     }
     
-    else { //if it is valid it uploads the info to the session storage and moves you to the feed page
-        upload_info();
-        window.location.href = "feed.html";
+    await sendLoginRequest();
+}
+
+async function sendLoginRequest() {
+    const mail = document.getElementById("mail").value.trim();
+    const password = document.getElementById("passwordInput").value.trim();
+    const errorText = document.getElementById("passwordError");
+    console.log("sent fetch request")
+    try {
+        // Send post request to /api/auth/login
+        const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mail, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            // Server accepted credentials!
+            window.location.href = "/feed.html";
+        } else {
+            // Server rejected credentials (e.g. status 401 "Wrong email or password")
+            errorText.textContent = data.message;
+            errorText.style.display = "block";
+        }
+    } catch (err) { 
+        console.error("Login request failed:", err);
+        errorText.textContent = "Server unreachable. Please try again later.";
+        errorText.style.display = "block";
     }
 }
-
-function upload_info() {
-    let un = document.getElementById("info").value.trim(); //gets the email string
-    un = un.split("@")[0]; //gets only the first part of the email before the @
-    let td = String(Math.floor(Math.random() * 100)); //generates a new number for the tag
-    let ut = "@" + un + "_" + td; //creates the tag
-    
-    sessionStorage.setItem("username", un);
-    sessionStorage.setItem("usertag", ut);
-    //uploads the username and tag to the session storage
-}
-
 function toggleVisability() {
     const passwordInput = document.getElementById("passwordInput");
     const eyeIcon = document.getElementById("eyeIcon");
