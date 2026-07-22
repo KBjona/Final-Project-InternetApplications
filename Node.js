@@ -20,7 +20,10 @@ app.use("/api", apiRoutes); // redirect api calls to the routes folder (index.js
 const PORT = process.env.PORT;
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'Register','Register.html'));
+    res.sendFile(path.join(__dirname, 'public', 'Register', 'Register.html'));
+});
+app.get('/67', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'Payment', 'payment.html'));
 });
 connectDB()
     .then(() => {
