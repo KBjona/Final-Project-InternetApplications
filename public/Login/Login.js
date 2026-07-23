@@ -1,8 +1,53 @@
 let passwordModal;
 
+let googleClient;
+
 window.onload = function () {
-    passwordModal = new bootstrap.Modal(document.getElementById("PasswordModal"));
+
+    passwordModal = new bootstrap.Modal(
+        document.getElementById("PasswordModal")
+    );
+
+    // Initialize Google Identity Services
+    google.accounts.id.initialize({
+        client_id: "685548395864-6ai103mk15p914vp9g2tboi2jk71ge30.apps.googleusercontent.com",
+        callback: handleCredentialResponse
+    });
+
+    // When clicking the button, trigger the Google prompt
+    document.getElementById("googleLogin").addEventListener("click", () => {
+        google.accounts.id.prompt(); 
+    });
+
 };
+
+// runs automatically once Google authenticates the user
+async function handleCredentialResponse(response) {
+    console.log("Google Auth Response:", response);
+
+    try {
+        const res = await fetch("/api/auth/google", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                token: response.credential // converts the respoinse to a usable format
+            })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+            // Login successful! Redirect to feed
+            window.location.href = "/feed.html";
+        } else {
+            console.error("Google login rejected by server:", data.message);
+        }
+    } catch (err) {
+        console.error("Failed to send Google token to server:", err);
+    }
+}
 
 function validateInfo() {
     const email_regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; // email regex 
