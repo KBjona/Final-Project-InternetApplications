@@ -2,9 +2,5 @@
 
 needed imports
 ```
-npm install Node
-npm install express
-npm install bcrypt
-npm install passport passport-google-oauth20 express-session
-npm install google-auth-library
+npm install node express mongodb bcrypt express-session google-auth-library dotenv
 ```
