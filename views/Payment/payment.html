@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark"> <!--Dark theme  -->
+<html lang="en" data-bs-theme="dark"> <!--Dark theme -->
 
 <head>
     <meta charset="UTF-8">
@@ -16,21 +16,17 @@
 <body onload="load_items()">
     <h1>Your Cart</h1>
     <div id="main-div">
-        <div>
-            <span>&#128722;</span>
+        <div id="ds-div">
+            <button class="top-btns-ds" onclick="delete_cart_items(this)">&#x1F5D1;</button>
+            <button class="top-btns-ds">&#128190;</button>
         </div>
-        <ul id="products-list"> <!--The products list-->
-            <li class="product">
-                <div class="top-div">
-                    <span class="product-name">Jona's perfume</span> <!--The product name-->
-                    <span class="product-price">1000$</span> <!--The product price-->
-                </div>
-                <span class="product-quantity">Qty: 1</span>
-                <!--The product quantity (optional in the future to add or remove items)-->
-            </li>
+        <div>
+            <span id="cart">&#128722;</span>
+        </div>
+        <ul id="products-list" data-is_empty='T'> <!--The products list-->
         </ul>
-        <div id="puchase-section">
-            <span id="total-price">1000$</span>
+        <div id="purchase-section">
+            <span id="total-price">----$</span>
             <button id="purchase-button">Purchase</button>
         </div>
     </div>

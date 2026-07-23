@@ -1,4 +1,4 @@
-@import url('../../General-files/variables.css');
+@import url('/General-files/variables.css');
 @import url('https://fonts.googleapis.com/css2?family=Monoton&display=swap');
 body {
     display: flex;
@@ -40,7 +40,7 @@ h1{
     gap: 12px;
     margin: 0;
     padding: 5px;
-    max-height: 500px;
+    max-height: 550px;
     width: 100%;
     overflow-y: auto;
     list-style: none;
@@ -67,16 +67,44 @@ h1{
     min-height: 80px;
     flex-shrink: 0;
     border-radius: 20px;
-    background-color: var(--bg-container, #343a40);
+    background-color: var( --border-color,--bg-container-hover);
     padding: 12px 22px;
     box-sizing: border-box;
     transition: transform 0.2s ease, background-color 0.2s ease;
-}/*order the product's attributes in an elegant way, sets the height and width for the product and makes the transition smooth
+}/*order the product's attributes in an elegant way, sets the height and width for the product and makes the transition smooth*/
 
 .product:hover {
     transform: translateY(-2px);
-    background-color: var(--bg-container-hover, #3b4248);
+    background-color: var(--bg-container, --border-color);
 } /*changes the color and the position for a cool effect on hover*/
+
+#ds-div{
+    max-height: 70px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.top-btns-ds{
+    height: 40px;
+    width: 40px;
+    max-height: 70px;
+    background-color: var(--bg-main);
+    border-radius: 50%;
+    outline: var(--text-main);
+    color: var(--text-main);
+    font-size: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+#cart{
+    font-size: 22px;
+}
 
 .top-div {
     display: flex;
@@ -90,24 +118,49 @@ h1{
 .product-name {
     font-weight: 600;
     font-size: 1.1rem;
-    color: #f8f9fa;
+    color: var(--text-main);
 }/*designs the product name*/
 
 .product-price {
     font-weight: 700;
     font-size: 1.1rem;
-    color: #198754;
+    color: #51dd97;
     margin-left: auto;
 }/*designs the product price*/
 
 .product-quantity {
-    align-self: flex-start;
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #adb5bd;
+    font-size: 1.3rem;
+    font-weight: bolder;
+    color: var(--text-main);
 }/*designs the product quantity*/
 
-#puchase-section {
+.change-quantity {
+    font-weight: bolder;
+    background-color: var(--bg-main);
+    border-radius: 50%;
+    outline: var(--text-main);
+    color: var(--text-main);
+    width: 24px; 
+    height: 24px; 
+    margin-left: 4px;
+    margin-right: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+button:hover{
+    filter: brightness(1.05);
+    transform: scale(1.1);
+}
+
+button:active{
+    transform: scale(0.95);
+}
+
+
+#purchase-section {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -120,7 +173,7 @@ h1{
 #total-price {
     font-size: 1.3rem;
     font-weight: 700;
-    color: #f8f9fa;
+    color: #12ca65;
 }/*designs the total price*/
 
 #purchase-button {
@@ -135,7 +188,7 @@ h1{
     transition: background-color 0.2s ease, transform 0.1s ease;
 }/*removes the border, make it bold, changes the cursor to pointerand makes smooth transition*/
 
-#purchase-button:hover {
+#purchase-button:hover { 
     background-color: #0b5ed7;
 }/*change color when hover*/
 
