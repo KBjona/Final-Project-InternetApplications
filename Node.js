@@ -27,6 +27,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 
+
 app.use("/api", apiRoutes); // redirect api calls to the routes folder (index.js)
 
 // Connect to MongoDB Atlas then open Express server
@@ -42,7 +43,7 @@ app.get('/cart', (req, res) => { // just for testing
 connectDB()
     .then(() => {
         app.listen(PORT, () => {
-            console.log(`Server running on http://localhost:${PORT}/cart`);
+            console.log(`Server running on http://localhost:${PORT}`);
         });
     })
     .catch((err) => {

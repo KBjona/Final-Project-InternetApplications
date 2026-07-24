@@ -48,17 +48,20 @@ class Item {
     }
 }
 
-const mail = '';
+let mail = '';
 const sccn = "1234-1234-1234-1234";
 
 let cart_items = [];
 
 async function load_mail(){
-    const response = await fetch('api/auth/me');
-    if(!response.ok || !(response.json().loggedIn)){
-        return;
-    }
-    mail = response.json().user.mail;
+    const response = await fetch('api/auth/me'); //request user information from cookies
+    if(!response.ok) return; 
+
+    const data = await response.json(); //read the information as json
+    
+    if(!data.loggedIn) return;
+
+    mail = data.user.mail; // update mail
 }
 
 async function load_items() {
@@ -197,6 +200,6 @@ async function closePayment(){
 function useSavedCard(){
     const cc_field = document.getElementById("paymentInformation");
     if(cc_field)
-        cc_field.value = sccn;
+        cc_field.value = sccn; // update credit card number field to saved card number
 
 }

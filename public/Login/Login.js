@@ -40,7 +40,7 @@ async function handleCredentialResponse(response) {
 
         if (res.ok) {
             // Login successful! Redirect to feed
-            window.location.href = "/feed.html";
+            window.location.href = "/cart";
         } else {
             console.error("Google login rejected by server:", data.message);
         }
