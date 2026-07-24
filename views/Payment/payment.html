@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark"> <!--Dark theme -->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!--Import of bootstrap for nicer ui-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/Payment/payment.js"></script>
+    <link rel="stylesheet" href="/Payment/payment.css">
+    <title>Payment</title>
+</head>
+
+<body onload="load_items()">
+    <h1>Your Cart</h1>
+    <div id="main-div">
+        <div id="ds-div">
+            <button class="top-btns-ds" onclick="delete_cart_items(this)">&#x1F5D1;</button>
+            <button class="top-btns-ds" onclick="update_items_quantity(this)">&#128190;</button>
+        </div>
+        <div>
+            <span id="cart">&#128722;</span>
+        </div>
+        <ul id="products-list" data-is_empty='T'> <!--The products list-->
+        </ul>
+        <div id="purchase-section">
+            <span id="total-price">----$</span>
+            <button id="purchase-button" onclick="openPayment()">Purchase</button>
+        </div>
+    </div>
+
+    <div id="payment-modal" class="payment-modal hidden"> <!-- The payment modal, the menu with the payment area and its interfaces-->
+      <div class="payment-content">
+        <button id="close-payment-btn" onclick="closePayment()">X</button> <!-- the exit payment modal button -->
+        <h3>Checkout</h3> <br>
+        <form>
+        <label for="paymentInformation" class="form-label">credit card number</label> <br>
+        <input type="text" id="paymentInformation" placeholder="xxxx-xxxx-xxxx-xxxx" class="form-control payment-input">
+        <button type="button" id="SCCN" class="btn btn-outline-info btn-sm mt-1 mb-3" onclick="useSavedCard()"><i class="bi bi-credit-card"></i>Use saved card ****-****-****-1234</button>
+        <br><label for="paymentCVV" class="form-label">CVV</label> <br>
+        <input type="text" id="paymentCVV" placeholder="1234" class="form-control payment-input" style="max-width: 20%;"> <br>
+        <input type="checkbox" id="savePaymentInformation" class="form-check-input formElemenet" value="save">
+        <label for="savePaymentInformation" class="form-check-label">save credit card number</label> <br>
+        <button type="submit" onclick="validatePurchase()" id="submitPayment" class="btn btn-warning w-80 mt-4"> <i class="bi bi-cart-check-fill"></i>Complete Purchase</button>
+    </form>
+    </div>
+    </div>
+
+</body>
+
+</html>

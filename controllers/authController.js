@@ -36,7 +36,7 @@ exports.register = async (req, res) => {
 
     } catch (err) { // database error
         console.error(err);
-        res.status(500).json({ message: 'Something went wrong on the server' });
+        res.status(500).json({ message: 'Something went wrong on the database' });
     }
 };
 

@@ -21,7 +21,7 @@ function linkFacebookAccount(mail, facebookId) {
 }
 // Saves a brand new user document into the "users" collection.
 function createUser(userData) {
-    console.log("Added user to collection")
+    console.log("Added user to collection");
     return getDb().collection('users').insertOne(userData);
 }
 
