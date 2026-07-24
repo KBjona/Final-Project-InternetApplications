@@ -4,3 +4,13 @@ needed imports
 ```
 npm install node express mongodb bcrypt express-session google-auth-library dotenv
 ```
+
+to look for demons:
+```
+tasklist | findstr node
+```
+
+to kill demons:
+```
+taskkill /PID {demon_number} /F
+```
