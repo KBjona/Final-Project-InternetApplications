@@ -140,3 +140,39 @@ function toggleVisability() {
     }
     //changes the password from seen to dots
 }
+
+function loginWithFacebook(){
+    FB.login(function(response) {
+        if (response.authResponse){
+            const accessToken = response.authResponse.accessToken;
+            sendFacebookTokenToServer(accessToken);
+        }
+        else{
+            console.log('User cancelled login or did not fully authorize.');
+        }
+    }, { scope: 'public_profile,email' }); // request profile and email access
+}
+
+// Sends the token to the Express server for verification and database lookup
+async function sendFacebookTokenToServer(accessToken) {
+    try {
+        const response = await fetch("/api/auth/facebook", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ accessToken })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            // if ok redirect user to main application page
+            window.location.href = "../Feed/Feed.html"; // Adjust to your actual feed path
+        } else {
+            alert(data.message || "Facebook authentication failed.");
+        }
+    } catch (error) {
+        console.error("Network error during Facebook authentication:", error);
+    }
+}

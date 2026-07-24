@@ -11,14 +11,14 @@ function findByGoogleId(googleId){ //Looks for one user wtih this exact google i
 }
 
 function linkGoogleAccount(mail, googleId) { // update the collection user to add googleId to exisiting one without.
-    return getDb().collection("users").updateOne(
-        { mail },
-        {
-            $set: { googleId }
-        }
-    );
+    return getDb().collection("users").updateOne({ mail } , {$set: { googleId }});
 }
-
+function findByFacebookId(facebookId) {
+    return getDb().collection('users').findOne({ facebookId });
+}
+function linkFacebookAccount(mail, facebookId) {
+    return getDb().collection("users").updateOne({ mail }, { $set: { facebookId } });
+}
 // Saves a brand new user document into the "users" collection.
 function createUser(userData) {
     console.log("Added user to collection")
@@ -27,4 +27,4 @@ function createUser(userData) {
 
 
 
-module.exports = { findByMail, findByGoogleId, linkGoogleAccount, createUser };
+module.exports = { findByMail, findByGoogleId, linkGoogleAccount, findByFacebookId, linkFacebookAccount, createUser };

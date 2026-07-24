@@ -2,5 +2,15 @@
 
 needed imports
 ```
-npm install node express mongodb bcrypt express-session google-auth-library dotenv
+npm install node express mongodb bcrypt express-session google-auth-library dotenv @vitalets/google-translate-api
+```
+
+to look for demons:
+```
+tasklist | findstr node
+```
+
+to kill demons:
+```
+taskkill /PID {demon_number} /F
 ```
