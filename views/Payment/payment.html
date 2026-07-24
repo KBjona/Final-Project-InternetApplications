@@ -18,7 +18,7 @@
     <div id="main-div">
         <div id="ds-div">
             <button class="top-btns-ds" onclick="delete_cart_items(this)">&#x1F5D1;</button>
-            <button class="top-btns-ds">&#128190;</button>
+            <button class="top-btns-ds" onclick="update_items_quantity(this)">&#128190;</button>
         </div>
         <div>
             <span id="cart">&#128722;</span>
@@ -38,9 +38,9 @@
         <form>
         <label for="paymentInformation" class="form-label">credit card number</label> <br>
         <input type="text" id="paymentInformation" placeholder="xxxx-xxxx-xxxx-xxxx" class="form-control payment-input">
-        <button type="button"id="SCCN"class="btn btn-outline-info btn-sm mt-1 mb-3" onclick="useSavedCard()"><i class="bi bi-credit-card"></i>Use saved card ••••1234</button>
+        <button type="button" id="SCCN" class="btn btn-outline-info btn-sm mt-1 mb-3" onclick="useSavedCard()"><i class="bi bi-credit-card"></i>Use saved card ****-****-****-1234</button>
         <br><label for="paymentCVV" class="form-label">CVV</label> <br>
-        <input type="number" id="paymentCVV" placeholder="1234" class="form-control payment-input" style="max-width: 20%;"> <br>
+        <input type="text" id="paymentCVV" placeholder="1234" class="form-control payment-input" style="max-width: 20%;"> <br>
         <input type="checkbox" id="savePaymentInformation" class="form-check-input formElemenet" value="save">
         <label for="savePaymentInformation" class="form-check-label">save credit card number</label> <br>
         <button type="submit" onclick="validatePurchase()" id="submitPayment" class="btn btn-warning w-80 mt-4"> <i class="bi bi-cart-check-fill"></i>Complete Purchase</button>

@@ -130,6 +130,10 @@ h1{
     margin-left: auto;
 }/*designs the product price*/
 
+.line-through{
+    text-decoration: line-through;
+}
+
 .product-quantity {
     font-size: 1.3rem;
     font-weight: bolder;

@@ -9,7 +9,11 @@ function DeleteItemsByMail(user_mail){
     return getDb().collection('carts').updateOne({mail: user_mail},{ $set: { items: [] }});
 }
 
-module.exports = { findCartByMail, DeleteItemsByMail };
+function UpdateItemsByMail(user_mail,new_items){
+    return getDb().collection('carts').updateOne({mail: user_mail},{ $set: { items: new_items  }});
+}
+
+module.exports = { findCartByMail, DeleteItemsByMail, UpdateItemsByMail };
 
 /*
 

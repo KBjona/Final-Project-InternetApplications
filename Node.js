@@ -22,13 +22,14 @@ const PORT = process.env.PORT;
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'Register', 'Register.html'));
 });
-app.get('/67', (req, res) => {
+app.get('/cart', (req, res) => { // just for testing
     res.sendFile(path.join(__dirname, 'views', 'Payment', 'payment.html'));
 });
+
 connectDB()
     .then(() => {
         app.listen(PORT, () => {
-            console.log(`Server running on http://localhost:${PORT}\\67`);
+            console.log(`Server running on http://localhost:${PORT}/cart`);
         });
     })
     .catch((err) => {
