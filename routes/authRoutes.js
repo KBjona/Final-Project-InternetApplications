@@ -6,4 +6,5 @@ router.post('/register', authController.register); //redirects register requets 
 
 router.post('/login', authController.login); //redirects login requets to authcontroller.login func
 router.post("/google", authController.googleLogin); // redirectes google login requests to google login func 
+router.post("/facebook", authController.facebookLogin); // redirects facebook login requests to facebooklogin func
 module.exports = router; // exports the router

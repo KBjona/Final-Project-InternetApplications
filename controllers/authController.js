@@ -3,7 +3,6 @@ const User = require('../models/User');
 const { OAuth2Client } = require("google-auth-library"); // import google auth library
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID); // get client id from .env
-
 // Runs when Register.js sends a POST request to /api/auth/register
 exports.register = async (req, res) => {
     const { fname, lname, bday, mail, password } = req.body;
@@ -19,6 +18,9 @@ exports.register = async (req, res) => {
         if (existingUser) {
             return res.status(409).json({ message: 'That email is already registered' });
         }
+
+        fname = await translateIfHebrew(fname);
+        lname = await translateIfHebrew(lname);
 
         // hash the password
         const passwordHash = await bcrypt.hash(password, 10);
@@ -148,4 +150,67 @@ exports.googleLogin = async (req, res) => {
 
     }
 
+};
+
+exports.facebookLogin = async (req, res) => {
+    const { accessToken } = req.body;
+
+    if (!accessToken) {
+        return res.status(400).json({
+            message: "Facebook token is missing."
+        });
+    }
+
+    try {
+        // Fetch user information from Facebook Graph API
+        const fbRes = await fetch(
+            `https://graph.facebook.com/me?fields=id,first_name,last_name,email&access_token=${accessToken}`
+        );
+        const profile = await fbRes.json();
+
+        if (profile.error) {
+            return res.status(400).json({ message: "Invalid Facebook token." });
+        }
+
+        const facebookId = profile.id;
+        const mail = profile.email || null;
+        const fname = profile.first_name || "";
+        const lname = profile.last_name || "";
+
+        // Try finding the user by Facebook ID first
+        let user = await User.findByFacebookId(facebookId);
+
+        // If not found, check whether this email already exists
+        if (!user) {
+            if (mail) {
+                user = await User.findByMail(mail);
+            }
+
+            if (user) {
+                // Existing account -> link it to Facebook
+                await User.linkFacebookAccount(mail, facebookId);
+            } else {
+                // First time logging in with Facebook
+                await User.createUser({
+                    fname,
+                    lname,
+                    mail,
+                    facebookId,
+                    createdAt: new Date()
+                });
+            }
+        }
+
+        console.log("User logged in using Facebook");
+
+        res.json({
+            message: "Logged in successfully!"
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(401).json({
+            message: "Invalid Facebook login."
+        });
+    }
 };
