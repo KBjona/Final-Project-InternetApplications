@@ -1,5 +1,7 @@
 @import url('/General-files/variables.css');
 @import url('https://fonts.googleapis.com/css2?family=Monoton&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap');
+
 body {
     display: flex;
     flex-direction: column;
@@ -222,7 +224,7 @@ color: var(--text-main);
 outline: 2px solid var(--border-color);
 border-radius: 20px;
 box-shadow: 0 8px 20px var(--shadow-color);
-} /* style for the whole commnets modal, making usre it looks fine with the rest.*/
+} /* style for the whole payment modal, making usre it looks fine with the rest.*/
 
 #close-payment-btn{
 float: right;
@@ -231,7 +233,7 @@ border: none;
 color: rgb(222,35,35);
 font-size: 20px;
 font-weight: bold;
-}  /* style and coloring for the button to close commnets modal*/
+}  /* style and coloring for the button to close payment modal*/
 
 #close-payment-btn:hover{
 filter: brightness(1.2);
@@ -248,4 +250,8 @@ transform: scale(1.1);
     border-radius: 30px;
     font-weight: bold;
     padding: 12px;
+}
+.payment-modal,
+.payment-modal * {
+    font-family: 'Rubik', sans-serif;
 }
