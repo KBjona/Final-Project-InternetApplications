@@ -137,3 +137,13 @@ async function delete_cart_items(element){
     element.disabled = false;
 
 }
+
+function openPayment(){
+    const modal = document.getElementById("payment-modal");
+
+    modal.classList.remove("hidden"); // makes the modal visiable to see the payment area.
+}
+
+async function closePayment(){
+    document.getElementById("payment-modal").classList.add("hidden"); // hides the modal.
+}

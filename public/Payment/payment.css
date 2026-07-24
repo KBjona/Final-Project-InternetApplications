@@ -195,3 +195,57 @@ button:active{
 #purchase-button:active {
     transform: scale(0.9);
 }/*scales down on click*/
+
+
+/*comment model section*/
+.payment-modal{
+    position: fixed;
+    inset: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background-color: rgba(0,0,0,0.7);
+
+    z-index: 9999;
+}/* sets the style for the modal to show infront of the main, and look seperated.*/
+
+.payment-content{
+width: 550px;
+max-width: 90vw;
+max-height: 90vh;
+overflow-y: auto;
+padding: 20px;
+background-color: var(--bg-main);
+color: var(--text-main);
+outline: 2px solid var(--border-color);
+border-radius: 20px;
+box-shadow: 0 8px 20px var(--shadow-color);
+} /* style for the whole commnets modal, making usre it looks fine with the rest.*/
+
+#close-payment-btn{
+float: right;
+background: transparent;
+border: none;
+color: rgb(222,35,35);
+font-size: 20px;
+font-weight: bold;
+}  /* style and coloring for the button to close commnets modal*/
+
+#close-payment-btn:hover{
+filter: brightness(1.2);
+transform: scale(1.1);
+}
+
+.hidden{
+    display: none;
+}/*hides items in this class*/
+.payment-input{
+    max-width: 50%;
+}
+#submitPayment{
+    border-radius: 30px;
+    font-weight: bold;
+    padding: 12px;
+}
