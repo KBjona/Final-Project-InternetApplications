@@ -8,4 +8,8 @@ router.post('/delete',CartController.delete_items); // sends a post request to d
 
 router.post('/update',CartController.update_items_quantities); // sends a post request to update the items
 
+router.post('/saved-cc',CartController.get_sccn); // sends a post request to update the items
+
+router.post('/update-cc',CartController.update_sccn); // sends a post request to update the items
+
 module.exports = router; // exports the router

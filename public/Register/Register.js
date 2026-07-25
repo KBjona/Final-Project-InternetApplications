@@ -60,6 +60,7 @@ function closeModal() { //hides the password modal
 }
 async function nextPage() { 
     const passwordInput = document.getElementById("passwordInput");
+    const passwordVerify = document.getElementById("passwordConfirmation");
     const errorText = document.getElementById("passwordError");
     let no_letters = true;
     let no_numbers = true;
@@ -71,7 +72,7 @@ async function nextPage() {
             no_numbers = false;
         }
     }
-    if (passwordInput.value.length < 8 || no_letters || no_numbers) { //if it isn't valid it shows the error message
+    if (passwordInput.value.length < 8 || no_letters || no_numbers || passwordInput.value != passwordVerify.value) { //if it isn't valid it shows the error message
         errorText.style.display = "block";
     }
     
@@ -81,13 +82,16 @@ async function nextPage() {
 }
 
 async function upload_info() {
-    const username = document.getElementById("mail").value.trim(); // read email
+    const fname = document.getElementById("fname").value.trim();
+    const lname = document.getElementById("lname").value.trim();
+    const bday = document.getElementById("bday").value;
+    const mail = document.getElementById("mail").value.trim(); // read email
     const password = document.getElementById("passwordInput").value.trim(); // read pass
  
     const response = await fetch('/api/auth/register', { // send a fetch request to start the whole server auth process
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ fname, lname, bday, mail, password })
     });
     const data = await response.json(); // store the response
     
