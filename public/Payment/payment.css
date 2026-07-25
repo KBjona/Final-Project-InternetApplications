@@ -1,0 +1,261 @@
+@import url('/General-files/variables.css');
+@import url('https://fonts.googleapis.com/css2?family=Monoton&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap');
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    font-family: sans-serif;
+}/*align the container and the text in the center and set a font*/
+
+h1{
+    color: var(--text-main);
+    font-weight: lighter;
+    font-family: 'Monoton',cursive;
+    font-size: 2rem;
+}/*make the top text have a special font and big*/
+
+#main-div {
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    max-width: 400px;
+    width: 100%;
+    border-radius: 25px;
+    box-shadow: 0 8px 30px var(--shadow-color-inverse);
+    background-color: var(--bg-main, #212529);
+    max-height: 700px;
+    box-sizing: border-box;
+}/*designs the main container and order the components and adds a cool shadow*/
+
+#products-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    margin: 0;
+    padding: 5px;
+    max-height: 550px;
+    width: 100%;
+    overflow-y: auto;
+    list-style: none;
+}/*makes the products appear one on top of the other with gaps and when there is overflow the scrollbar will appear*/
+
+#products-list::-webkit-scrollbar {
+    width: 6px;
+}/*sets the scrollbar width*/
+
+#products-list::-webkit-scrollbar-thumb {
+    background-color: var(--btn-secondary-bg);
+    border-radius: 10px;
+}/*sets the scrollbar thumb's color and radius*/
+
+#products-list::-webkit-scrollbar-track {
+    background: none;
+}/*makes the scrollbar track's invisible*/
+
+.product {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    min-height: 80px;
+    flex-shrink: 0;
+    border-radius: 20px;
+    background-color: var( --border-color,--bg-container-hover);
+    padding: 12px 22px;
+    box-sizing: border-box;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}/*order the product's attributes in an elegant way, sets the height and width for the product and makes the transition smooth*/
+
+.product:hover {
+    transform: translateY(-2px);
+    background-color: var(--bg-container, --border-color);
+} /*changes the color and the position for a cool effect on hover*/
+
+#ds-div{
+    max-height: 70px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.top-btns-ds{
+    height: 40px;
+    width: 40px;
+    max-height: 70px;
+    background-color: var(--bg-main);
+    border-radius: 50%;
+    outline: var(--text-main);
+    color: var(--text-main);
+    font-size: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+#cart{
+    font-size: 22px;
+}
+
+.top-div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 4px;
+} /*aligns the items so the name is in the left side and the price in the right*/ 
+
+.product-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--text-main);
+}/*designs the product name*/
+
+.product-price {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #51dd97;
+    margin-left: auto;
+}/*designs the product price*/
+
+.line-through{
+    text-decoration: line-through;
+}
+
+.product-quantity {
+    font-size: 1.3rem;
+    font-weight: bolder;
+    color: var(--text-main);
+}/*designs the product quantity*/
+
+.change-quantity {
+    font-weight: bolder;
+    background-color: var(--bg-main);
+    border-radius: 50%;
+    outline: var(--text-main);
+    color: var(--text-main);
+    width: 24px; 
+    height: 24px; 
+    margin-left: 4px;
+    margin-right: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+button:hover{
+    filter: brightness(1.05);
+    transform: scale(1.1);
+}
+
+button:active{
+    transform: scale(0.95);
+}
+
+
+#purchase-section {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 10px 15px 0 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}/*aligns the total price and purchase button*/
+
+#total-price {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #12ca65;
+}/*designs the total price*/
+
+#purchase-button {
+    background-color: #0d6efd;
+    color: var(--text-main);
+    border: none;
+    border-radius: 50px;
+    padding: 10px 25px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}/*removes the border, make it bold, changes the cursor to pointerand makes smooth transition*/
+
+#purchase-button:hover { 
+    background-color: #0b5ed7;
+}/*change color when hover*/
+
+#purchase-button:active {
+    transform: scale(0.9);
+}/*scales down on click*/
+
+
+/*comment model section*/
+.payment-modal{
+    position: fixed;
+    inset: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background-color: rgba(0,0,0,0.7);
+
+    z-index: 9999;
+}/* sets the style for the modal to show infront of the main, and look seperated.*/
+
+.payment-content{
+width: 550px;
+max-width: 90vw;
+max-height: 90vh;
+overflow-y: auto;
+padding: 20px;
+background-color: var(--bg-main);
+color: var(--text-main);
+outline: 2px solid var(--border-color);
+border-radius: 20px;
+box-shadow: 0 8px 20px var(--shadow-color);
+} /* style for the whole payment modal, making usre it looks fine with the rest.*/
+
+#close-payment-btn{
+float: right;
+background: transparent;
+border: none;
+color: rgb(222,35,35);
+font-size: 20px;
+font-weight: bold;
+}  /* style and coloring for the button to close payment modal*/
+
+#close-payment-btn:hover{
+filter: brightness(1.2);
+transform: scale(1.1);
+}
+
+.hidden{
+    display: none;
+}/*hides items in this class*/
+.payment-input{
+    max-width: 50%;
+}
+#submitPayment{
+    border-radius: 30px;
+    font-weight: bold;
+    padding: 12px;
+}
+.payment-modal,
+.payment-modal * {
+    font-family: 'Rubik', sans-serif;
+}
