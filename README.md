@@ -2,7 +2,7 @@
 
 needed imports
 ```
-npm install node express mongodb bcrypt express-session google-auth-library dotenv @vitalets/google-translate-api
+npm install node express mongodb bcrypt express-session google-auth-library dotenv
 ```
 
 to look for demons:

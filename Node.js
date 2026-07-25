@@ -19,7 +19,7 @@ app.use(session({
     cookie: {
         httpOnly: true, // Prevents client-side JS from stealing the cookie
         secure: false,
-        maxAge: 1000 * 60 * 30 // 30 minutes in milliseconds
+        maxAge: 1000 * 60 * 15 // 15 minutes in milliseconds
     }
 }));
 
