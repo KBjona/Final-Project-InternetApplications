@@ -1,24 +1,24 @@
 let cart = [];
 
-let mail = ''
+let mail = '';
 
-async function load_mail(){
-    const response = await fetch('api/auth/me'); //request user information from cookies
-    if(!response.ok) return; 
 
-    const data = await response.json(); //read the information as json
-    
-    if(!data.loggedIn) return; // throw back to login
 
-    mail = data.user.mail; // update mail
+async function load_mail() {
+  const response = await fetch('api/auth/me'); // request user information from cookies
+  if (!response.ok) return;
+
+  const data = await response.json(); // read the information as json
+  if (!data.loggedIn) return; // throw back to login
+
+  mail = data.user.mail; // update mail
 }
-
 
 // Cart Pop-up Toggle
 function toggleCart() {
   const cartPopup = document.getElementById('cart-popup');
   const cartBackdrop = document.getElementById('cart-backdrop');
-  
+
   cartPopup.classList.toggle('open');
   cartBackdrop.classList.toggle('active');
 }
@@ -26,7 +26,7 @@ function toggleCart() {
 // Fetch from MongoDB
 async function fetchProductsFromDB() {
   // === PLACE YOUR MONGODB BACKEND ENDPOINT HERE ===
-  const API_URL = "YOUR_MONGODB_API_ENDPOINT_HERE"; 
+  const API_URL = "YOUR_MONGODB_API_ENDPOINT_HERE";
 
   try {
     const response = await fetch(API_URL);
@@ -90,7 +90,7 @@ function updateCartUI() {
       totalPrice += item.price * item.qty;
 
       const li = document.createElement('li');
-      li.className = 'list-group-item bg-dark text-white d-flex justify-content-between align-items-center mb-2 border-secondary';
+      li.className = 'list-group-item bg-dark text-white d-flex justify-content-between align-items-center mb-2 border-secondary rounded';
       li.innerHTML = `
         <div>
           <h6 class="my-0">${item.name}</h6>
@@ -108,16 +108,33 @@ function updateCartUI() {
 
 document.addEventListener('DOMContentLoaded', () => {
   fetchProductsFromDB();
+
+  const maxPriceInput = document.getElementById('maxPrice');
+  const maxPriceDisplay = document.getElementById('priceVal');
+  const minDiscountInput = document.getElementById('minDiscount');
+  const minDiscountDisplay = document.getElementById('discountVal');
+
+  if (maxPriceInput && maxPriceDisplay) {
+    maxPriceInput.addEventListener('input', (event) => {
+      maxPriceDisplay.textContent = `0$ - ${event.target.value}$`;
+    });
+  }
+
+  if (minDiscountInput && minDiscountDisplay) {
+    minDiscountInput.addEventListener('input', (event) => {
+      minDiscountDisplay.textContent = `${event.target.value}% - 100%`;
+    });
+  }
 });
 
-const maxPriceInput = document.getElementById('maxPrice');
-const maxPriceDisplay = document.getElementById('priceVal');
-const minDiscountInput = document.getElementById("minDiscount")
-const minDiscountDisplay = document.getElementById("discountVal")
+function openSettings(){
+    const modal = document.getElementById("Account-modal");
+    if(modal)
+        modal.classList.remove("hidden"); // makes the modal visiable to see the payment area.
+}
 
-maxPriceInput.addEventListener('input', (event) => {
-  maxPriceDisplay.textContent = `0$ - ${event.target.value}$`;
-});
-minDiscountInput.addEventListener('input', (event => {
-  minDiscountDisplay.textContent = `${event.target.value}% - 100%`
-}))
+async function closeSettings(){
+    const modal = document.getElementById("Account-modal");
+    if(modal)
+        modal.classList.add("hidden"); // hides the modal.
+}
