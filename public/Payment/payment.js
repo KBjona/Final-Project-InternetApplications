@@ -63,7 +63,6 @@ async function load_mail(){
 
 async function load_items() {
     await load_mail();
-    
     if(mail == '') return;
 
     const list = document.getElementById("products-list"); // gets the list element
@@ -144,12 +143,16 @@ function change_item_qty(element,num){
 }
 
 async function delete_cart_items(element){
+    if(mail == '') return;
+
     element.disabled = true;
     const items_list = document.getElementById("products-list");
     const t_price = document.getElementById("total-price"); // gets the total price element
+
     if(!items_list || !t_price || items_list.dataset.is_empty == 'T'){ // if we couldn't get the items list or it is already empty we can return
         return;
     }
+
     const response = await fetch('api/cart/delete', { // send a fetch request to start the whole delete cart's items process
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -167,9 +170,10 @@ async function delete_cart_items(element){
 }
 
 async function update_items_quantity(element){
+    if (mail == '') return;
     element.disabled = true;
     const items = cart_items;
-    console.log(cart_items);
+
     const response = await fetch('api/cart/update', { // send a fetch request to start the whole load cart process
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -192,11 +196,12 @@ async function closePayment(){
         modal.classList.add("hidden"); // hides the modal.
 }
 
-
+async function load_sccn() {
+    if(mail == '') return;
+}
 
 function useSavedCard(){
     const cc_field = document.getElementById("paymentInformation");
     if(cc_field)
         cc_field.value = sccn;
-
 }
