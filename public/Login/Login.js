@@ -14,11 +14,22 @@ window.onload = function () {
         callback: handleCredentialResponse
     });
 
-    // When clicking the button, trigger the Google prompt
-    document.getElementById("googleLogin").addEventListener("click", () => {
-        google.accounts.id.prompt(); 
-    });
+    const googleWrapperWidth = document.getElementById("googleBtnWrapper").offsetWidth;
+    const renderWidth = Math.min(400, Math.max(200, Math.round(googleWrapperWidth)));
 
+    google.accounts.id.renderButton( // renders the true but invisable google button
+        document.getElementById("hiddengoogleContainer"),
+        {
+            theme: "outline",
+            size: "large",
+            shape: "rectangular",
+            text: "signin_with",
+            type: "standard",
+            width: renderWidth,
+            logo_alignment: "left",
+            locale: "en_US"
+        }
+    );
 };
 
 // runs automatically once Google authenticates the user
