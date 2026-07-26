@@ -240,8 +240,6 @@ async function load_sccn() {
 }
 
 async function update_sccn(new_sccn) {
-
-
     const response = await fetch('api/cart/update-cc', { // send a post request to start the whole loading credit card process
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -285,5 +283,10 @@ function validatePurchase(){
 }
 
 async function complete_purchase() {
-    if(!validatePurchase()) return ; 
+    if (!validatePurchase()) return ; 
+    const to_save_cc = document.getElementById("savePaymentInformation");
+    if(to_save_cc && to_save_cc.checked){
+        await update_sccn();
+    }
+    return; // change to notifications entity
 }

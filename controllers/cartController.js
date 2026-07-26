@@ -63,16 +63,16 @@ exports.update_items_quantities = async (req, res) => {
 exports.get_sccn = async (req, res) => {
     let { mail } = req.body;// get the email from the request's body
     if (!mail) { //if there is no email
-        return res.status(400).json({ message: 'Email cannot be empty' });
+        return res.status(408).json({ message: 'Email cannot be empty' });
     }
 
     try {
         const user = await User.findByMail(mail);
         if (!user) { // if no user was found
-            return res.status(400).json({ message: 'No user with this mail'});
+            return res.status(417).json({ message: 'No user with this mail'});
         }
         if (!user.sccn) { // if the user has no saved cc
-            return res.status(400).json({ message: 'No stored credit card'});
+            return res.status(405).json({ message: 'No stored credit card'});
         }
         res.status(200).json({ message: 'Cart with items', sccn: user.sccn });
     } catch (err) { // server error
