@@ -18,7 +18,7 @@ module.exports = { findCartByMail, DeleteItemsByMail, UpdateItemsByMail };
 /*
 
 {
-  "mail": "Jona10112010@gmail.com",
+  "mail": "pytlr343@gmail.com",
   "items": [
     {
       "name": "Wireless Mouse",

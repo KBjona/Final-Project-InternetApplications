@@ -1,0 +1,35 @@
+
+@import url('/variables.css');
+
+.pop_up {
+    position: fixed;
+    top: 0!important;
+    left: 50%!important;
+    transform: translateX(50%)!important;
+    padding: 15px;
+    background-color: var(--bg-main);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border-radius: 8px;
+    font-family: sans-serif;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.pop_up.error { 
+    border: 5px solid #ff4d4f; 
+}
+
+.pop_up.success { 
+    border: 5px solid #52c41a; 
+}
+
+.status_text { 
+    font-weight: bold; 
+}
+.bar_div { 
+    height: 4px; 
+    background: var(--bg-container); 
+    width: 100%; 
+}

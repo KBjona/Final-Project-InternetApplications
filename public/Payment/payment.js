@@ -1,3 +1,5 @@
+import { pop_up } from '../General-files/notifications-errors.js';
+
 class Item {
     constructor(name,cost,quantity){ //basic constructor 
         this.name = name;
@@ -51,6 +53,11 @@ class Item {
 let mail = '';
 const sccn = "1234-1234-1234-1234";
 
+document.getElementById('purchase-button').addEventListener('click', openPayment);
+document.getElementById('close-payment-btn').addEventListener('click', closePayment);
+document.getElementById('SCCN').addEventListener('click', useSavedCard);
+load_items();
+
 let cart_items = [];
 
 async function load_mail(){
@@ -66,7 +73,6 @@ async function load_mail(){
 
 async function load_items() {
     await load_mail();
-    
     if(mail == '') return;
 
     const list = document.getElementById("products-list"); // gets the list element

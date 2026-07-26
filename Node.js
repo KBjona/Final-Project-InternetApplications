@@ -6,7 +6,6 @@ const path = require('path');
 const { connectDB } = require('./models/db');
 const apiRoutes = require('./routes');
 
-
 const app = express();
 
 app.use(express.json());
