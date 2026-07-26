@@ -131,6 +131,12 @@ function openSettings(){
     const modal = document.getElementById("Account-modal");
     if(modal)
         modal.classList.remove("hidden"); // makes the modal visiable to see the payment area.
+    let pass = document.getElementById("pass");
+    if (pass && pass.value != "")
+      pass.disabled = true;
+    let bday = document.getElementById("bday");
+    if (bday && bday.value != "")
+      bday.disabled = true;
 }
 
 async function closeSettings(){

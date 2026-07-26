@@ -122,13 +122,24 @@
             <form>
                 <label for="fname" id="fnameL" class="form-label">First name</label>
                 <input type="text" id="fname" class="form-control accountInfo"></input>
+
                 <label for="lname" id="lnameL" class="form-label">Last name</label>
                 <input type="text" id="lname" class="accountInfo form-control"></input>
+
                 <label for="email" id="emailL" class="form-label">Email address</label>
                 <input type="text" id="email" class="accountInfo form-control" disabled value="jona10112010@gmail.com"></input>
-                <label for="bday" id="bdayL" class="form-label">Birthday date</label>
+
+                <label for="bday" id="bdayL" class="form-label">Date of birth</label>
                 <input type="date" id="bday" class="form-control">
-                
+
+                <label for="pass" id="passL" class="form-label">Password</label>
+                <input type="password" id="pass" class="accountInfo form-control">
+
+                <div class="mt-4 text-end">
+                <button type="submit" id="update-account-btn" disabled class="btn-update-data">
+                  <span>Save Changes</span>
+                </button>
+              </div>
             </form>
         </div>
     </div>
