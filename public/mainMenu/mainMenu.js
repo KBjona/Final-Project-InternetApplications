@@ -25,11 +25,13 @@ function toggleCart() {
 
 // Fetch from MongoDB
 async function fetchProductsFromDB() {
-  // === PLACE YOUR MONGODB BACKEND ENDPOINT HERE ===
-  const API_URL = "YOUR_MONGODB_API_ENDPOINT_HERE";
-
   try {
-    const response = await fetch(API_URL);
+    const response = await fetch('/api/products');
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
     const products = await response.json();
     renderProducts(products);
   } catch (error) {
@@ -41,17 +43,27 @@ function renderProducts(products) {
   const productGrid = document.getElementById('product-grid');
   productGrid.innerHTML = '';
 
+  if (!products || products.length === 0) {
+    productGrid.innerHTML = `<p class="text-muted text-center col-12">No products found in database.</p>`;
+    return;
+  }
+
   products.forEach(product => {
     const card = document.createElement('div');
     card.className = 'product-card';
+
+    const priceVal = product.price ?? product.cost ?? 0;
+    const priceFormatted = Number(priceVal).toFixed(2);
+    const imageSrc = product.imageUrl || product.image || '/images/placeholder.png';
+
     card.innerHTML = `
       <div class="product-image-wrap">
-        <img src="${product.imageUrl || 'images/placeholder.png'}" alt="${product.name}">
+        <img src="${imageSrc}" alt="${product.name || 'Product'}">
       </div>
       <div class="product-info">
-        <h5>${product.name}</h5>
-        <p class="text-success fw-bold">$${product.price.toFixed(2)}</p>
-        <button class="btn btn-primary btn-sm w-100" onclick="addToCart('${product._id}', '${product.name}', ${product.price})">
+        <h5>${product.name || 'Untitled Product'}</h5>
+        <p class="text-success fw-bold">$${priceFormatted}</p>
+        <button class="btn btn-primary btn-sm w-100" onclick="addToCart('${product._id}', '${product.name}', ${priceVal})">
           Add to Cart
         </button>
       </div>
@@ -105,6 +117,8 @@ function updateCartUI() {
   cartBadge.innerText = totalCount;
   cartTotal.innerText = `$${totalPrice.toFixed(2)}`;
 }
+
+
 
 document.addEventListener('DOMContentLoaded', () => {
   fetchProductsFromDB();

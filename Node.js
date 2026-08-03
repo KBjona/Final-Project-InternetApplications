@@ -36,6 +36,9 @@ const PORT = process.env.PORT;
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'Register', 'Register.html'));
 });
+app.get('/menu', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views','mainMenu', 'mainMenu.html'));
+});
 app.get('/cart', (req, res) => { // just for testing
     res.sendFile(path.join(__dirname, 'views', 'Payment', 'payment.html'));
 });

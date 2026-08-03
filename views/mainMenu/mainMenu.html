@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
-
+ <!-- TODO: add nav and footer tags-->
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="../../public/mainMenu/mainMenu.css" rel="stylesheet">
-  <link rel="icon" type="image/png" href="images/Logo.png">
+  <link href="/mainMenu/mainMenu.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
   <title>My Shop</title>
 </head>
@@ -40,7 +39,7 @@
         <label for="maxPrice" class="form-label">Price Range</label>
         <div class="slider-wrapper">
           <span class="slider-label">$0</span>
-          <input type="range" id="maxPrice" min="0" max="1000" value="500">
+          <input type="range" class="form-range" id="maxPrice" min="0" max="1000" value="500">
           <span class="slider-label">$1000</span> 
         </div>
         <div>
@@ -52,7 +51,7 @@
         <label for="minDiscount" class="form-label">Minimum Discount</label>
         <div class="slider-wrapper">
           <span class="slider-label">0%</span>
-          <input type="range" id="minDiscount" min="0" max="100" value="10">
+          <input type="range" class="form-range" id="minDiscount" min="0" max="100" value="10">
           <span class="slider-label">100%</span> 
         </div>
         <div>
@@ -144,6 +143,6 @@
         </div>
     </div>
 
-<script src="../../public/mainMenu/mainMenu.js"></script>
+<script src="/mainMenu/mainMenu.js"></script>
 </body>
 </html>

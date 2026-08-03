@@ -1,4 +1,4 @@
-@import url('../General-files/variables.css');
+@import url('/General-files/variables.css');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 body {
@@ -160,7 +160,7 @@ body {
 
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 20px;
 }
 
@@ -193,8 +193,8 @@ body {
 }
 
 .product-image-wrap img {
-  max-width: 90%;
-  max-height: 90%;
+  max-width: 99%;
+  max-height: 99%;
   object-fit: contain;
   transition: transform 0.3s ease;
 }
