@@ -142,6 +142,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function openSettings(){
+    let currentTime = new Date();
+    console.log(currentTime.getFullYear());
+
     const modal = document.getElementById("Account-modal");
     if(modal)
         modal.classList.remove("hidden"); // makes the modal visiable to see the payment area.
@@ -151,7 +154,11 @@ function openSettings(){
     let bday = document.getElementById("bday");
     if (bday && bday.value != "")
       bday.disabled = true;
-}
+    let bdayms = new Date(bday.value);
+    if ((currentTime < bdayms.getTime()) || currentTime.getFullYear() - bdayms.getFullYear() > 120)
+      console.log("invalid age");
+
+  }
 
 async function closeSettings(){
     const modal = document.getElementById("Account-modal");
