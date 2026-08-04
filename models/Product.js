@@ -1,0 +1,1 @@
+const { getDb } = require('./db'); // getDb() gives us the "nozama" database your db.js already connects to
