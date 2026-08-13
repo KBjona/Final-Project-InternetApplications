@@ -12,6 +12,7 @@ async function load_mail() {
   if (!data.loggedIn) return; // throw back to login
 
   mail = data.user.mail; // update mail
+  console.log(`mail ${mail}`)
 }
 
 // Cart Pop-up Toggle
@@ -43,11 +44,26 @@ function renderProducts(products) {
   const productGrid = document.getElementById('product-grid');
   productGrid.innerHTML = '';
 
+  const addProductCard = document.createElement('div');
+  addProductCard.className = 'product-card add-product-card';
+  addProductCard.innerHTML = `
+    <a href="/product/create" class="add-product-link">
+      <div class="add-icon-wrap">
+        <span class="plus-icon">+</span>
+      </div>
+      <div class="product-info text-center mt-2">
+        <h5>New Product</h5>
+        <p class="text-muted small mb-0">List a new item for sale</p>
+      </div>
+    </a>
+  `;
+  productGrid.appendChild(addProductCard);
+
   if (!products || products.length === 0) {
     productGrid.innerHTML = `<p class="text-muted text-center col-12">No products found in database.</p>`;
     return;
   }
-
+  
   products.forEach(product => {
     const card = document.createElement('div');
     card.className = 'product-card';
@@ -56,16 +72,27 @@ function renderProducts(products) {
     const priceFormatted = Number(priceVal).toFixed(2);
     const imageSrc = product.imageUrl || product.image || '/images/placeholder.png';
 
+    const isOwner =  (mail === product.mail); // check if current user is product owner
+
+    const editButtonHtml = isOwner ? `
+      <button class="btn btn-warning btn-sm mt-2" onclick="window.location.href='http://localhost:8080/product/edit/${product._id}'">
+        ✏️ Edit Product
+      </button>
+    ` : ''; // if so make an edit button
+    console.log(`product.mail ${product.mail}, mail ${mail}`)
     card.innerHTML = `
       <div class="product-image-wrap">
+      <a href="http://localhost:8080/product/${product._id}" class="product-link">
         <img src="${imageSrc}" alt="${product.name || 'Product'}">
       </div>
       <div class="product-info">
         <h5>${product.name || 'Untitled Product'}</h5>
         <p class="text-success fw-bold">$${priceFormatted}</p>
+        </a>
         <button class="btn btn-primary btn-sm w-100" onclick="addToCart('${product._id}', '${product.name}', ${priceVal})">
           Add to Cart
         </button>
+        ${editButtonHtml}
       </div>
     `;
     productGrid.appendChild(card);
@@ -121,6 +148,7 @@ function updateCartUI() {
 
 
 document.addEventListener('DOMContentLoaded', () => {
+  load_mail();
   fetchProductsFromDB();
 
   const maxPriceInput = document.getElementById('maxPrice');
