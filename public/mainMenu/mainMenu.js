@@ -12,7 +12,6 @@ async function load_mail() {
   if (!data.loggedIn) return; // throw back to login
 
   mail = data.user.mail; // update mail
-  console.log(`mail ${mail}`)
 }
 
 // Cart Pop-up Toggle
@@ -79,7 +78,6 @@ function renderProducts(products) {
         ✏️ Edit Product
       </button>
     ` : ''; // if so make an edit button
-    console.log(`product.mail ${product.mail}, mail ${mail}`)
     card.innerHTML = `
       <div class="product-image-wrap">
       <a href="http://localhost:8080/product/${product._id}" class="product-link">
