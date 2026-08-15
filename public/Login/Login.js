@@ -50,8 +50,8 @@ async function handleCredentialResponse(response) {
         const data = await res.json();
 
         if (res.ok) {
-            // Login successful! Redirect to feed
-            window.location.href = "/cart";
+            // Login successful! Redirect to menu
+            window.location.href = "/menu";
         } else {
             console.error("Google login rejected by server:", data.message);
         }
@@ -124,7 +124,7 @@ async function sendLoginRequest() {
 
         if (response.ok) {
             // Server accepted credentials!
-            window.location.href = "/feed.html";
+            window.location.href = "/menu";
         } else {
             // Server rejected credentials (e.g. status 401 "Wrong email or password")
             errorText.textContent = data.message;
@@ -179,7 +179,7 @@ async function sendFacebookTokenToServer(accessToken) {
 
         if (response.ok) {
             // if ok redirect user to main application page
-            window.location.href = "../Feed/Feed.html"; // Adjust to your actual feed path
+            window.location.href = "/menu"; // Adjust to your actual feed path
         } else {
             alert(data.message || "Facebook authentication failed.");
         }

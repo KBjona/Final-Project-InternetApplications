@@ -7,3 +7,5 @@ router.post('/update',ProductController.edit_store_parameters); // sends a post 
 router.post('/load',ProductController.load_store_parameters); // sends a post request to load the store parameters
 
 router.post('/validate',ProductController.validate_owner); // sends a post request to validate the owner of the store
+
+module.exports = router; // exports the router
