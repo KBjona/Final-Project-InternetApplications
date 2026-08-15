@@ -5,8 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product:----</title>
-    <link rel="stylesheet" href="../../public/product/product.css">
-    <script src="../../public/product/product.js"></script>
+    <link rel="stylesheet" href="/product/product_edit.css">
 </head>
 
 <body>
@@ -15,10 +14,10 @@
             <div id="edit-title-div">
                 <span id="edit-title"><b><u>Editing Section:</u></b></span>
             </div>
-            <form>
+            <form id="form">
                 <div class="field-group">
                     <label for="product-name">Product Name:</label>
-                    <input type="text" id="product-name" placeholder="Enter product name" value="----">
+                    <input type="text" onchange="changed_param('product-name')" id="product-name" placeholder="Enter product name" value="----">
                 </div>
                 <div class="field-group">
                     <label for="product-description">Product Description:</label>
@@ -39,11 +38,11 @@
                 
                 <div class="field-group">
                     <div class="file-upload">
-                        <button type="button" onclick="upload_file('image-input')">Upload product image</button>
+                        <button type="button" onclick="upload_file('product-image')">Upload product image</button>
                         <input type="file" id="image-input" class="hidden" accept="image/*">
                     </div>
                     <div class="file-upload">
-                        <button type="button" onclick="upload_file('video-input')">Upload product video</button>
+                        <button type="button" onclick="upload_file('product-video')">Upload product video</button>
                         <input type="file" id="video-input" class="hidden" accept="video/*">
                     </div>
                 </div>
@@ -69,6 +68,6 @@
         </div>
 
     </div>
+    <script src="/product/product_edit.js"></script>
 </body>
-
 </html>

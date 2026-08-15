@@ -5,7 +5,7 @@ let mail = '';
 
 
 async function load_mail() {
-  const response = await fetch('api/auth/me'); // request user information from cookies
+  const response = await fetch('/api/auth/me'); // request user information from cookies
   if (!response.ok) return;
 
   const data = await response.json(); // read the information as json
@@ -26,7 +26,7 @@ function toggleCart() {
 // Fetch from MongoDB
 async function fetchProductsFromDB() {
   try {
-    const response = await fetch('/api/products');
+    const response = await fetch('/api/product/getAll', {method: 'GET'});
     
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
@@ -71,7 +71,7 @@ function renderProducts(products) {
     const priceFormatted = Number(priceVal).toFixed(2);
     const imageSrc = product.imageUrl || product.image || '/images/placeholder.png';
 
-    const isOwner =  (mail === product.mail); // check if current user is product owner
+    const isOwner =  (mail === product.owner); // check if current user is product owner
 
     const editButtonHtml = isOwner ? `
       <button class="btn btn-warning btn-sm mt-2" onclick="window.location.href='http://localhost:8080/product/edit/${product._id}'">

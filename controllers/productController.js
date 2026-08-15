@@ -1,4 +1,4 @@
-const Cart = require('../models/Product');
+const Product = require('../models/Product');
 
 exports.edit_store_parameters = async (req, res) => {
     let { _id, parameters } = req.body;// get the id and params from the request's body
@@ -10,7 +10,7 @@ exports.edit_store_parameters = async (req, res) => {
     }
 
     try {
-        const result = Cart.UpdateStoreParameters(_id,parameters);
+        const result = await Product.UpdateStoreParameters(_id,parameters);
         if (result.matchedCount === 0) { //no product was found with this id
             return res.status(400).json({ message: 'No product found with that id address'});
         } else if (result.modifiedCount === 0) {//the parameters field didn't need to change
@@ -30,7 +30,7 @@ exports.load_store_parameters = async (req, res) => {
     }
 
     try {
-        const result = Cart.GetStoreParameters(_id);
+        const result = await Product.GetStoreParameters(_id);
         if (!result) { //no product was found with this id
             return res.status(400).json({ message: 'No product found with that id address'});
         }
@@ -42,22 +42,36 @@ exports.load_store_parameters = async (req, res) => {
 }
 
 exports.validate_owner = async (req, res) => {
+    console.log("entered validate owner in productController")
     let { _id } = req.body;// get the id from the request's body
     if (!_id) {//if there is no product id
         return res.status(400).json({ message: 'product id cannot be empty' });
     }
+    console.log("bypassed first if")
 
     try {
-        const result = Cart.GetStoreOwner(_id);
+        const result = await Product.GetStoreOwner(_id);
+        console.log("got 'getstoreowner(id)' successfuly")
         if (!result) { //no product was found with this id
             return res.status(400).json({ message: 'No product found with that id address'});
         }
-        if (result.owner !== req.session.userId) { //the owner of the store is not the same as the user that is logged in
+        if (result.owner !== req.session.user.mail) { //the owner of the store is not the same as the user that is logged in
             return res.status(400).json({ message: 'You are not the owner of this store', is_owner: false });
         }
+        
         res.status(200).json({ message: 'Owner validated successfully' ,is_owner: true });
     } catch (err) { // server error
         console.error(err);
         res.status(500).json({ message: 'Something went wrong on the server' });
     }
 }
+
+exports.get_all_products = async (req, res) => {
+    try {
+        const products = await Product.findAllProducts(); // send req to get all products
+        res.status(200).json(products);
+    } catch (err) {
+        console.error("Product Controller Error:", err);
+        res.status(500).json({ message: 'Something went wrong on the server' }); //if failed send error status
+    }
+};
