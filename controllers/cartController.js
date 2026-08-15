@@ -24,7 +24,7 @@ exports.delete_items = async (req, res) => {
         return res.status(400).json({ message: 'Email cannot be empty' });
     }
     try {
-        const result = Cart.DeleteItemsByMail(mail);
+        const result = await Cart.DeleteItemsByMail(mail);
         if (result.matchedCount === 0) { //user had no cart
             return res.status(200).json({ message: 'No user found with that email address'});
         } else if (result.modifiedCount === 0) {//the items field didn't exist or was already deleted
@@ -43,7 +43,7 @@ exports.update_items_quantities = async (req, res) => {
         return res.status(400).json({ message: 'Email cannot be empty' });
     }
     try {
-        const result = Cart.UpdateItemsByMail(mail,items);
+        const result = await Cart.UpdateItemsByMail(mail,items);
         if (result.matchedCount === 0) { //user had no cart
             return res.status(400).json({ message: 'No user found with that email address'});
         } else if (result.modifiedCount === 0) {//the items field didn't exist or was already deleted
