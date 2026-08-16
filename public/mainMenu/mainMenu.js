@@ -12,7 +12,43 @@ async function load_mail() {
   if (!data.loggedIn) return; // throw back to login
 
   mail = data.user.mail; // update mail
+
+  const emailInput = document.getElementById('email');
+  const fnameInput = document.getElementById('fname');
+  const lnameInput = document.getElementById('lname');
+
+  if (emailInput) emailInput.value = data.user.mail || '';
+  if (fnameInput) fnameInput.value = data.user.fname || '';
+  if (lnameInput) lnameInput.value = data.user.lname || '';
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  const accountForm = document.querySelector('#Account-modal form');
+  if (accountForm) {
+    accountForm.addEventListener('submit', async (e) => { e.preventDefault();
+
+    const payload = {
+      fname: document.getElementById('fname')?.value,
+      lname: document.getElementById('lname')?.value,
+      bday: document.getElementById('bday')?.value,
+      password: document.getElementById('pass')?.value,      
+    };
+
+    try {
+      const res = await fetch('/api/auth/update-profile', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (res.ok) closeSettings();
+    }
+    catch (err) {
+      console.error("Update failed:", err);
+    }
+    });
+  }
+});
 
 // Cart Pop-up Toggle
 function toggleCart() {

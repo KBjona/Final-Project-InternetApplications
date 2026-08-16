@@ -229,3 +229,32 @@ exports.logout = (req, res) => { //LOGOUT function
         res.json({ message: "Logged out successfully!" });
     });
 };
+
+exports.updateProfile = async (req,res) => {
+    if (!req.session || !req.session.user)
+        return res.status(401).json({message: "not logged in"});
+
+    const {fname, lname, bday, password} = req.body;
+    const mail = req.session.user.mail;
+
+    try{
+        const updateData = {};
+        if (fname) updateData.fname = fname;
+        if (lname) updateData.fname = lname;
+        if (bday) updateData.fname = bday;
+        if (password) updateData.passwordHash = await bcrypt.hash(password, 10);
+
+        await User.updateUserProfile(mail, updateData);
+
+        if (fname) req.session.user.fname = fname;
+        if (lname) req.session.user.lname = lname;
+
+        res.status(200).json({ message: "account updates successfully!"});
+    }
+    catch (err){
+        console.error("Update profile error:", err);
+        res.status(500).json({ message: "Database update failed"});
+    }
+
+
+}

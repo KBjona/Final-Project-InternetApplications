@@ -24,7 +24,17 @@ function createUser(userData) {
     console.log("Added user to collection");
     return getDb().collection('users').insertOne(userData);
 }
+function updateUserProfile(mail, updateData){
+    return getDb().collection('users').updateOne({ mail }, {$set: updateData});
+}
 
 
-
-module.exports = { findByMail, findByGoogleId, linkGoogleAccount, findByFacebookId, linkFacebookAccount, createUser };
+module.exports = {
+    findByMail,
+    findByGoogleId,
+    linkGoogleAccount,
+    findByFacebookId, 
+    linkFacebookAccount, 
+    createUser, 
+    updateUserProfile
+ }; // export all the functions
