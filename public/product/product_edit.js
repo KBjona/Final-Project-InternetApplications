@@ -1,4 +1,4 @@
-let parameters = {"product-name": "", "product-description": "", "product-price": "", "product-stock": "","product-discount": 0, "product-image": "","product-video": "","background-color": "#ffffff", "text-color": "#000000", "description-color": "#000000" };
+let parameters = {"product-name": "", "product-description": "", "product-price": "", "product-stock": "","product-discount": 0, "product-image": null,"product-video": null,"background-color": "#ffffff", "name-color": "#000000", "description-color": "#000000" };
 let store_id = null;
 
 function get_store_id(){ //extracting the store id from the url
@@ -36,11 +36,11 @@ async function load_store() {  // send a request to the server to get the parame
     }
     else { //if the response is ok 
         for (const key in parameters) {
-            if (data.hasOwnProperty(key)) { // if the key exists in the data, update the parameters object with the value from the data
-                parameters[key] = data[key];
+            if (data.parameters.hasOwnProperty(key)) { // if the key exists in the data, update the parameters object with the value from the data
+                parameters[key] = data.parameters[key];
             }
             const c_param = document.getElementById(key); //to update the value of the input fields with the values from the parameters object
-            if (c_param) {
+            if (c_param && c_param.type !== 'file') { //if the input field exists and is not a file input, update the value of the input field with the value from the parameters object
                 c_param.value = parameters[key];
             }
         }
@@ -66,6 +66,15 @@ function upload_file(id){ //to use the file input indirectly when clicking on th
     }
 }
 
+function validate_data(){ //to validate the data before sending it to the server   
+    if(parameters["product-name"].length < 1 || parameters["product-name"].length > 100){ return false}
+    if(parameters["product-description"].length < 1 || parameters["product-description"].length > 500){ return false}
+    if(isNaN(parameters["product-price"]) || parameters["product-price"] < 0 || parameters["product-price"] > 1000){ return false}
+    if(isNaN(parameters["product-stock"]) || parameters["product-stock"] < 0 || parameters["product-stock"] > 10000){ return false}
+    if(isNaN(parameters["product-discount"]) || parameters["product-discount"] < 0 || parameters["product-discount"] > 100){ return false}
+    return true;
+}
+
 const form = document.querySelector('#form');//to get the form element from the html
 
 form.addEventListener('submit',async function (event) {
@@ -73,7 +82,11 @@ form.addEventListener('submit',async function (event) {
     
     let Formdata = new FormData(form); // to get the data from the form in a form data method
     Formdata = Object.fromEntries(Formdata); // converts the data to a key value form 
-
+    parameters = {...parameters, ...Formdata}; //merges the parameters object with the form data object
+    if(!validate_data()){ //to validate the data before sending it to the server
+        //add popup
+        return;
+    }
     const response = await fetch("/api/product/update",{ //sends a fetch request to the server to update the parameters of the store in the database
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
