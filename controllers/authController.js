@@ -240,8 +240,8 @@ exports.updateProfile = async (req,res) => {
     try{
         const updateData = {};
         if (fname) updateData.fname = fname;
-        if (lname) updateData.fname = lname;
-        if (bday) updateData.fname = bday;
+        if (lname) updateData.lname = lname;
+        if (bday) updateData.bday = bday;
         if (password) updateData.passwordHash = await bcrypt.hash(password, 10);
 
         await User.updateUserProfile(mail, updateData);

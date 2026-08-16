@@ -20,6 +20,68 @@ async function load_mail() {
   if (emailInput) emailInput.value = data.user.mail || '';
   if (fnameInput) fnameInput.value = data.user.fname || '';
   if (lnameInput) lnameInput.value = data.user.lname || '';
+
+  await fetchDbCart();
+}
+
+async function fetchDbCart() {
+  if (!mail) return;
+  
+  try{
+    const res = await fetch('/api/cart/items', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mail })
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data.items) {
+      cart = data.items.map(item => ({
+         id: item.name,
+         name: item.name,
+         price: item.cost,
+         qty: item.quantity
+      }));
+      updateCartUI();
+    }
+  }
+  catch (err) {
+    console.error("Failed to load cart from DB:", err);
+  }
+}
+
+async function syncCartToDb() {
+  if (!mail) return;
+
+  const dbItems = cart.map(item => ({
+    name: item.name,
+    cost: item.price,
+    quantity: item.qty
+  }));
+
+  try {
+    await fetch('/api/cart/update', {
+      method: 'POST',
+      headers: { 'Content-Type' : 'application/json'},
+      body: JSON.stringify({ mail, items:dbItems})
+    });
+  }
+  catch (err){
+    console.error("failed to sync cart:", err);
+  }
+}
+
+function addToCart(id, name, price) {
+  const existing = cart.find(item => item.id === id || item.name === name);
+  
+  if (existing) {
+    existing.qty += 1;
+  } else {
+    cart.push({ id, name, price, qty: 1 });
+  }
+  
+  updateCartUI();
+  syncCartToDb(); // Persists updates to MongoDB
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -133,15 +195,6 @@ function renderProducts(products) {
   });
 }
 
-function addToCart(id, name, price) {
-  const existing = cart.find(item => item.id === id);
-  if (existing) {
-    existing.qty += 1;
-  } else {
-    cart.push({ id, name, price, qty: 1 });
-  }
-  updateCartUI();
-}
 
 function updateCartUI() {
   const cartItemsList = document.getElementById('cart-items-list');
