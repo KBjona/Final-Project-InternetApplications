@@ -67,11 +67,11 @@ function renderProducts(products) {
     const card = document.createElement('div');
     card.className = 'product-card';
 
-    const priceVal = product.price ?? product.cost ?? 0;
+    const priceVal = product.parameters['product-price'] ?? 0;
     const priceFormatted = Number(priceVal).toFixed(2);
-    const imageSrc = product.imageUrl || product.image || '/images/placeholder.png';
+    const imageSrc = product.parameters['product-image'] || '../noImage.png';
 
-    const isOwner =  (mail === product.mail); // check if current user is product owner
+    const isOwner =  (mail === product.owner); // check if current user is product owner
 
     const editButtonHtml = isOwner ? `
       <button class="btn btn-warning btn-sm mt-2" onclick="window.location.href='http://localhost:8080/product/edit/${product._id}'">
@@ -81,13 +81,13 @@ function renderProducts(products) {
     card.innerHTML = `
       <div class="product-image-wrap">
       <a href="http://localhost:8080/product/${product._id}" class="product-link">
-        <img src="${imageSrc}" alt="${product.name || 'Product'}">
+        <img src="${imageSrc}" alt="${product.parameters['product-name'] || 'Product'}">
       </div>
       <div class="product-info">
-        <h5>${product.name || 'Untitled Product'}</h5>
+        <h5>${product.parameters['product-name'] || 'Untitled Product'}</h5>
         <p class="text-success fw-bold">$${priceFormatted}</p>
         </a>
-        <button class="btn btn-primary btn-sm w-100" onclick="addToCart('${product._id}', '${product.name}', ${priceVal})">
+        <button class="btn btn-primary btn-sm w-100" onclick="addToCart('${product._id}', '${product.parameters['product-name']}', ${priceVal})">
           Add to Cart
         </button>
         ${editButtonHtml}
