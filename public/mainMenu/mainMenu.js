@@ -280,3 +280,9 @@ async function closeSettings(){
     if(modal)
         modal.classList.add("hidden"); // hides the modal.
 }
+
+window.addEventListener('pageshow', (event) => {
+  if (event.persisted) {
+    window.location.reload(); // refresh the page when user opened it, needed to update cart items when coming back from payment menu.
+  }
+});
