@@ -38,6 +38,14 @@ app.get('/cart', (req, res) => {
   }
     res.sendFile(path.join(__dirname, 'views', 'Payment', 'payment.html'));
 });
+app.get('/product/edit/:id', (req, res) => {
+  if (!req.session.user) {
+    return res.redirect('/'); // Redirect to register/login page if no cookie/session
+  }
+  const productId = req.params.id;
+    res.sendFile(path.join(__dirname, 'views', 'product', 'product_edit.html'));
+});
+/*
 app.get('/product/:id', (req, res) => {
   if (!req.session.user) {
     return res.redirect('/'); // Redirect to register/login page if no cookie/session
@@ -45,6 +53,7 @@ app.get('/product/:id', (req, res) => {
   const productId = req.params.id;
     res.sendFile(path.join(__dirname, 'views', 'product', 'product.html'));
 });
+*/
 app.use("/api", apiRoutes); // redirect api calls to the routes folder (index.js)
 
 // Connect to MongoDB Atlas then open Express server

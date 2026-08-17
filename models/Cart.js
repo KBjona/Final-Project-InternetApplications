@@ -10,7 +10,7 @@ function DeleteItemsByMail(user_mail){
 }
 
 function UpdateItemsByMail(user_mail,new_items){
-    return getDb().collection('carts').updateOne({mail: user_mail},{ $set: { items: new_items  }});
+    return getDb().collection('carts').updateOne({mail: user_mail},{ $set: { items: new_items  }}, { upsert: true });
 }
 
 module.exports = { findCartByMail, DeleteItemsByMail, UpdateItemsByMail };

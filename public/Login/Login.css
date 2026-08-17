@@ -11,6 +11,28 @@
     border-radius: 38px;
 } /* General class for all buttons, to have the same size and */
 /* Tell the placeholder to look for the custom CSS variable */
+
+#googleBtnWrapper{
+    position: relative; /* anchors the absolutely-positioned real google button to this wrapper */
+}
+
+#googleCustomLogin{
+    border-radius: 38px; /* keeps the pill shape - ButtonClass's radius lives on the wrapper, which has no visible background, so the button needs its own */
+}
+
+#hiddengoogleContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    overflow: hidden;
+    z-index: 2;
+    cursor: pointer;
+}/*make the real google auth button invisable but when you click the fake one you will actually click the real one because of the z-index: 2*/
+
+
 #info::placeholder {
     color: var(--placeholder-color, #777); /* Fallback to grey if variable isn't set */
 }
