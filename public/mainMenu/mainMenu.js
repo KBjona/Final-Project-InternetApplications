@@ -165,9 +165,9 @@ function renderProducts(products) {
     const card = document.createElement('div');
     card.className = 'product-card';
 
-    const priceVal = product.price ?? product.cost ?? 0;
+    const priceVal = product.parameters['product-price'] ?? 0;
     const priceFormatted = Number(priceVal).toFixed(2);
-    const imageSrc = product.imageUrl || product.image || '/images/placeholder.png';
+    const imageSrc = product.productImage || 'noImage.png';
 
     const isOwner =  (mail === product.owner); // check if current user is product owner
 
@@ -179,13 +179,13 @@ function renderProducts(products) {
     card.innerHTML = `
       <div class="product-image-wrap">
       <a href="http://localhost:8080/product/${product._id}" class="product-link">
-        <img src="${imageSrc}" alt="${product.name || 'Product'}">
+        <img src="${imageSrc}" alt="${product.parameters['product-name'] || 'Product'}">
       </div>
       <div class="product-info">
-        <h5>${product.name || 'Untitled Product'}</h5>
+        <h5 class="product-name-class">${product.parameters['product-name'] || 'Untitled Product'}</h5>
         <p class="text-success fw-bold">$${priceFormatted}</p>
         </a>
-        <button class="btn btn-primary btn-sm w-100" onclick="addToCart('${product._id}', '${product.name}', ${priceVal})">
+        <button class="btn btn-primary btn-sm w-100" onclick="addToCart('${product._id}', '${product.parameters['product-name']}', ${priceVal})">
           Add to Cart
         </button>
         ${editButtonHtml}
@@ -286,3 +286,16 @@ window.addEventListener('pageshow', (event) => {
     window.location.reload(); // refresh the page when user opened it, needed to update cart items when coming back from payment menu.
   }
 });
+
+function search(){
+  let searchQuery = document.getElementById("store-search").value.toLowerCase().trim();
+  let products = document.querySelectorAll(".product-card");
+
+  products.forEach( product => { // go over all products
+    let itemName = product.querySelector(".product-name-class");
+    let searchName = itemName ? itemName.textContent.toLowerCase() : "";
+    console.log("itemName: " + itemName + " searchName: " + searchName);
+    if ((searchName.includes(searchQuery))) product.style.display = ""
+    else product.style.display = "none";
+  });
+}
