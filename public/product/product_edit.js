@@ -29,12 +29,17 @@ async function validate_owner() { //to check if the user is the owner of the sto
 
 async function load_store() {  // send a request to the server to get the parameters using the store id
     if (!editing) {
+        document.title = 'Creating a product';
         return;
     }
     else if (!(await validate_owner()) && editing) {
         window.location.href = '/menu/';
         return;
     }
+    if(store_id == null){
+        return;
+    }
+    document.title = `Editing Product`;
     const response = await fetch('/api/product/load', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -86,7 +91,7 @@ function validate_data() { //to validate the data before sending it to the serve
     if (isNaN(parameters["product-price"]) || parameters["product-price"] < 0 || parameters["product-price"] > 1000) { return false }
     if (isNaN(parameters["product-stock"]) || parameters["product-stock"] < 0 || parameters["product-stock"] > 10000) { return false }
     if (isNaN(parameters["product-discount"]) || parameters["product-discount"] < 0 || parameters["product-discount"] > 100) { return false }
-    if(!(document.getElementById('product-image').files[0])) {return false}
+    if(!editing && !(document.getElementById('product-image').files[0])) {return false}
     return true;
 }
 
