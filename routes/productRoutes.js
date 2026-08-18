@@ -10,4 +10,6 @@ router.post('/validate',ProductController.validate_owner); // sends a post reque
 
 router.get('/getAll', ProductController.get_all_products);
 
+router.get('/search', ProductController.search_products); // routes the search fucntion to the controller search function.
+
 module.exports = router; // exports the router

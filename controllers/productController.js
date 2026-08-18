@@ -75,3 +75,15 @@ exports.get_all_products = async (req, res) => {
         res.status(500).json({ message: 'Something went wrong on the server' }); //if failed send error status
     }
 };
+
+exports.search_products = async (req,res) => {
+    try {
+        const searchQuery = res.query?.q || '';
+        const groupedResults = await Product.searchProductsGrouped(searchQuery);
+        res.status(200).json(groupedResults);
+    }
+    catch (err){
+        console.error(err);
+        res.status(500).json( {message: 'error searchign products'});
+    }
+};

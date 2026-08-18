@@ -254,6 +254,27 @@ document.addEventListener('DOMContentLoaded', () => {
       minDiscountDisplay.textContent = `${event.target.value}% - 100%`;
     });
   }
+  let isSearching = false; // set up safeguard flag
+  const searchInput = document.getElementById('store-search');
+  if (searchInput){
+    searchInput.addEventListener('input', search) // search locally whenver something changed
+    searchInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter'){ // if clicked enter update from db
+        event.preventDefault();
+
+        if (event.repeat) return; // safeguard incase the user holds enter key
+        if (isSearching) return; // safeguard incase user send a request while the last one hasn't finished
+        try {
+          isSearching = true;
+          dbSearch();
+        }
+        finally {
+          isSearching = false; // reset flag when request finished
+        }
+      }
+    })
+  }
+
 });
 
 function openSettings(){
@@ -294,8 +315,31 @@ function search(){
   products.forEach( product => { // go over all products
     let itemName = product.querySelector(".product-name-class");
     let searchName = itemName ? itemName.textContent.toLowerCase() : "";
+
+    if (product.classList.contains("add-product-card")) return;
+
     console.log("itemName: " + itemName + " searchName: " + searchName);
     if ((searchName.includes(searchQuery))) product.style.display = ""
     else product.style.display = "none";
   });
+}
+
+async function dbSearch(){
+  const searchQuery = document.getElementById("store-search").value.toLowerCase().trim();
+
+  try{
+    const response = await fetch(`/api/product/search?q=${encodeURIComponent(searchQuery)}`);
+    if (!response.ok) throw new Error('search requested faield');
+
+    const groupedData = await response.json();
+
+    const products = groupedData.flatMap( group => group.items);
+
+    renderProducts(products);
+
+    search();
+  }
+  catch (err){
+    console.error("db search failed", err);
+  }
 }
