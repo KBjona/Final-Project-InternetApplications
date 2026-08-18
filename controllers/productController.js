@@ -78,8 +78,16 @@ exports.get_all_products = async (req, res) => {
 
 exports.search_products = async (req,res) => {
     try {
-        const searchQuery = res.query?.q || '';
-        const groupedResults = await Product.searchProductsGrouped(searchQuery);
+        const {q = '', maxPrice, minDiscount ,minStars} = req.query;
+
+        const filters = {
+            query: q,
+            maxPrice: maxPrice ? Number(maxPrice) : null,
+            minDiscount: minDiscount ? Number(minDiscount) : null,
+            minStars: minStars ? Number(minStars) : null,
+        };
+
+        const groupedResults = await Product.searchProductsGrouped(filters);
         res.status(200).json(groupedResults);
     }
     catch (err){

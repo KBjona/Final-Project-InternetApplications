@@ -167,7 +167,12 @@ function renderProducts(products) {
 
     const priceVal = product.parameters['product-price'] ?? 0;
     const priceFormatted = Number(priceVal).toFixed(2);
-    const imageSrc = product.productImage || 'noImage.png';
+    let imageSrc = '/noImage.png';
+  if (product.productImage) {
+    imageSrc = product.productImage.startsWith('data:') || product.productImage.startsWith('http') || product.productImage.startsWith('/')
+      ? product.productImage
+      : `data:image/jpeg;base64,${product.productImage}`;
+  }
 
     const isOwner =  (mail === product.owner); // check if current user is product owner
 
@@ -326,17 +331,31 @@ function search(){
 
 async function dbSearch(){
   const searchQuery = document.getElementById("store-search").value.toLowerCase().trim();
+  const maxPrice = document.getElementById("maxPrice")?.value || 1000;
+  const minDiscount = document.getElementById("minDiscount")?.value || 0;
+
+  let minStars = 0;
+  if (document.getElementById("stars5")?.checked) minStars = 5;
+  else if (document.getElementById("stars4")?.checked) minStars = 4;
+  else if (document.getElementById("stars3")?.checked) minStars = 3;
+  else if (document.getElementById("stars2")?.checked) minStars = 2;
+  else if (document.getElementById("stars1")?.checked) minStars = 1;
+
+  const queryParams = new URLSearchParams({
+    q: searchQuery,
+    maxPrice: maxPrice,
+    minDiscount: minDiscount,
+    minStars: minStars
+  });
 
   try{
-    const response = await fetch(`/api/product/search?q=${encodeURIComponent(searchQuery)}`);
+    const response = await fetch(`/api/product/search?${queryParams.toString()}`);
     if (!response.ok) throw new Error('search requested faield');
 
     const groupedData = await response.json();
-
-    const products = groupedData.flatMap( group => group.items);
+    const products = groupedData.flatMap( group => group.items || []);
 
     renderProducts(products);
-
     search();
   }
   catch (err){
