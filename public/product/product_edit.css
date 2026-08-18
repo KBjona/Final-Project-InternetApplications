@@ -1,0 +1,181 @@
+@import url('../General-files/variables.css');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: system-ui, sans-serif;
+}
+
+body {
+    background-color: var(--secondary-color);
+    color: var(--text-main);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Outer Main Container (Dark) */
+.product-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    background-color: var(--bg-main);
+    border: 3px solid var(--border-color);
+    border-radius: 40px;
+    padding: 25px;
+    width: 100%;
+    max-width: 900px;
+    height: 600px;
+}
+
+/* Left Section Outer Box (Dark) */
+#editing-section {
+    background-color: var(--bg-container);
+    border: 3px solid var(--border-color);
+    border-radius: 15px;
+    padding: 20px;
+    overflow-y: auto;
+    height: 100%;
+}
+
+#editing-section::-webkit-scrollbar {
+    width: 6px;
+}/*sets the scrollbar width*/
+
+#editing-section::-webkit-scrollbar-thumb {
+    background-color: var(--btn-secondary-bg);
+    border-radius: 7px;
+}/*sets the scrollbar thumb's color and radius*/
+
+#editing-section::-webkit-scrollbar-track {
+    background: none;
+}/*makes the scrollbar track's invisible*/
+
+#edit-title-div{
+    display: flex;
+    align-items: top;
+    justify-content: center;
+}
+
+#edit-title{
+    font-family: sans-serif;
+    color: var(--text-main);
+    font-size: x-large;
+}
+
+/* Form Layout (Stacked) */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-main);
+    letter-spacing: 0.5px;
+}
+
+/* Inputs & Textarea */
+input[type="text"], 
+input[type="number"], 
+textarea {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    outline: none;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* Buttons */
+button {
+    cursor: pointer;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    transition: opacity 0.2s;
+}
+
+button:hover {
+    opacity: 0.85;
+}
+
+.file-upload {
+    width: 100%;
+    margin-bottom: 6px;
+}
+
+.btn-secondary {
+    background-color: var(--secondary-color);
+    color: var(--text-main);
+    width: 100%;
+}
+
+.btn-submit {
+    background-color: var(--btn-secondary-bg);
+    color: var(--btn-post-text);
+    margin-top: 5px;
+    padding: 14px;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Stacked Color Pickers Section */
+.color-pickers {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 10px;
+    border-top: 2px solid var(--border-color);
+    padding-top: 15px;
+}
+
+.color-field {
+    width: 100%;
+}
+
+input[type="color"] {
+    width: 100%;
+    height: 42px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: var(--bg-main);
+    padding: 4px;
+}
+
+/* Right Section Containers (Dark) */
+.right-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: 100%;
+}
+
+.graph-placeholder {
+    flex: 1;
+    background-color: var(--bg-container);
+    border: 3px solid var(--border-color);
+    border-radius: 30px;
+    width: 100%;
+}

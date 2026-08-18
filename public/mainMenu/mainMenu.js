@@ -5,14 +5,112 @@ let mail = '';
 
 
 async function load_mail() {
-  const response = await fetch('api/auth/me'); // request user information from cookies
+  const response = await fetch('/api/auth/me'); // request user information from cookies
   if (!response.ok) return;
 
   const data = await response.json(); // read the information as json
   if (!data.loggedIn) return; // throw back to login
 
   mail = data.user.mail; // update mail
+
+  const emailInput = document.getElementById('email');
+  const fnameInput = document.getElementById('fname');
+  const lnameInput = document.getElementById('lname');
+
+  if (emailInput) emailInput.value = data.user.mail || '';
+  if (fnameInput) fnameInput.value = data.user.fname || '';
+  if (lnameInput) lnameInput.value = data.user.lname || '';
+
+  await fetchDbCart();
 }
+
+async function fetchDbCart() {
+  if (!mail) return;
+  
+  try{
+    const res = await fetch('/api/cart/items', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mail })
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data.items) {
+      cart = data.items.map(item => ({
+         id: item.name,
+         name: item.name,
+         price: item.cost,
+         qty: item.quantity
+      }));
+      updateCartUI();
+    }
+  }
+  catch (err) {
+    console.error("Failed to load cart from DB:", err);
+  }
+}
+
+async function syncCartToDb() {
+  if (!mail) return;
+
+  const dbItems = cart.map(item => ({
+    name: item.name,
+    cost: item.price,
+    quantity: item.qty
+  }));
+
+  try {
+    await fetch('/api/cart/update', {
+      method: 'POST',
+      headers: { 'Content-Type' : 'application/json'},
+      body: JSON.stringify({ mail, items:dbItems})
+    });
+  }
+  catch (err){
+    console.error("failed to sync cart:", err);
+  }
+}
+
+function addToCart(id, name, price) {
+  const existing = cart.find(item => item.id === id || item.name === name);
+  
+  if (existing) {
+    existing.qty += 1;
+  } else {
+    cart.push({ id, name, price, qty: 1 });
+  }
+  
+  updateCartUI();
+  syncCartToDb(); // Persists updates to MongoDB
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const accountForm = document.querySelector('#Account-modal form');
+  if (accountForm) {
+    accountForm.addEventListener('submit', async (e) => { e.preventDefault();
+
+    const payload = {
+      fname: document.getElementById('fname')?.value,
+      lname: document.getElementById('lname')?.value,
+      bday: document.getElementById('bday')?.value,
+      password: document.getElementById('pass')?.value,      
+    };
+
+    try {
+      const res = await fetch('/api/auth/update-profile', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (res.ok) closeSettings();
+    }
+    catch (err) {
+      console.error("Update failed:", err);
+    }
+    });
+  }
+});
 
 // Cart Pop-up Toggle
 function toggleCart() {
@@ -26,7 +124,7 @@ function toggleCart() {
 // Fetch from MongoDB
 async function fetchProductsFromDB() {
   try {
-    const response = await fetch('/api/products');
+    const response = await fetch('/api/product/getAll', {method: 'GET'});
     
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
@@ -71,10 +169,10 @@ function renderProducts(products) {
     const priceFormatted = Number(priceVal).toFixed(2);
     const imageSrc = product.imageUrl || product.image || '/images/placeholder.png';
 
-    const isOwner =  (mail === product.mail); // check if current user is product owner
+    const isOwner =  (mail === product.owner); // check if current user is product owner
 
     const editButtonHtml = isOwner ? `
-      <button class="btn btn-warning btn-sm mt-2" onclick="window.location.href='http://localhost:8080/product/edit/${product._id}'">
+      <button class="btn btn-warning btn-sm mt-2" onclick="window.location.href='/product/edit/${product._id}'">
         ✏️ Edit Product
       </button>
     ` : ''; // if so make an edit button
@@ -97,15 +195,6 @@ function renderProducts(products) {
   });
 }
 
-function addToCart(id, name, price) {
-  const existing = cart.find(item => item.id === id);
-  if (existing) {
-    existing.qty += 1;
-  } else {
-    cart.push({ id, name, price, qty: 1 });
-  }
-  updateCartUI();
-}
 
 function updateCartUI() {
   const cartItemsList = document.getElementById('cart-items-list');
