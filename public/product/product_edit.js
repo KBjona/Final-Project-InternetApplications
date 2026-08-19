@@ -1,4 +1,4 @@
-let parameters = { "product-name": "", "product-description": "", "product-price": "", "product-stock": "", "product-discount": 0, "background-color": "#ffffff", "name-color": "#000000", "description-color": "#000000" };
+let parameters = { "product-name": "", "product-description": "", "product-price": "", "product-stock": "", "product-discount": 0, "background-firstly-color": "#ffffff", "background-secondary-color": "#cccccc", "name-color": "#000000", "description-color": "#000000" };
 let editing = window.location.pathname != '/product/create';
 let store_id = null;
 
@@ -45,7 +45,6 @@ async function load_store() {  // send a request to the server to get the parame
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ _id: store_id })
     });
-    console.log("entered");
     const data = await response.json(); //get the data of the response from the server
     if (!response.ok) { //if we couldnt get the parameters
         window.location.href = '/menu/';
@@ -58,12 +57,11 @@ async function load_store() {  // send a request to the server to get the parame
                 parameters[key] = data.parameters[key];
             }
             const c_param = document.getElementById(key); //to update the value of the input fields with the values from the parameters object
-            if (c_param && c_param.type !== 'file') { //if the input field exists and is not a file input, update the value of the input field with the value from the parameters object
+            if (c_param) { //if the input field exists and is not a file input, update the value of the input field with the value from the parameters object
                 c_param.value = parameters[key];
             }
         }
     }
-    console.log("finished");
     return;
 }
 
@@ -112,7 +110,7 @@ form.addEventListener('submit', async function (event) {
     let Formdata = new FormData(form); // to get the data from the form in a form data method
     Formdata = Object.fromEntries(Formdata); // converts the data to a key value form 
 
-    delete Formdata['product-video'];
+    delete Formdata['product-video'];//deleting them because we will handle them separately
     delete Formdata['product-image'];
 
     let video_base64 = null;

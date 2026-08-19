@@ -22,8 +22,8 @@ function UpdateStoreVideo(id,vid){
     return getDb().collection('products').updateOne({_id: new ObjectId(id)},{ $set: { productVideo: vid }}); //updates the store video
 }
 
-function GetStoreParameters(id){
-    return getDb().collection('products').findOne({_id: new ObjectId(id)},{parameters: 1, _id: 0}); //gets the store parameters
+function GetStoreParameters(id,img=0,vid=0,rating=0){
+    return getDb().collection('products').findOne({_id: new ObjectId(id)},{parameters: 1, productImage: img, productVideo: vid, rating: rating, _id: 0}); //gets the store parameters
 }
 
 function GetStoreOwner(id){

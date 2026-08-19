@@ -1,0 +1,152 @@
+:root{
+    --background-firstly-color: white;
+    --background-secondary-color: lightgrey;
+    --text-color: black;
+    --description-color: grey;
+} /* the default colors of the store*/
+
+body {
+    background-color: var(--background-firstly-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+* {
+    box-sizing: border-box;
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+/* Shared Box Style */
+.box {
+    border: 4px solid var(--background-secondary-color);
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    background-color: var(--background-firstly-color);
+    color: var(--text-color);
+}
+
+/* Main Container */
+.product-container {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 20px;
+    max-width: 1000px;
+    margin: 40px auto;
+    min-height: 600px;
+}
+
+/* --- Left Column --- */
+.product-image {
+    justify-content: center;
+    padding: 15px;
+    align-items: flex-start;
+}
+
+
+/* --- Right Column --- */
+.product-details {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 20px;
+}
+
+.product-name {
+    min-height: 50px;
+}
+
+/* Middle Row */
+.middle-section {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    gap: 20px;
+}
+
+.product-description {
+    align-items: flex-start;
+    color: var(--description-color);
+
+}
+
+/* Pricing & Details Section */
+.pricing-section {
+    display: grid;
+    grid-template-rows: repeat(5, 1fr);
+    gap: 15px;
+}
+
+/* --- Bottom Row (Updated for Review) --- */
+.bottom-section {
+    display: grid;
+    /* Gives the review box slightly more room than the cart button */
+    grid-template-columns: 1.5fr 1fr;
+    gap: 20px;
+    min-height: 70px;
+}
+
+/* Review Internal Layout */
+.review-box {
+    display: flex;
+    justify-content: space-between;
+    /* Pushes items apart evenly */
+    gap: 10px;
+    background-color: black;
+}
+
+.stars input[type="radio"] {
+    display: none;
+    /* Hides the radio inputs */
+}
+.stars{
+    display: flex;
+    gap: 5px;
+    flex-direction: row-reverse;
+    background: none;
+}
+.stars label {
+    color: white;
+    font-size: large;
+    cursor: pointer;
+}
+
+
+.stars label:hover,
+.stars label:hover~label {
+    color: rgb(215, 207, 54);
+    /* Simple CSS hover effect for the stars */
+}
+
+.stars input:checked~label {
+    color: rgb(215, 207, 54) !important;
+    /* Highlights selected stars */
+}
+
+.send-btn {
+    border: 3px solid black;
+    background: white;
+    padding: 5px 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.send-btn:hover {
+    transform: scale(1.05);
+}
+
+.send-btn:active {
+    transform: scale(0.95);
+    /* Slightly shrinks the button when clicked */
+}
+
+.add-to-cart {
+    justify-content: center;
+    cursor: pointer;
+}
+
+.add-to-cart:hover {
+    background-color: #f0f0f0;
+}
