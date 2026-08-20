@@ -177,7 +177,7 @@ function renderProducts(products) {
     const isOwner =  (mail === product.owner); // check if current user is product owner
 
     const editButtonHtml = isOwner ? `
-      <button class="btn btn-warning btn-sm mt-2" onclick="window.location.href='http://localhost:8080/product/edit/${product._id}'">
+      <button class="btn btn-warning btn-sm mt-2" onclick="window.location.href='/product/edit/${product._id}'">
         ✏️ Edit Product
       </button>
     ` : ''; // if so make an edit button

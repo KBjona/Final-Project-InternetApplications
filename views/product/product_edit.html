@@ -42,15 +42,19 @@
                         <input type="file" name="product-image" id="product-image" class="hidden" accept="image/*">
                     </div>
                     <div class="file-upload">
-                        <button type="button" onclick="upload_file('product-video')">Upload product video(max 10MB)</button>
+                        <button type="button" onclick="upload_file('product-video')">Upload product video(max 3MB)</button>
                         <input type="file" name="product-video" id="product-video" class="hidden" accept="video/*">
                     </div>
                 </div>
 
                 <div class="color-pickers">
                     <div class="field-group color-field">
-                        <label for="bg-color">Background Color</label>
-                        <input type="color" name="background-color" id="background-color" value="#ffffff">
+                        <label for="background-firstly-color">Background Firstly Color</label>
+                        <input type="color" name="background-firstly-color" id="background-firstly-color" value="#ffffff">
+                    </div>
+                    <div class="field-group color-field">
+                        <label for="background-secondary-color">Background Secondary Color</label>
+                        <input type="color" name="background-secondary-color" id="background-secondary-color" value="#cccccc">
                     </div>
                     <div class="field-group color-field">
                         <label for="name-color">Name Text Color</label>
