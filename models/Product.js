@@ -38,6 +38,15 @@ function AddReview(id, rating) {
     return getDb().collection('products').updateOne({_id: new ObjectId(id)}, {$inc: { sum_rating: rating, num_ratings: 1 }}, {upsert: true}); // adds a review to the product
 }
 
+function CreateStoreParameters(store_owner,params,img, vid){
+    return getDb().collection('products').insertOne({
+        owner: store_owner,
+        parameters: params,
+        productImage: img,
+        productVideo: vid || null
+    });
+}
+
 async function searchProductsGrouped({ query = '', maxPrice = 1000, minDiscount = 0, minStars = 0 } = {}) {
   const cleanQuery = query ? String(query).trim() : '';
   const matchConditions = [];
@@ -95,4 +104,4 @@ async function searchProductsGrouped({ query = '', maxPrice = 1000, minDiscount 
   return await getDb().collection('products').aggregate(pipeline).toArray();
 }
 
-module.exports = {UpdateStoreParameters, GetStoreParameters, GetStoreOwner, findAllProducts, searchProductsGrouped};
+module.exports = {UpdateStoreParameters, GetStoreParameters, GetStoreOwner, findAllProducts, CreateStoreParameters, searchProductsGrouped};
