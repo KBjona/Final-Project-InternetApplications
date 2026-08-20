@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../public/product/product_store.css">
+    <script src="../../public/product/product_store.js" ></script>
+    <title>Product: ----</title>
+</head>
+
+<body>
+    <div class="product-container">
+        <!-- Left Column -->
+        <div class="box product-image">
+            <canvas id="productCanvas"></canvas>
+        </div>
+
+        <!-- Right Column -->
+        <div class="product-details">
+            <div class="box product-name">product name</div>
+
+            <div class="middle-section">
+                <div class="box product-description">product description</div>
+
+                <div class="pricing-section">
+                    <div class="box" id="product-price">original price</div>
+                    <div class="box" id="product-discount">discount</div>
+                    <div class="box" id="product-price-after-discount">price after discount</div>
+                    <div class="box" id="product-stock">stock</div>
+                    <div class="box" id="product-rating">rating</div>
+                </div>
+            </div>
+
+            <!-- Updated Bottom Section -->
+            <div class="bottom-section">
+                <!-- Add Review Area -->
+                <div class="box review-box">
+                    <span>add review:</span>
+                    <div class="stars">
+                        <input type="radio" onclick="check_or_uncheck(this,1)" name="star" id="star1"><label for="star1">★</label>
+                        <input type="radio" onclick="check_or_uncheck(this,2)" name="star" id="star2"><label for="star2">★</label>
+                        <input type="radio" onclick="check_or_uncheck(this,3)" name="star" id="star3"><label for="star3">★</label>
+                        <input type="radio" onclick="check_or_uncheck(this,4)" name="star" id="star4"><label for="star4">★</label>
+                        <input type="radio" onclick="check_or_uncheck(this,5)" name="star" id="star5"><label for="star5">★</label>
+                    </div>
+                    <button class="send-btn" onclick="send_review()">send</button>
+                </div>
+
+                <!-- Add to Cart Area -->
+                <button class="box add-to-cart" onclick="add_to_cart()">add to cart</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

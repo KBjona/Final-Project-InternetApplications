@@ -4,15 +4,15 @@ const { Binary } = require('mongodb');
 
 
 exports.create_store = async (req, res) => {
-    let {parameters, image_base64, video_base64} = req.body
+    let { parameters, image_base64, video_base64 } = req.body
     if (!parameters) {//if there are no parameters
         return res.status(400).json({ message: 'parameters cannot be empty' });
     }
-    else if(!image_base64 || image_base64 == null || typeof (image_base64) != 'string'){ // if there is no image
+    else if (!image_base64 || image_base64 == null || typeof (image_base64) != 'string') { // if there is no image
         return res.status(400).json({ message: 'image has to exist' });
     }
-    else if(!( req.session?.user?.mail)){ //if there is no user connected
-        return res.status(400).json({ message: 'Log in please'});
+    else if (!(req.session?.user?.mail)) { //if there is no user connected
+        return res.status(400).json({ message: 'Log in please' });
     }
 
     const owner = req.session.user.mail; // creating the owner as the user logged in
@@ -102,6 +102,48 @@ exports.load_store_parameters = async (req, res) => {
         console.error(err);
         return res.status(500).json({ message: 'Something went wrong on the server' });
     }
+}
+
+exports.show_store = async (req, res) => {
+    let { _id } = req.body;// get the id from the request's body
+    if (!_id) {//if there is no product id
+        return res.status(400).json({ message: 'product id cannot be empty' });
+    }
+
+    try {
+        const result = await Product.GetStoreParameters(_id, 1, 1, 1); // get the parameters, image, video, and rating of the store
+        if (!result) { //no product was found with this id
+            return res.status(400).json({ message: 'No product found with that id address' });
+        }
+        res.status(200).json({ message: 'Store parameters loaded successfully', parameters: result.parameters, productImage: result.productImage, productVideo: result.productVideo, rating: result.sum_rating / (result.num_ratings || 1) });
+    } catch (err) { // server error
+        console.error(err);
+        return res.status(500).json({ message: 'Something went wrong on the server' });
+    }
+}
+
+exports.add_review = async (req, res) => {
+    let { _id, rating } = req.body;// get the id and params from the request's body
+    if (!_id) {//if there is no product id
+        return res.status(400).json({ message: 'product id cannot be empty' });
+    }
+    else if (!rating) {//if there are no parameters
+        return res.status(400).json({ message: 'rating cannot be null' });
+    }
+
+    try {
+        const result = await Product.AddReview(_id, rating);
+        if (result.matchedCount === 0) { //no product was found with this id
+            return res.status(400).json({ message: 'No product found with that id address to add review' });
+        }
+        else if (result.modifiedCount === 0) { //the review was not added
+            return res.status(400).json({ message: 'Failed to add review' });
+        }
+    } catch (err) { // server error
+        console.error(err);
+        return res.status(500).json({ message: 'Something went wrong on the server' });
+    }
+    res.status(200).json({ message: 'Store review added successfully' });
 }
 
 

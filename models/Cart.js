@@ -13,6 +13,8 @@ function UpdateItemsByMail(user_mail,new_items){
     return getDb().collection('carts').updateOne({mail: user_mail},{ $set: { items: new_items  }}, { upsert: true });
 }
 
+//to add add to cart functionality
+
 module.exports = { findCartByMail, DeleteItemsByMail, UpdateItemsByMail };
 
 /*
