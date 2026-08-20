@@ -3,16 +3,12 @@ let review = null;
 let store_id = null;
 
 function get_store_id() { //extracting the store id from the url
-    if (editing) {
-        const cleanUrl = window.location.pathname.replace(/\/+$/, '');
-        store_id = cleanUrl.split('/').pop();
-    }
+    const cleanUrl = window.location.pathname.replace(/\/+$/, '');
+    store_id = cleanUrl.split('/').pop();
 }
 
 async function load_store() {  // send a request to the server to get the parameters using the store id
-    if(store_id == null){
-        return;
-    }
+    get_store_id();
     document.title = `Product: ${parameters["product-name"]}`;
     const response = await fetch('/api/product/show', {
         method: 'POST',
@@ -39,28 +35,28 @@ async function load_store() {  // send a request to the server to get the parame
         document.getElementById("product-price-after-discount").innerText = data.parameters["product-price"] - (data.parameters["product-price"] * data.parameters["product-discount"] / 100);
         document.getElementById("product-rating").innerText = data.rating;
     }
-    if(data.productImage){
+    if (data.productImage) {
         const canvas = document.getElementById("productCanvas");
-        if(canvas){
+        if (canvas) {
             const ctx = canvas.getContext("2d");
             const img = new Image();
 
-            img.onload = function() {
+            img.onload = function () {
                 canvas.width = img.width;
                 canvas.height = img.height;
                 ctx.drawImage(img, 0, 0);
 
-                if(img.src.startsWith("blob:")){
+                if (img.src.startsWith("blob:")) {
                     URL.revokeObjectURL(img.src);
                 }
             };
 
-            if(typeof data.productImage === "string") { // if the image is a base64 string we can directly set the src to it
+            if (typeof data.productImage === "string") { // if the image is a base64 string we can directly set the src to it
                 img.src = data.productImage.startsWith("data:") ? data.productImage : `data:image/png;base64,${data.productImage}`;
             }
             else { // if the image is in raw bytes we need to convert it to blob in order to create the url for the image
-                const raw_bytes = data.productImage.data || (data.productImage.buffer && data.productImage.buffer.data)|| data.productImage.buffer;
-                if(raw_bytes){
+                const raw_bytes = data.productImage.data || (data.productImage.buffer && data.productImage.buffer.data) || data.productImage.buffer;
+                if (raw_bytes) {
                     const blob = new Blob([new Uint8Array(raw_bytes)], { type: 'image/png' });
                     img.src = URL.createObjectURL(blob);
                 }
@@ -81,11 +77,11 @@ async function send_review() { //send the review to the server
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ _id: store_id, review: review })
     });
-    const data = await response.json(); 
+    const data = await response.json();
     if (!response.ok) { //if we couldnt send the review
         //add popup
         return;
-    } 
+    }
 }
 
 async function add_to_cart() { //send the request to the server to add the product to the cart
@@ -106,8 +102,8 @@ function check_or_uncheck(element, star_number) { // to check or uncheck the sta
         review = null;
         element.checked = false;
     }
-    else{
+    else {
         review = star_number;
-        
+
     }
 }
