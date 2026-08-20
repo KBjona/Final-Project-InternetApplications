@@ -165,9 +165,14 @@ function renderProducts(products) {
     const card = document.createElement('div');
     card.className = 'product-card';
 
-    const priceVal = product.price ?? product.cost ?? 0;
+    const priceVal = product.parameters['product-price'] ?? 0;
     const priceFormatted = Number(priceVal).toFixed(2);
-    const imageSrc = product.imageUrl || product.image || '/images/placeholder.png';
+    let imageSrc = '/noImage.png';
+  if (product.productImage) {
+    imageSrc = product.productImage.startsWith('data:') || product.productImage.startsWith('http') || product.productImage.startsWith('/')
+      ? product.productImage
+      : `data:image/jpeg;base64,${product.productImage}`;
+  }
 
     const isOwner =  (mail === product.owner); // check if current user is product owner
 
@@ -179,13 +184,13 @@ function renderProducts(products) {
     card.innerHTML = `
       <div class="product-image-wrap">
       <a href="http://localhost:8080/product/${product._id}" class="product-link">
-        <img src="${imageSrc}" alt="${product.name || 'Product'}">
+        <img src="${imageSrc}" alt="${product.parameters['product-name'] || 'Product'}">
       </div>
       <div class="product-info">
-        <h5>${product.name || 'Untitled Product'}</h5>
+        <h5 class="product-name-class">${product.parameters['product-name'] || 'Untitled Product'}</h5>
         <p class="text-success fw-bold">$${priceFormatted}</p>
         </a>
-        <button class="btn btn-primary btn-sm w-100" onclick="addToCart('${product._id}', '${product.name}', ${priceVal})">
+        <button class="btn btn-primary btn-sm w-100" onclick="addToCart('${product._id}', '${product.parameters['product-name']}', ${priceVal})">
           Add to Cart
         </button>
         ${editButtonHtml}
@@ -254,6 +259,27 @@ document.addEventListener('DOMContentLoaded', () => {
       minDiscountDisplay.textContent = `${event.target.value}% - 100%`;
     });
   }
+  let isSearching = false; // set up safeguard flag
+  const searchInput = document.getElementById('store-search');
+  if (searchInput){
+    searchInput.addEventListener('input', search) // search locally whenver something changed
+    searchInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter'){ // if clicked enter update from db
+        event.preventDefault();
+
+        if (event.repeat) return; // safeguard incase the user holds enter key
+        if (isSearching) return; // safeguard incase user send a request while the last one hasn't finished
+        try {
+          isSearching = true;
+          dbSearch();
+        }
+        finally {
+          isSearching = false; // reset flag when request finished
+        }
+      }
+    })
+  }
+
 });
 
 function openSettings(){
@@ -279,4 +305,60 @@ async function closeSettings(){
     const modal = document.getElementById("Account-modal");
     if(modal)
         modal.classList.add("hidden"); // hides the modal.
+}
+
+window.addEventListener('pageshow', (event) => {
+  if (event.persisted) {
+    window.location.reload(); // refresh the page when user opened it, needed to update cart items when coming back from payment menu.
+  }
+});
+
+function search(){
+  let searchQuery = document.getElementById("store-search").value.toLowerCase().trim();
+  let products = document.querySelectorAll(".product-card");
+
+  products.forEach( product => { // go over all products
+    let itemName = product.querySelector(".product-name-class");
+    let searchName = itemName ? itemName.textContent.toLowerCase() : "";
+
+    if (product.classList.contains("add-product-card")) return;
+
+    console.log("itemName: " + itemName + " searchName: " + searchName);
+    if ((searchName.includes(searchQuery))) product.style.display = ""
+    else product.style.display = "none";
+  });
+}
+
+async function dbSearch(){
+  const searchQuery = document.getElementById("store-search").value.toLowerCase().trim();
+  const maxPrice = document.getElementById("maxPrice")?.value || 1000;
+  const minDiscount = document.getElementById("minDiscount")?.value || 0;
+
+  let minStars = 0;
+  if (document.getElementById("stars5")?.checked) minStars = 5;
+  else if (document.getElementById("stars4")?.checked) minStars = 4;
+  else if (document.getElementById("stars3")?.checked) minStars = 3;
+  else if (document.getElementById("stars2")?.checked) minStars = 2;
+  else if (document.getElementById("stars1")?.checked) minStars = 1;
+
+  const queryParams = new URLSearchParams({
+    q: searchQuery,
+    maxPrice: maxPrice,
+    minDiscount: minDiscount,
+    minStars: minStars
+  });
+
+  try{
+    const response = await fetch(`/api/product/search?${queryParams.toString()}`);
+    if (!response.ok) throw new Error('search requested faield');
+
+    const groupedData = await response.json();
+    const products = groupedData.flatMap( group => group.items || []);
+
+    renderProducts(products);
+    search();
+  }
+  catch (err){
+    console.error("db search failed", err);
+  }
 }

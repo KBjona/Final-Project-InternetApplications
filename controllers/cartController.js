@@ -43,6 +43,7 @@ exports.update_items_quantities = async (req, res) => {
         return res.status(400).json({ message: 'Email cannot be empty' });
     }
     try {
+        items = items.filter(item => item.quantity > 0);
         const result = await Cart.UpdateItemsByMail(mail,items);
         if (result.matchedCount === 0) { //user had no cart
             return res.status(400).json({ message: 'No user found with that email address'});

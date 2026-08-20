@@ -95,7 +95,7 @@ exports.load_store_parameters = async (req, res) => {
     try {
         const result = await Product.GetStoreParameters(_id);
         if (!result) { //no product was found with this id
-            return res.status(400).json({ message: 'No product found with that id address' });
+            return res.status(400).json({ message: 'No product found with that id address'});
         }
         res.status(200).json({ message: 'Store parameters loaded successfully', parameters: result.parameters });
     } catch (err) { // server error
@@ -177,4 +177,24 @@ exports.get_all_products = async (req, res) => {
     } catch (err) {
         return res.status(500).json({ message: 'Something went wrong on the server' }); //if failed send error status
     }
-}
+};
+
+exports.search_products = async (req,res) => {
+    try {
+        const {q = '', maxPrice, minDiscount ,minStars} = req.query;
+
+        const filters = {
+            query: q,
+            maxPrice: maxPrice ? Number(maxPrice) : null,
+            minDiscount: minDiscount ? Number(minDiscount) : null,
+            minStars: minStars ? Number(minStars) : null,
+        };
+
+        const groupedResults = await Product.searchProductsGrouped(filters);
+        res.status(200).json(groupedResults);
+    }
+    catch (err){
+        console.error(err);
+        res.status(500).json( {message: 'error searching products'});
+    }
+};

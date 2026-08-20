@@ -178,7 +178,7 @@ async function update_items_quantity(element){
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ mail, items })
     });
-
+    window.location.reload();
     if(response.ok) console.log("It worked");
     element.disabled = false;
 }
