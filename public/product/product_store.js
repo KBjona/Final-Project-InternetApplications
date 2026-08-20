@@ -39,7 +39,66 @@ async function load_store() {  // send a request to the server to get the parame
         document.getElementById("product-price-after-discount").innerText = data.parameters["product-price"] - (data.parameters["product-price"] * data.parameters["product-discount"] / 100);
         document.getElementById("product-rating").innerText = data.rating;
     }
+    if(data.productImage){
+        const canvas = document.getElementById("productCanvas");
+        if(canvas){
+            const ctx = canvas.getContext("2d");
+            const img = new Image();
+
+            img.onload = function() {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.drawImage(img, 0, 0);
+
+                if(img.src.startsWith("blob:")){
+                    URL.revokeObjectURL(img.src);
+                }
+            };
+
+            if(typeof data.productImage === "string") { // if the image is a base64 string we can directly set the src to it
+                img.src = data.productImage.startsWith("data:") ? data.productImage : `data:image/png;base64,${data.productImage}`;
+            }
+            else { // if the image is in raw bytes we need to convert it to blob in order to create the url for the image
+                const raw_bytes = data.productImage.data || (data.productImage.buffer && data.productImage.buffer.data)|| data.productImage.buffer;
+                if(raw_bytes){
+                    const blob = new Blob([new Uint8Array(raw_bytes)], { type: 'image/png' });
+                    img.src = URL.createObjectURL(blob);
+                }
+            }
+        }
+    }
     return;
+}
+
+window.onload = load_store;
+
+async function send_review() { //send the review to the server
+    if (review === null) {
+        return;
+    }
+    const response = await fetch('/api/product/add-review', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ _id: store_id, review: review })
+    });
+    const data = await response.json(); 
+    if (!response.ok) { //if we couldnt send the review
+        //add popup
+        return;
+    } 
+}
+
+async function add_to_cart() { //send the request to the server to add the product to the cart
+    const response = await fetch('/api/cart/inc', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ _id: store_id })
+    });
+    const data = await response.json();
+    if (!response.ok) { //if we couldnt add the product to the cart
+        //add popup
+        return;
+    }
 }
 
 function check_or_uncheck(element, star_number) { // to check or uncheck the star rating based on the user's selection
