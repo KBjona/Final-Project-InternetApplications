@@ -26,8 +26,8 @@ async function load_mail() {
 
 async function fetchDbCart() {
   if (!mail) return;
-  
-  try{
+
+  try {
     const res = await fetch('/api/cart/items', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -37,10 +37,10 @@ async function fetchDbCart() {
     const data = await res.json();
     if (data.items) {
       cart = data.items.map(item => ({
-         id: item.name,
-         name: item.name,
-         price: item.cost,
-         qty: item.quantity
+        id: item.name,
+        name: item.name,
+        price: item.cost,
+        qty: item.quantity
       }));
       updateCartUI();
     }
@@ -62,24 +62,24 @@ async function syncCartToDb() {
   try {
     await fetch('/api/cart/update', {
       method: 'POST',
-      headers: { 'Content-Type' : 'application/json'},
-      body: JSON.stringify({ mail, items:dbItems})
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mail, items: dbItems })
     });
   }
-  catch (err){
+  catch (err) {
     console.error("failed to sync cart:", err);
   }
 }
 
 function addToCart(id, name, price) {
   const existing = cart.find(item => item.id === id || item.name === name);
-  
+
   if (existing) {
     existing.qty += 1;
   } else {
     cart.push({ id, name, price, qty: 1 });
   }
-  
+
   updateCartUI();
   syncCartToDb(); // Persists updates to MongoDB
 }
@@ -87,27 +87,28 @@ function addToCart(id, name, price) {
 document.addEventListener('DOMContentLoaded', () => {
   const accountForm = document.querySelector('#Account-modal form');
   if (accountForm) {
-    accountForm.addEventListener('submit', async (e) => { e.preventDefault();
+    accountForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
 
-    const payload = {
-      fname: document.getElementById('fname')?.value,
-      lname: document.getElementById('lname')?.value,
-      bday: document.getElementById('bday')?.value,
-      password: document.getElementById('pass')?.value,      
-    };
+      const payload = {
+        fname: document.getElementById('fname')?.value,
+        lname: document.getElementById('lname')?.value,
+        bday: document.getElementById('bday')?.value,
+        password: document.getElementById('pass')?.value,
+      };
 
-    try {
-      const res = await fetch('/api/auth/update-profile', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(payload)
-      });
-      const data = await res.json();
-      if (res.ok) closeSettings();
-    }
-    catch (err) {
-      console.error("Update failed:", err);
-    }
+      try {
+        const res = await fetch('/api/auth/update-profile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (res.ok) closeSettings();
+      }
+      catch (err) {
+        console.error("Update failed:", err);
+      }
     });
   }
 });
@@ -124,8 +125,8 @@ function toggleCart() {
 // Fetch from MongoDB
 async function fetchProductsFromDB() {
   try {
-    const response = await fetch('/api/product/getAll', {method: 'GET'});
-    
+    const response = await fetch('/api/product/getAll', { method: 'GET' });
+
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
@@ -135,6 +136,13 @@ async function fetchProductsFromDB() {
   } catch (error) {
     console.error("MongoDB Fetch Error:", error);
   }
+}
+
+function get_base64_prefix(base64_string) {
+  if (base64_string.startsWith('iVBORw')) return 'data:image/png;base64';
+  if (base64_string.startsWith('/9j/')) return 'data:image/jpeg;base64';
+  if (base64_string.startsWith('R0lGOD')) return 'data:image/gif;base64';
+  return 'data:image/png;base64'; // default to PNG if unknown
 }
 
 function renderProducts(products) {
@@ -160,21 +168,23 @@ function renderProducts(products) {
     productGrid.innerHTML = `<p class="text-muted text-center col-12">No products found in database.</p>`;
     return;
   }
-  
+
   products.forEach(product => {
     const card = document.createElement('div');
     card.className = 'product-card';
 
     const priceVal = product.parameters['product-price'] ?? 0;
     const priceFormatted = Number(priceVal).toFixed(2);
-    let imageSrc = '/noImage.png';
-  if (product.productImage) {
-    imageSrc = product.productImage.startsWith('data:') || product.productImage.startsWith('http') || product.productImage.startsWith('/')
-      ? product.productImage
-      : `data:image/jpeg;base64,${product.productImage}`;
-  }
 
-    const isOwner =  (mail === product.owner); // check if current user is product owner
+    let imageSrc = '/noImage.png';
+
+    if (product.productImage) {
+      imageSrc = product.productImage.startsWith('data:') || product.productImage.startsWith('http') || (product.productImage.startsWith('/') && !product.productImage.startsWith('/9j/'))
+        ? product.productImage
+        : `${get_base64_prefix(product.productImage)},${product.productImage}`;
+    }
+
+    const isOwner = (mail === product.owner); // check if current user is product owner
 
     const editButtonHtml = isOwner ? `
       <button class="btn btn-warning btn-sm mt-2" onclick="window.location.href='/product/edit/${product._id}'">
@@ -182,19 +192,21 @@ function renderProducts(products) {
       </button>
     ` : ''; // if so make an edit button
     card.innerHTML = `
+    <a href="http://localhost:8080/product/${product._id}" class="product-link">
       <div class="product-image-wrap">
-      <a href="http://localhost:8080/product/${product._id}" class="product-link">
         <img src="${imageSrc}" alt="${product.parameters['product-name'] || 'Product'}">
       </div>
       <div class="product-info">
         <h5 class="product-name-class">${product.parameters['product-name'] || 'Untitled Product'}</h5>
         <p class="text-success fw-bold">$${priceFormatted}</p>
-        </a>
-        <button class="btn btn-primary btn-sm w-100" onclick="addToCart('${product._id}', '${product.parameters['product-name']}', ${priceVal})">
-          Add to Cart
-        </button>
-        ${editButtonHtml}
       </div>
+    </a>
+    <div class="px-3 pb-3">
+      <button class="btn btn-primary btn-sm w-100" onclick="addToCart('${product._id}', '${product.parameters['product-name']}', ${priceVal})">
+         Add to Cart
+      </button>
+      ${editButtonHtml}
+    </div>
     `;
     productGrid.appendChild(card);
   });
@@ -261,10 +273,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   let isSearching = false; // set up safeguard flag
   const searchInput = document.getElementById('store-search');
-  if (searchInput){
+  if (searchInput) {
     searchInput.addEventListener('input', search) // search locally whenver something changed
     searchInput.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter'){ // if clicked enter update from db
+      if (event.key === 'Enter') { // if clicked enter update from db
         event.preventDefault();
 
         if (event.repeat) return; // safeguard incase the user holds enter key
@@ -282,29 +294,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 
-function openSettings(){
-    let currentTime = new Date();
-    console.log(currentTime.getFullYear());
+function openSettings() {
+  let currentTime = new Date();
+  console.log(currentTime.getFullYear());
 
-    const modal = document.getElementById("Account-modal");
-    if(modal)
-        modal.classList.remove("hidden"); // makes the modal visiable to see the payment area.
-    let pass = document.getElementById("pass");
-    if (pass && pass.value != "")
-      pass.disabled = true;
-    let bday = document.getElementById("bday");
-    if (bday && bday.value != "")
-      bday.disabled = true;
-    let bdayms = new Date(bday.value);
-    if ((currentTime < bdayms.getTime()) || currentTime.getFullYear() - bdayms.getFullYear() > 120)
-      console.log("invalid age");
+  const modal = document.getElementById("Account-modal");
+  if (modal)
+    modal.classList.remove("hidden"); // makes the modal visiable to see the payment area.
+  let pass = document.getElementById("pass");
+  if (pass && pass.value != "")
+    pass.disabled = true;
+  let bday = document.getElementById("bday");
+  if (bday && bday.value != "")
+    bday.disabled = true;
+  let bdayms = new Date(bday.value);
+  if ((currentTime < bdayms.getTime()) || currentTime.getFullYear() - bdayms.getFullYear() > 120)
+    console.log("invalid age");
 
-  }
+}
 
-async function closeSettings(){
-    const modal = document.getElementById("Account-modal");
-    if(modal)
-        modal.classList.add("hidden"); // hides the modal.
+async function closeSettings() {
+  const modal = document.getElementById("Account-modal");
+  if (modal)
+    modal.classList.add("hidden"); // hides the modal.
 }
 
 window.addEventListener('pageshow', (event) => {
@@ -313,11 +325,11 @@ window.addEventListener('pageshow', (event) => {
   }
 });
 
-function search(){
+function search() {
   let searchQuery = document.getElementById("store-search").value.toLowerCase().trim();
   let products = document.querySelectorAll(".product-card");
 
-  products.forEach( product => { // go over all products
+  products.forEach(product => { // go over all products
     let itemName = product.querySelector(".product-name-class");
     let searchName = itemName ? itemName.textContent.toLowerCase() : "";
 
@@ -329,7 +341,7 @@ function search(){
   });
 }
 
-async function dbSearch(){
+async function dbSearch() {
   const searchQuery = document.getElementById("store-search").value.toLowerCase().trim();
   const maxPrice = document.getElementById("maxPrice")?.value || 1000;
   const minDiscount = document.getElementById("minDiscount")?.value || 0;
@@ -348,17 +360,17 @@ async function dbSearch(){
     minStars: minStars
   });
 
-  try{
+  try {
     const response = await fetch(`/api/product/search?${queryParams.toString()}`);
     if (!response.ok) throw new Error('search requested faield');
 
     const groupedData = await response.json();
-    const products = groupedData.flatMap( group => group.items || []);
+    const products = groupedData.flatMap(group => group.items || []);
 
     renderProducts(products);
     search();
   }
-  catch (err){
+  catch (err) {
     console.error("db search failed", err);
   }
 }
