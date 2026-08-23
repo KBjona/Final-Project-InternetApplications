@@ -48,8 +48,9 @@ body {
     min-height: 600px;
 }
 
-/* --- Left Column --- */
-.product-image {
+.product-media {
+    display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 10px;
@@ -57,19 +58,31 @@ body {
     border: 1px solid rgba(--background-secondary-color, 0.1);
     box-shadow: 0 4px 6px rgba(--background-firstly-color, 0.5);
     overflow: auto;
-}
+} /*setting a pretty background, border and aligning the media in the center*/
 
-#productCanvas {
+#productImage {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
     box-shadow: 0 4px 6px rgba(--background-secondary-color, 0.5);
     transition: transform 0.3s ease-in-out;
-}
+} /*making the image fit in the canvas*/
 
-.product-image:hover #productCanvas {
+.product-media:hover #productImage {
     transform: scale(1.05);
-}/*makes the canvas bigger when hovered*/
+}/*makes the image bigger when hovered*/
+
+#productVideo {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    box-shadow: 0 4px 6px rgba(--background-secondary-color, 0.5);
+    transition: transform 0.3s ease-in-out;
+} /*making the video fit */
+
+.product-media:hover #ProductVideo {
+    transform: scale(1.05);
+}/*makes the video bigger when hovered*/
 
 .product-details {
     display: grid;
@@ -122,7 +135,8 @@ body {
     display: flex;
     justify-content: space-between;
     gap: 10px;
-    background-color: black;
+    background-color: var(--background-firstly-color);
+    color: var(--text-color);
 }
 
 .stars input[type="radio"] {

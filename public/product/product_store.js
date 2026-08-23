@@ -1,11 +1,36 @@
 
 let parameters = { "product-name": "", "product-description": "", "product-price": 0, "product-stock": 0, "product-discount": 0, "background-firstly-color": "#ffffff", "background-secondary-color": "#cccccc", "name-color": "#000000", "description-color": "#000000" };
 let review = 0;
+let show_img = true;
 let store_id = null;
 
 function get_store_id() { //extracting the store id from the url
     const cleanUrl = window.location.pathname.replace(/\/+$/, '');
     store_id = cleanUrl.split('/').pop();
+}
+
+function toggleMedia(){
+    const img = document.getElementById("productImage"); //getting the elements we need
+    const vid = document.getElementById("productVideo");
+    const media_btn = document.getElementById("media-btn");
+
+    if(!img || !vid || !media_btn) { 
+        //add popup
+         return;
+    }
+
+    show_img = !show_img; // change what we need to see
+    if(show_img){ // show the image and hide the video
+        img.style.display = "block";
+        vid.style.display = "none";
+        media_btn.innerText = "Show video"
+    }
+    else{ // show the video and hide the image
+        img.style.display = "none";
+        vid.style.display = "block";
+        media_btn.innerText = "Show Image";
+    }
+    vid.pause();
 }
 
 async function load_store() {  // send a request to the server to get the parameters using the store id
@@ -26,9 +51,9 @@ async function load_store() {  // send a request to the server to get the parame
         const original_price = Number(data.parameters["product-price"]);
         const discount = Number(data.parameters["product-discount"]);
         const new_price = original_price - discount/100 * original_price;
-        let rating = data.rating || 'None';
+        let rating = 'None';
         console.log(data);
-        if (rating != 'None') {rating = (rating)+'★'; }
+        if (!isNaN(data.rating) && typeof(data.rating) == 'number' && isFinite(data.rating)) {rating = (data.rating)+'★'; }
 
         document.documentElement.style.setProperty('--background-firstly-color', data.parameters["background-firstly-color"]);
         document.documentElement.style.setProperty('--background-secondary-color', data.parameters["background-secondary-color"]);
@@ -44,14 +69,14 @@ async function load_store() {  // send a request to the server to get the parame
         document.getElementById("product-rating").innerText = `Rating: \n ${rating}`;
     }
     if (data.productImage) {
-        const canvas = document.getElementById("productCanvas");
-        if (canvas) {
-            const ctx = canvas.getContext("2d");
+        const img_canvas = document.getElementById("productImage");
+        if (img_canvas) {
+            const ctx = img_canvas.getContext("2d");
             const img = new Image();
 
             img.onload = function () {
-                canvas.width = img.width;
-                canvas.height = img.height;
+                img_canvas.width = img.width;
+                img_canvas.height = img.height;
                 ctx.drawImage(img, 0, 0);
 
                 if (img.src.startsWith("blob:")) {
@@ -63,13 +88,35 @@ async function load_store() {  // send a request to the server to get the parame
                 img.src = data.productImage.startsWith("data:") ? data.productImage : `data:image/png;base64,${data.productImage}`;
             }
             else { // if the image is in raw bytes we need to convert it to blob in order to create the url for the image
-                const raw_bytes = data.productImage.data || (data.productImage.buffer && data.productImage.buffer.data) || data.productImage.buffer;
-                if (raw_bytes) {
-                    const blob = new Blob([new Uint8Array(raw_bytes)], { type: 'image/png' });
-                    img.src = URL.createObjectURL(blob);
+                const img_raw_bytes = data.productImage.data || (data.productImage.buffer && data.productImage.buffer.data) || data.productImage.buffer;
+                if (img_raw_bytes) {
+                    const img_blob = new Blob([new Uint8Array(img_raw_bytes)], { type: 'image/png' });
+                    img.src = URL.createObjectURL(img_blob);
                 }
             }
         }
+    }
+
+    if(data.productVideo){
+        const vid = document.getElementById("productVideo");
+        const media_btn = document.getElementById("media-btn");
+
+        if(vid || media_btn){
+            if (typeof data.productVideo === "string") { // if the video is a base64 string we can directly set the src to it
+                vid.src = data.productVideo.startsWith("data:") ? data.productVideo : `data:video/mp4;base64,${data.productVideo}`;
+                
+            }
+
+            else { // if the video is in raw bytes we need to convert it to blob in order to create the url for the video
+                const vid_raw_bytes = data.productVideo.data || (data.productVideo.buffer && data.productVideo.buffer.data) || data.productVideo.buffer;
+                if (vid_raw_bytes) {
+                    const vid_blob = new Blob([new Uint8Array(vid_raw_bytes)], { type: 'video/mp4' });
+                    vid.src = URL.createObjectURL(vid_blob);
+                }
+            }
+            media_btn.style.display = "block";
+        }
+
     }
     return;
 }
