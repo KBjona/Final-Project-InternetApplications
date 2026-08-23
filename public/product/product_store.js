@@ -1,5 +1,6 @@
+
 let parameters = { "product-name": "", "product-description": "", "product-price": 0, "product-stock": 0, "product-discount": 0, "background-firstly-color": "#ffffff", "background-secondary-color": "#cccccc", "name-color": "#000000", "description-color": "#000000" };
-let review = null;
+let review = 0;
 let store_id = null;
 
 function get_store_id() { //extracting the store id from the url
@@ -22,6 +23,13 @@ async function load_store() {  // send a request to the server to get the parame
         return;
     }
     else { //if the response is ok 
+        const original_price = Number(data.parameters["product-price"]);
+        const discount = Number(data.parameters["product-discount"]);
+        const new_price = original_price - discount/100 * original_price;
+        let rating = data.rating || 'None';
+        console.log(data);
+        if (rating != 'None') {rating = (rating)+'★'; }
+
         document.documentElement.style.setProperty('--background-firstly-color', data.parameters["background-firstly-color"]);
         document.documentElement.style.setProperty('--background-secondary-color', data.parameters["background-secondary-color"]);
         document.documentElement.style.setProperty('--text-color', data.parameters["name-color"]);
@@ -29,11 +37,11 @@ async function load_store() {  // send a request to the server to get the parame
         document.title = `Product: ${data.parameters["product-name"]}`;
         document.getElementById("product-name").innerText = data.parameters["product-name"];
         document.getElementById("product-description").innerText = data.parameters["product-description"];
-        document.getElementById("product-price").innerText = data.parameters["product-price"];
-        document.getElementById("product-stock").innerText = data.parameters["product-stock"];
-        document.getElementById("product-discount").innerText = data.parameters["product-discount"];
-        document.getElementById("product-price-after-discount").innerText = data.parameters["product-price"] - (data.parameters["product-price"] * data.parameters["product-discount"] / 100);
-        document.getElementById("product-rating").innerText = data.rating;
+        document.getElementById("product-price").innerText = `Original Price: \n ${original_price.toFixed(2)}$`;
+        document.getElementById("product-stock").innerText = `Stock: \n ${data.parameters["product-stock"]}`;
+        document.getElementById("product-discount").innerText = `Discount: \n ${discount.toFixed(2)}%`;
+        document.getElementById("product-price-after-discount").innerText = `New Price: \n ${new_price.toFixed(2)}$`;
+        document.getElementById("product-rating").innerText = `Rating: \n ${rating}`;
     }
     if (data.productImage) {
         const canvas = document.getElementById("productCanvas");
@@ -72,10 +80,10 @@ async function send_review() { //send the review to the server
     if (review === null) {
         return;
     }
-    const response = await fetch('/api/product/add-review', {
+    const response = await fetch('/api/product/addreview', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ _id: store_id, review: review })
+        body: JSON.stringify({ _id: store_id, rating: review })
     });
     const data = await response.json();
     if (!response.ok) { //if we couldnt send the review

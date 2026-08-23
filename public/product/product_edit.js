@@ -88,7 +88,7 @@ function validate_data() { //to validate the data before sending it to the serve
     if (parameters["product-description"].length < 1 || parameters["product-description"].length > 500) { return false }
     if (isNaN(parameters["product-price"]) || parameters["product-price"] < 0 || parameters["product-price"] > 1000) { return false }
     if (isNaN(parameters["product-stock"]) || parameters["product-stock"] < 0 || parameters["product-stock"] > 10000) { return false }
-    if (isNaN(parameters["product-discount"]) || parameters["product-discount"] < 0 || parameters["product-discount"] > 100) { return false }
+    if (isNaN(parameters["product-discount"]) || parameters["product-discount"] <= 0 || parameters["product-discount"] >= 100) { return false }
     if(!editing && !(document.getElementById('product-image').files[0])) {return false}
     return true;
 }

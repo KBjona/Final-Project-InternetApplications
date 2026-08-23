@@ -10,19 +10,17 @@
 
 <body>
     <div class="product-container">
-        <!-- Left Column -->
-        <div class="box product-image">
+        <div class="box product-image"><!--the image canvas-->
             <canvas id="productCanvas"></canvas>
         </div>
 
-        <!-- Right Column -->
         <div class="product-details">
-            <div class="box" id="product-name">product name</div>
+            <span class="box" id="product-name">product name</span> <!--the product name-->
 
             <div class="middle-section">
-                <div class="box" id="product-description">product description</div>
+                <span class="box" id="product-description">product description</span><!--the product description-->
 
-                <div class="pricing-section">
+                <div class="pricing-section"><!--prices, stock and rating-->
                     <div class="box" id="product-price">original price</div>
                     <div class="box" id="product-discount">discount</div>
                     <div class="box" id="product-price-after-discount">price after discount</div>
@@ -31,23 +29,21 @@
                 </div>
             </div>
 
-            <!-- Updated Bottom Section -->
-            <div class="bottom-section">
-                <!-- Add Review Area -->
-                <div class="box review-box">
+            <div class="bottom-section"><!--bottom section for the buttons - add item to cart and send rating-->
+
+                <div class="box review-box"><!--add rating section-->
                     <span>add review:</span>
-                    <div class="stars">
-                        <input type="radio" onclick="check_or_uncheck(this,1)" name="star" id="star1"><label for="star1">★</label>
-                        <input type="radio" onclick="check_or_uncheck(this,2)" name="star" id="star2"><label for="star2">★</label>
-                        <input type="radio" onclick="check_or_uncheck(this,3)" name="star" id="star3"><label for="star3">★</label>
-                        <input type="radio" onclick="check_or_uncheck(this,4)" name="star" id="star4"><label for="star4">★</label>
+                    <div class="stars"> <!--the clickable stars-->
                         <input type="radio" onclick="check_or_uncheck(this,5)" name="star" id="star5"><label for="star5">★</label>
+                        <input type="radio" onclick="check_or_uncheck(this,4)" name="star" id="star4"><label for="star4">★</label>
+                        <input type="radio" onclick="check_or_uncheck(this,3)" name="star" id="star3"><label for="star3">★</label>
+                        <input type="radio" onclick="check_or_uncheck(this,2)" name="star" id="star2"><label for="star2">★</label>
+                        <input type="radio" onclick="check_or_uncheck(this,1)" name="star" id="star1"><label for="star1">★</label>
                     </div>
                     <button class="send-btn" onclick="send_review()">send</button>
                 </div>
 
-                <!-- Add to Cart Area -->
-                <button class="box add-to-cart" onclick="add_to_cart()">add to cart</button>
+                <button class="box add-to-cart" onclick="add_to_cart()">add to cart</button><!--add to cart button-->
             </div>
         </div>
     </div>

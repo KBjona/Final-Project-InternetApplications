@@ -111,11 +111,12 @@ exports.show_store = async (req, res) => {
     }
 
     try {
-        const result = await Product.GetStoreParameters(_id, 1, 1, 1); // get the parameters, image, video, and rating of the store
+        const result = await Product.GetStoreParameters(_id, 1, 1,1); // get the parameters, image, video, and rating of the store
         if (!result) { //no product was found with this id
             return res.status(400).json({ message: 'No product found with that id address' });
         }
-        res.status(200).json({ message: 'Store parameters loaded successfully', parameters: result.parameters, productImage: result.productImage, productVideo: result.productVideo, rating: result.sum_rating / (result.num_ratings || 1) });
+        res.status(200).json({ message: 'Store parameters loaded successfully', parameters: result.parameters, productImage: result.productImage, productVideo: result.productVideo, rating: ((result.sum_ratings / (result.num_ratings || 1)).toFixed(2)) });
+        
     } catch (err) { // server error
         console.error(err);
         return res.status(500).json({ message: 'Something went wrong on the server' });
@@ -123,7 +124,9 @@ exports.show_store = async (req, res) => {
 }
 
 exports.add_review = async (req, res) => {
+    console.log("entered");
     let { _id, rating } = req.body;// get the id and params from the request's body
+
     if (!_id) {//if there is no product id
         return res.status(400).json({ message: 'product id cannot be empty' });
     }

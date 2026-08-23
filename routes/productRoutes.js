@@ -12,7 +12,7 @@ router.post('/validate',ProductController.validate_owner); // sends a post reque
 
 router.get('/search', ProductController.search_products); // routes the search fucntion to the controller search function.
 
-router.post('/add-review',ProductController.add_review); // sends a post request to add a review to the store
+router.post('/addreview',ProductController.add_review); // sends a post request to add a review to the store
 
 router.post('/show',ProductController.show_store); // sends a post request to show the store
 

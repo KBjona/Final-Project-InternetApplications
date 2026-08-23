@@ -23,7 +23,7 @@ function UpdateStoreVideo(id,vid){
 }
 
 function GetStoreParameters(id,img=0,vid=0,rating=0){
-    return getDb().collection('products').findOne({_id: new ObjectId(id)},{parameters: 1, productImage: img, productVideo: vid, sum_rating: rating, num_ratings: rating, _id: 0}); //gets the store parameters
+    return getDb().collection('products').findOne({_id: new ObjectId(id)},{parameters: 1, productImage: img, productVideo: vid, sum_ratings: rating, num_ratings: rating, _id: 0}); //gets the store parameters
 }
 
 function GetStoreOwner(id){
@@ -35,7 +35,8 @@ function findAllProducts() {
 }
 
 function AddReview(id, rating) {
-    return getDb().collection('products').updateOne({_id: new ObjectId(id)}, {$inc: { sum_rating: rating, num_ratings: 1 }}, {upsert: true}); // adds a review to the product
+    console.log("here");
+    return getDb().collection('products').updateOne({_id: new ObjectId(id)}, {$inc: { sum_ratings: rating, num_ratings: 1 }}, {upsert: true}); // adds a review to the product
 }
 
 function CreateStoreParameters(store_owner,params,img, vid){
@@ -104,4 +105,4 @@ async function searchProductsGrouped({ query = '', maxPrice = 1000, minDiscount 
   return await getDb().collection('products').aggregate(pipeline).toArray();
 }
 
-module.exports = {UpdateStoreParameters, GetStoreParameters, GetStoreOwner, findAllProducts, CreateStoreParameters, searchProductsGrouped};
+module.exports = {UpdateStoreParameters, GetStoreParameters, GetStoreOwner, findAllProducts, CreateStoreParameters, searchProductsGrouped, AddReview};
