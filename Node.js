@@ -9,11 +9,11 @@ const apiRoutes = require('./routes');
 
 const app = express();
 
-app.use(express.json());
+app.use(express.json({limit: '15mb'}));
 app.use(express.urlencoded({ extended: true }));
 
 app.use(session({
-    secret: process.env.SESSION_SECRET || 'fallback_secret_key_change_in_production',
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -27,7 +27,43 @@ app.use(session({
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.get('/menu', (req, res) => {
+  if (!req.session.user) {
+    return res.redirect('/'); // Redirect to register/login page if no cookie/session
+  }
+  res.sendFile(path.join(__dirname, 'views', 'mainMenu', 'mainMenu.html'));
+});
 
+app.get('/cart', (req, res) => {
+  if (!req.session.user) {
+    return res.redirect('/'); // Redirect to register/login page if no cookie/session
+  }
+    res.sendFile(path.join(__dirname, 'views', 'Payment', 'payment.html'));
+});
+
+app.get('/product/edit/:id', (req, res) => {
+  if (!req.session.user) {
+    return res.redirect('/'); // Redirect to register/login page if no cookie/session
+  }
+  const productId = req.params.id;
+    res.sendFile(path.join(__dirname, 'views', 'product', 'product_edit.html'));
+});
+
+app.get('/product/create', (req, res) => {
+  if (!req.session.user) {
+    return res.redirect('/'); // Redirect to register/login page if no cookie/session
+  }
+  const productId = req.params.id;
+    res.sendFile(path.join(__dirname, 'views', 'product', 'product_edit.html'));
+});
+
+app.get('/product/:id', (req, res) => {
+  if (!req.session.user) {
+    return res.redirect('/'); // Redirect to register/login page if no cookie/session
+  }
+  const productId = req.params.id;
+    res.sendFile(path.join(__dirname, 'views', 'product', 'product_store.html'));
+});
 
 app.use("/api", apiRoutes); // redirect api calls to the routes folder (index.js)
 
@@ -35,10 +71,9 @@ app.use("/api", apiRoutes); // redirect api calls to the routes folder (index.js
 const PORT = process.env.PORT;
 
 app.get('/', (req, res) => {
+    if (req.session.user)
+        return res.redirect('/menu'); // Redirect to main menu if already registered
     res.sendFile(path.join(__dirname, 'public', 'Register', 'Register.html'));
-});
-app.get('/cart', (req, res) => { // just for testing
-    res.sendFile(path.join(__dirname, 'views', 'Payment', 'payment.html'));
 });
 
 connectDB()

@@ -2,10 +2,10 @@ const Cart = require('../models/Cart');
 const User = require('../models/User');
 
 exports.load_items = async (req, res) => {
-    let { mail } = req.body;// get the email from the request's body
-    if (!mail) {//if there is no email
-        return res.status(400).json({ message: 'Email cannot be empty' });
+    if (!(req.session?.user?.mail)) { //if there is no user connected
+        return res.status(400).json({ message: 'Log in please' });
     }
+    let mail = req.session.user.mail;
 
     try {
         const cart = await Cart.findCartByMail(mail); // finding thhe cart to load
@@ -20,18 +20,18 @@ exports.load_items = async (req, res) => {
 }
 
 exports.delete_items = async (req, res) => {
-    let { mail } = req.body;// get the email from the request's body
-    if (!mail) { //if there is no email
-        return res.status(400).json({ message: 'Email cannot be empty' });
+    if (!(req.session?.user?.mail)) { //if there is no user connected
+        return res.status(400).json({ message: 'Log in please' });
     }
+    let mail = req.session.user.mail;
     try {
-        const result = Cart.DeleteItemsByMail(mail);
-        if (result.matchedCount === 0) { //no user was found with that mail
-            return res.status(200).json({ message: 'No user found with that email address'});
-        } else if (result.modifiedCount === 0) {//the items field was already empty
-            return res.status(200).json({ message: 'User found, but the the items array was already empty'});
+        const result = await Cart.DeleteItemsByMail(mail);
+        if (result.matchedCount === 0) { //user had no cart
+            return res.status(200).json({ message: 'No user found with that email address' });
+        } else if (result.modifiedCount === 0) {//the items field didn't exist or was already deleted
+            return res.status(200).json({ message: 'User found, but the field did not exist or was already removed' });
         }
-        res.status(200).json({ message: 'Cart emptied successfully'});
+        res.status(200).json({ message: 'Cart emptied successfully' });
     } catch (err) { // server error
         console.error(err);
         res.status(500).json({ message: 'Something went wrong on the server' });
@@ -39,21 +39,42 @@ exports.delete_items = async (req, res) => {
 }
 
 exports.update_items_quantities = async (req, res) => {
-    let { mail, items } = req.body; // get the email and items from the request's body
-    if (!mail) { //if there is no email
-        return res.status(400).json({ message: 'Email cannot be empty' });
+    let { items } = req.body; // get the email and items from the request's body
+    if (!(req.session?.user?.mail)) { //if there is no user connected
+        return res.status(400).json({ message: 'Log in please' });
     }
-    if (!items && items != []) { //if there is null/ nonexistent items ([] is okay)
-        return res.status(400).json({ message: 'items have to exist' });
+    if (!items && items != []) { //if there is no email or null/ nonexistent items ([] is okay)
+        return res.status(400).json({ message: 'items has to exist' });
     }
+    let mail = req.session.user.mail;
     try {
-        const result = Cart.UpdateItemsByMail(mail,items);
-        if (result.matchedCount === 0) { //no user was found with that mail
-            return res.status(400).json({ message: 'No user found with that email address'});
-        } else if (result.modifiedCount === 0) {//the items field we found was already like after the update
-            return res.status(200).json({ message: 'User found, but the items field was already the same as we entered'});
+        items = items.filter(item => item.quantity > 0);
+        const result = await Cart.UpdateItemsByMail(mail, items);
+        if (result.matchedCount === 0) { //user had no cart
+            return res.status(400).json({ message: 'No user found with that email address' });
+        } else if (result.modifiedCount === 0) {//the items field didn't exist or was already deleted
+            return res.status(200).json({ message: 'User found, but the field did not exist or was already removed' });
         }
-        res.status(200).json({ message: 'Cart changed successfully'});
+        res.status(200).json({ message: 'Cart changed successfully' });
+    } catch (err) { // server error
+        console.error(err);
+        res.status(500).json({ message: 'Something went wrong on the server' });
+    }
+}
+
+exports.add_item_to_cart = async (req, res) => {
+    let { _id, name, price } = req.body; // get the email and items from the request's body
+    if (!_id || !name || !price) { //if there is no email or no name or no price
+        return res.status(400).json({ message: 'Email/name/price cannot be empty' });
+    }
+    if (!(req.session?.user?.mail)) { //if there is no user connected
+        return res.status(400).json({ message: 'Log in please' });
+    }
+    let mail = req.session.user.mail;
+
+    try {
+        const result = await Cart.IncrementCartItem(mail, _id, name,price);
+        res.status(200).json({ message: 'Cart changed successfully' });
     } catch (err) { // server error
         console.error(err);
         res.status(500).json({ message: 'Something went wrong on the server' });
@@ -61,10 +82,10 @@ exports.update_items_quantities = async (req, res) => {
 }
 
 exports.get_sccn = async (req, res) => {
-    let { mail } = req.body;// get the email from the request's body
-    if (!mail) { //if there is no email
-        return res.status(408).json({ message: 'Email cannot be empty' });
+    if (!(req.session?.user?.mail)) { //if there is no user connected
+        return res.status(400).json({ message: 'Log in please' });
     }
+    let mail = req.session.user.mail;
 
     try {
         const user = await User.findByMail(mail);
@@ -82,13 +103,17 @@ exports.get_sccn = async (req, res) => {
 }
 
 exports.update_sccn = async (req, res) => {
-    let { mail, new_sccn } = req.body; // get the mail and items from the request's body
-    if (!mail) { //if there is no mail
-        return res.status(400).json({ message: 'Email cannot be empty' });
+    let { new_sccn } = req.body; // get the mail and items from the request's body
+
+    if (!(req.session?.user?.mail)) { //if there is no user connected
+        return res.status(400).json({ message: 'Log in please' });
     }
+    let mail = req.session.user.mail;
+
     if (!new_sccn || new_sccn == '') { //if there isn't a vaild cc
         return res.status(400).json({ message: 'items have to exist' });
     }
+
     try {
         const result = User.UpdateCCByMail(mail,new_sccn);
         if (result.matchedCount === 0) { // didn't find user with that email

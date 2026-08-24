@@ -1,87 +1,112 @@
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark"> <!--Dark theme  -->
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="referrer" content="no-referrer-when-downgrade">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"> <!--Import of bootstrap for nicer ui-->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="no-referrer-when-downgrade">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!--Import of bootstrap for nicer ui-->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
   <script src="Login.js"></script>
   <script src="https://accounts.google.com/gsi/client" async defer></script> <!-- imports google oatuh script-->
   <script>
-  window.fbAsyncInit = function() { // facebook load script
-    FB.init({
-      appId      : '1323542426435700',
-      cookie     : true,
-      xfbml      : true,
-      version    : 'v25.0'
-    });
-      
-    FB.AppEvents.logPageView();   
-      
-  };
+    window.fbAsyncInit = function () { // facebook load script
+      FB.init({
+        appId: '1323542426435700',
+        cookie: true,
+        xfbml: true,
+        version: 'v25.0'
+      });
 
-  (function(d, s, id){
-     var js, fjs = d.getElementsByTagName(s)[0];
-     if (d.getElementById(id)) {return;}
-     js = d.createElement(s); js.id = id;
-     js.src = "https://connect.facebook.net/en_US/sdk.js";
-     fjs.parentNode.insertBefore(js, fjs);
-   }(document, 'script', 'facebook-jssdk'));
-</script>
+      FB.AppEvents.logPageView();
+
+    };
+
+    (function (d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) { return; }
+      js = d.createElement(s); js.id = id;
+      js.src = "https://connect.facebook.net/en_US/sdk.js";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+  </script>
 
   <link rel="stylesheet" href="Login.css">
-    <title>Login Page</title>
-</head> 
-  <body>
-      <div class="container p-3 my-5 bg-black text-white text-center"id="login-container"><!--Bootstrap container with black background centered white text and a custom id -->
-        <img src="images/Logo.png" class="mx-auto d-block" style="max-width: 60%; max-height: 50%;"> <!--Centered logo image -->
-        <h3 id="text"> Sign in to nozama </h3>
-        <div class="d-grid ">
-          <button type="button" id="googleLogin" class="btn btn-light my-4 mx-auto d-block ButtonClass"> <!--Centered Bootstrap google button with custom ButtonClass-->
-            <img src="images/GoogleLogo.png" class="logo">
-            Sign in using Google
-          </button>
-          <button type="button" id="facebookLogin" onclick="loginWithFacebook()" class="btn btn-light my-4 mx-auto d-block ButtonClass"> <!--Centered Bootstrap facebook button with custom ButtonClass-->
-            <img src="images/facebookLogo.png" class="logo">
-            Sign in using Facebook
-          </button>
-        </div>
-       <p>-----------------or-----------------</p>
-        <form onsubmit="event.preventDefault(); showModal();">  <!--form to send the info and when you submit it shows the modal and let you fill the password if the email is entered correctly-->
-            <input type="text" id="mail" class="form-control centered" required placeholder="Enter your email address please"><!--email field-->
-            
-            <button onclick="validateInfo()" type="submit" class="btn btn-light my-4 mx-auto d-block ButtonClass">Next</button> <!--next button with validation of the email when you click-->
-        </form> 
+  <title>Login Page</title>
+</head>
 
-       <p id="noAccountText"> Don't have an account?</p>
-       <a id = "link" href="../Register/Register.html"> Continue to registration</a>
+<body>
+  <div class="container p-3 my-5 bg-black text-white text-center" id="login-container">
+    <!--Bootstrap container with black background centered white text and a custom id -->
+    <img src="images/Logo.png" class="mx-auto d-block" style="max-width: 60%; max-height: 50%;">
+    <!--Centered logo image -->
+    <h3 id="text"> Sign in to nozama </h3>
+    <div class="d-grid ">
+
+      <div id="googleBtnWrapper" class="my-4 mx-auto ButtonClass"> <!--wrapper that the real Google button will be stacked on top of-->
+        <button type="button" id="googleCustomLogin" class="btn btn-light w-100 h-100"> <!--purely visual now, the real click is handled by the invisible Google button on top-->
+          <img src="images/GoogleLogo.png" class="logo" style="margin: 0; width: 20px; height: 20px;">
+          <span style="flex-grow: 1; text-align: center;">Sign in using Google</span>
+        </button>
+        <div id="hiddengoogleContainer"></div> <!--the real google button, invisible but stacked exactly on top of the button above so real clicks reach it-->
       </div>
-      <div class="modal fade" id="PasswordModal" tabindex="-1" data-bs-backdrop="static" data-bs-keybored="false"> <!--Password modal-->
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content"> 
-            <div class="modal-header"> <!--Header modal part-->
-              <h5 class="modal-title">Enter Password</h5> <!-- Header text -->
-              <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="closeModal()"></button> <!--Header button-->
-            </div>
-            <div class="modal-body text-center">  <!--the modal part for the password here there is use of many bootstrap classes-->
-              <p id="infoDisplay" class="text-muted small mb-3"></p> 
-              
-              <div class="input-group mx-auto" style="width: 85%;">
-                <input type="password" id="passwordInput" class="form-control bg-dark text-white border-secondary border-end-0" required placeholder="Password"> <!--the password field-->
-                
-                <span class="input-group-text bg-dark border-secondary border-start-0 text-secondary" id="togglePassword" onclick="toggleVisability()" style="cursor: pointer;">
-                  <i class="bi bi-eye" id="eyeIcon"></i> <!--the eye icon that shows you the password with function that shows or hides the password-->
-                </span>
-              </div>
-            </div>
-            <div id="passwordError" class="error-text">Password must be at least 8 characters, have 1 letter and 1 number at least</div> <!--error message for the password-->
-            <div class="modal-footer">
-              <button class="btn btn-primary" onclick="nextPage()">Login</button> <!--moves you to the feed page-->
-            </div>
+
+
+      <button type="button" id="facebookLogin" onclick="loginWithFacebook()" class="btn btn-light my-4 mx-auto d-block ButtonClass"> <!--Centered Bootstrap facebook button with custom ButtonClass-->
+        <img src="images/facebookLogo.png" class="logo">
+        <span>Sign in using Facebook</span>
+      </button>
+
+    </div>
+    <p>-----------------or-----------------</p>
+    <form onsubmit="event.preventDefault(); showModal();">
+      <!--form to send the info and when you submit it shows the modal and let you fill the password if the email is entered correctly-->
+      <input type="text" id="mail" class="form-control centered" required
+        placeholder="Enter your email address please"><!--email field-->
+
+      <button onclick="validateInfo()" type="submit"
+        class="btn btn-light my-4 mx-auto d-block ButtonClass">Next</button>
+      <!--next button with validation of the email when you click-->
+    </form>
+
+    <p id="noAccountText"> Don't have an account?</p>
+    <a id="link" href="../Register/Register.html"> Continue to registration</a>
+  </div>
+  <div class="modal fade" id="PasswordModal" tabindex="-1" data-bs-backdrop="static" data-bs-keybored="false">
+    <!--Password modal-->
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header"> <!--Header modal part-->
+          <h5 class="modal-title">Enter Password</h5> <!-- Header text -->
+          <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="closeModal()"></button>
+          <!--Header button-->
+        </div>
+        <div class="modal-body text-center">
+          <!--the modal part for the password here there is use of many bootstrap classes-->
+          <p id="infoDisplay" class="text-muted small mb-3"></p>
+
+          <div class="input-group mx-auto" style="width: 85%;">
+            <input type="password" id="passwordInput"
+              class="form-control bg-dark text-white border-secondary border-end-0" required placeholder="Password">
+            <!--the password field-->
+
+            <span class="input-group-text bg-dark border-secondary border-start-0 text-secondary" id="togglePassword"
+              onclick="toggleVisability()" style="cursor: pointer;">
+              <i class="bi bi-eye" id="eyeIcon"></i>
+              <!--the eye icon that shows you the password with function that shows or hides the password-->
+            </span>
           </div>
         </div>
+        <div id="passwordError" class="error-text">Password must be at least 8 characters, have 1 letter and 1 number at
+          least</div> <!--error message for the password-->
+        <div class="modal-footer">
+          <button class="btn btn-primary" onclick="nextPage()">Login</button> <!--moves you to the feed page-->
+        </div>
       </div>
-  </body>
+    </div>
+  </div>
+</body>
+
 </html>

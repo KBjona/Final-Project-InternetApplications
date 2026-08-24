@@ -22,6 +22,9 @@ function linkFacebookAccount(mail, facebookId) {
 function createUser(userData) {
     return getDb().collection('users').insertOne(userData);
 }
+function updateUserProfile(mail, updateData){
+    return getDb().collection('users').updateOne({ mail }, {$set: updateData});
+}
 
 function UpdateCCByMail(user_mail,new_sccn){
     return getDb().collection('users').updateOne({mail: user_mail},{ $set: { sccn: new_sccn  }});
@@ -30,3 +33,4 @@ function UpdateCCByMail(user_mail,new_sccn){
 
 
 module.exports = { findByMail, findByGoogleId, linkGoogleAccount, findByFacebookId, linkFacebookAccount, createUser, UpdateCCByMail };
+

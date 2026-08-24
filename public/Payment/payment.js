@@ -48,27 +48,32 @@ class Item {
     }
 }
 
-let mail = '';
+let mail = false;
 let sccn = '';
 let loaded_cc = false;
 const cc_regex = /^(?:4[0-9]{12}(?:[0-9]{3})?|[25][1-7][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35[0-9]{3})[0-9]{11})$/;
 const cvv_regex = /^\d{3,4}$/;
 let cart_items = [];
 
-async function load_mail() {
+async function validate_entrence() {
     const response = await fetch('api/auth/me'); //sends a get request to get the user's information from cookies
     if (!response.ok) return;
 
     const data = await response.json(); //read the information as json
 
-    if (!data.loggedIn) return;
+    if (!data.loggedIn) {
+        return false;
+    }
+    mail = true;
 
-    mail = data.user.mail; // update mail
+
 }
 
 async function load_items() {
-    await load_mail();
-    if (mail == '') return;
+    await validate_entrence();
+    if(!mail){
+        window.location.href = "/menu/";
+    }
     await load_sccn();
     const list = document.getElementById("products-list"); // gets the list element
     const t_price = document.getElementById("total-price"); // gets the total price element
@@ -76,11 +81,7 @@ async function load_items() {
     if (!list) {
         return;
     }
-    const response = await fetch('api/cart/items', { // send a post request to start the whole load cart process
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mail })
-    });
+    const response = await fetch('api/cart/items'); // send a get request to start the whole load cart process
     const response_json = await response.json(); // stores the response
 
     if (!response.ok) { //if the response status is not good we can't get the items so we return;
@@ -148,7 +149,10 @@ function change_item_qty(element, num) {
 }
 
 async function delete_cart_items(element) {
-    if (mail == '') return;
+    if (!mail){
+        //add popup
+        return;
+    } 
 
     element.disabled = true;
     const items_list = document.getElementById("products-list");
@@ -158,11 +162,7 @@ async function delete_cart_items(element) {
         return;
     }
 
-    const response = await fetch('api/cart/delete', { // send a post request to start the whole delete cart's items process
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mail })
-    });
+    const response = await fetch('api/cart/delete'); // send a get request to start the whole delete cart's items process
     if (!response.ok) { // if it couldn't delete successfully
         element.disabled = false;
         return;
@@ -175,17 +175,24 @@ async function delete_cart_items(element) {
 }
 
 async function update_items_quantity(element) {
-    if (mail == '') return;
+    if (!mail){
+        //add popup
+        return;
+    } 
+
     element.disabled = true;
     const items = cart_items;
 
     const response = await fetch('api/cart/update', { // send a post request to start the whole load cart process
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mail, items })
+        body: JSON.stringify({ items })
     });
-
-    if (response.ok) console.log("It worked"); // change when we implement error and notification class
+    window.location.reload();
+    if(response.ok) {
+        // add popup
+        return;
+    }
     element.disabled = false;
 }
 
@@ -219,13 +226,12 @@ async function closePayment() {
 }
 
 async function load_sccn() {
-    if (mail == '') return; // if there is no mail we cannot load the cc
+    if (!mail){
+        //add popup
+        return;
+    }  // if there is no mail we cannot load the cc
 
-    const response = await fetch('api/cart/saved-cc', { // send a post request to start the whole loading credit card process
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mail })
-    });
+    const response = await fetch('api/cart/saved-cc'); // send a get request to start the whole loading credit card process
 
     if (!response.ok) { //if we got a problem and we didn't get the response we wanted
         return;
@@ -243,11 +249,10 @@ async function update_sccn(new_sccn) {
     const response = await fetch('api/cart/update-cc', { // send a post request to start the whole loading credit card process
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mail, new_sccn })
+        body: JSON.stringify({ new_sccn })
     });
     if (!response.ok) return; // change when we implement errors and notifications class
     if (response.ok) { // change when we implement errors and notifications class
-        console.log("It worked");
         sccn = new_sccn;
         change_cc_btn();
     }
@@ -260,7 +265,10 @@ function useSavedCard() {
 }
 
 function validatePurchase(){
-    if (mail == '') return; // if there is no mail we cannot complete the purchase
+    if (!mail){
+        //add popup
+        return;
+    }  // if there is no mail we cannot complete the purchase
 
     const cc_field = document.getElementById("paymentInformation");
     if (!cc_field) return false; // if we can't get the cc to validate 
