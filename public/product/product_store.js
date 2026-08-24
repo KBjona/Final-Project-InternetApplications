@@ -1,4 +1,4 @@
-
+//initializing the global parameters
 let parameters = { "product-name": "", "product-description": "", "product-price": 0, "product-stock": 0, "product-discount": 0, "background-firstly-color": "#ffffff", "background-secondary-color": "#cccccc", "name-color": "#000000", "description-color": "#000000" };
 let review = 0;
 let show_img = true;
@@ -25,12 +25,12 @@ function toggleMedia(){
     if(show_img){ // show the image and hide the video
         img.style.display = "block";
         vid.style.display = "none";
-        media_btn.innerText = "Show video"
+        media_btn.innerText = "🎬Show video"
     }
     else{ // show the video and hide the image
         img.style.display = "none";
         vid.style.display = "block";
-        media_btn.innerText = "Show Image";
+        media_btn.innerText = "🖼️Show Image";
     }
     vid.pause();
 }

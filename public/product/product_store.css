@@ -13,13 +13,13 @@ body {
     margin: 0;
     padding: 0;
     height: 100vh;
-}
+}/*setting the body's colors margin padding and height*/
 
 * {
     box-sizing: border-box;
     font-family: sans-serif;
     font-weight: bold;
-}
+}/*general rules for every tag */
 
 .box {
     border: 0.5px solid var(--background-secondary-color);
@@ -36,9 +36,9 @@ body {
     box-shadow: 0 8px 12px rgba(--background-secondary-color, 0.5);
     transition: box-shadow 0.3s ease-in-out;
     transform: scale(1.02);
-}
+}/*adding a shadow and scaling up the boxes on hover*/
 
-/* Main Container */
+
 .product-container {
     display: grid;
     grid-template-columns: 1fr 1.5fr;
@@ -46,7 +46,7 @@ body {
     max-width: 1000px;
     margin: 40px auto;
     min-height: 600px;
-}
+}/*setting the sizes and layout for the container and it's items*/
 
 .product-media {
     display: flex;
