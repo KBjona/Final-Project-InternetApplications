@@ -27,7 +27,7 @@ async function IncrementCartItem(user_mail, p_id, p_name, p_price) {
 }
 
 
-module.exports = { findCartByMail, DeleteItemsByMail, UpdateItemsByMail };
+module.exports = { findCartByMail, DeleteItemsByMail, UpdateItemsByMail, IncrementCartItem };
 
 /*
 

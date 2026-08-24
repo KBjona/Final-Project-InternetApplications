@@ -124,7 +124,6 @@ exports.show_store = async (req, res) => {
 }
 
 exports.add_review = async (req, res) => {
-    console.log("entered");
     let { _id, rating } = req.body;// get the id and params from the request's body
 
     if (!_id) {//if there is no product id
@@ -155,6 +154,9 @@ exports.validate_owner = async (req, res) => {
     let { _id } = req.body;// get the id from the request's body
     if (!_id) {//if there is no product id
         return res.status(400).json({ message: 'product id cannot be empty' });
+    }
+    else if (!(req.session?.user?.mail)) { //if there is no user connected
+        return res.status(400).json({ message: 'Log in please' });
     }
 
     try {

@@ -2,11 +2,13 @@
 let parameters = { "product-name": "", "product-description": "", "product-price": 0, "product-stock": 0, "product-discount": 0, "background-firstly-color": "#ffffff", "background-secondary-color": "#cccccc", "name-color": "#000000", "description-color": "#000000" };
 let review = 0;
 let show_img = true;
-let store_id = null;
+let product_id = null;
+let product_name = null;
+let product_price = -1;
 
-function get_store_id() { //extracting the store id from the url
+function get_product_id() { //extracting the store id from the url
     const cleanUrl = window.location.pathname.replace(/\/+$/, '');
-    store_id = cleanUrl.split('/').pop();
+    product_id = cleanUrl.split('/').pop();
 }
 
 function toggleMedia(){
@@ -34,12 +36,12 @@ function toggleMedia(){
 }
 
 async function load_store() {  // send a request to the server to get the parameters using the store id
-    get_store_id();
-    document.title = `Product: ${parameters["product-name"]}`;
+    get_product_id();
+
     const response = await fetch('/api/product/show', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ _id: store_id })
+        body: JSON.stringify({ _id: product_id })
     });
     const data = await response.json(); //get the data of the response from the server
     if (!response.ok) { //if we couldnt get the parameters
@@ -48,27 +50,33 @@ async function load_store() {  // send a request to the server to get the parame
         return;
     }
     else { //if the response is ok 
-        const original_price = Number(data.parameters["product-price"]);
+        product_name = data.parameters["product-name"];
+
+        const original_price = Number(data.parameters["product-price"]); //getting the prices and discount
         const discount = Number(data.parameters["product-discount"]);
         const new_price = original_price - discount/100 * original_price;
-        let rating = 'None';
-        console.log(data);
+        product_price = new_price;
+
+        let rating = 'None'; // getting the rating
         if (!isNaN(data.rating) && typeof(data.rating) == 'number' && isFinite(data.rating)) {rating = (data.rating)+'★'; }
 
-        document.documentElement.style.setProperty('--background-firstly-color', data.parameters["background-firstly-color"]);
+
+        document.documentElement.style.setProperty('--background-firstly-color', data.parameters["background-firstly-color"]); //initializing the colors 
         document.documentElement.style.setProperty('--background-secondary-color', data.parameters["background-secondary-color"]);
         document.documentElement.style.setProperty('--text-color', data.parameters["name-color"]);
         document.documentElement.style.setProperty('--description-color', data.parameters["description-color"]);
-        document.title = `Product: ${data.parameters["product-name"]}`;
+
+        document.title = `Product: ${data.parameters["product-name"]}`; // setting the name and discription
         document.getElementById("product-name").innerText = data.parameters["product-name"];
         document.getElementById("product-description").innerText = data.parameters["product-description"];
-        document.getElementById("product-price").innerText = `Original Price: \n ${original_price.toFixed(2)}$`;
+
+        document.getElementById("product-price").innerText = `Original Price: \n ${original_price.toFixed(2)}$`; //setting the prices stock and rating
         document.getElementById("product-stock").innerText = `Stock: \n ${data.parameters["product-stock"]}`;
         document.getElementById("product-discount").innerText = `Discount: \n ${discount.toFixed(2)}%`;
         document.getElementById("product-price-after-discount").innerText = `New Price: \n ${new_price.toFixed(2)}$`;
         document.getElementById("product-rating").innerText = `Rating: \n ${rating}`;
     }
-    if (data.productImage) {
+    if (data.productImage) { //if the image exists we load it to the canvas
         const img_canvas = document.getElementById("productImage");
         if (img_canvas) {
             const ctx = img_canvas.getContext("2d");
@@ -97,7 +105,7 @@ async function load_store() {  // send a request to the server to get the parame
         }
     }
 
-    if(data.productVideo){
+    if(data.productVideo){ //if the video exists we load it to the video tag
         const vid = document.getElementById("productVideo");
         const media_btn = document.getElementById("media-btn");
 
@@ -113,7 +121,7 @@ async function load_store() {  // send a request to the server to get the parame
                     const vid_blob = new Blob([new Uint8Array(vid_raw_bytes)], { type: 'video/mp4' });
                     vid.src = URL.createObjectURL(vid_blob);
                 }
-            }
+            }//showing the media button if we can switch
             media_btn.style.display = "block";
         }
 
@@ -130,7 +138,7 @@ async function send_review() { //send the review to the server
     const response = await fetch('/api/product/addreview', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ _id: store_id, rating: review })
+        body: JSON.stringify({ _id: product_id, rating: review })
     });
     const data = await response.json();
     if (!response.ok) { //if we couldnt send the review
@@ -140,10 +148,14 @@ async function send_review() { //send the review to the server
 }
 
 async function add_to_cart() { //send the request to the server to add the product to the cart
+    if(!product_id || !product_name || product_price == -1) {
+        // add popup
+        return;
+        }
     const response = await fetch('/api/cart/inc', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ _id: store_id })
+        body: JSON.stringify({ _id: product_id, name: product_name, price: product_price })
     });
     const data = await response.json();
     if (!response.ok) { //if we couldnt add the product to the cart
