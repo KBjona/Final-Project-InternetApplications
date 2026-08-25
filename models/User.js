@@ -28,6 +28,14 @@ function updateUserProfile(mail, updateData){
     return getDb().collection('users').updateOne({ mail }, {$set: updateData});
 }
 
+function Follow(mail, tofollow){
+    return getDb().collection('users').updateOne({mail}, {$addToSet: {followings: tofollow}});
+}
+
+
+function Unfollow(mail, tofollow){
+    return getDb().collection('users').updateOne({mail}, {$pull: {followings: tofollow}});
+}
 
 module.exports = {
     findByMail,
@@ -36,5 +44,7 @@ module.exports = {
     findByFacebookId, 
     linkFacebookAccount, 
     createUser, 
-    updateUserProfile
+    updateUserProfile,
+    Follow,
+    Unfollow
  }; // export all the functions

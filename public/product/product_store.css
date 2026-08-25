@@ -89,13 +89,37 @@ body {
     grid-template-rows: auto 1fr auto;
     gap: 20px;
 }
+#owner-section{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
 
 #product-name {
-    min-height: 50px;
-    align-items: center;
-    justify-content: center;
-    font-size: larger;
+    flex-grow: 1;
 }/*puts the product name in the middle and makes it large*/
+
+.send-btn, .follow-btn {
+    height: 100%;
+    background-color: var(--primary-color-darker) !important;
+    color: white;
+    border: none;
+    border-radius: 15px;
+    padding: 0 20px;
+    white-space: nowrap;
+}/*styling for the follow button*/
+
+.send-btn:hover, .follow-btn:hover {
+    transform: scale(1.03);
+    
+}/*change the size on hover*/
+
+.send-btn:active, .follow-btn:active {
+    transform: scale(0.95);
+    
+}/*change size when clicking it*/
+
 
 .middle-section {
     display: grid;
@@ -168,23 +192,6 @@ body {
     color: rgb(215, 207, 54) !important;
 }/*changes the color of all the stars in the left to the star you clicked included to yellow*/
 
-.send-btn {
-    border: 3px solid black;
-    background: white;
-    padding: 5px 15px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.send-btn:hover {
-    transform: scale(1.05);
-}
-
-.send-btn:active {
-    transform: scale(0.95);
-    /* Slightly shrinks the button when clicked */
-}
 
 .add-to-cart {
     background-color: var(--primary-color);

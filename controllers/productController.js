@@ -111,11 +111,12 @@ exports.show_store = async (req, res) => {
     }
 
     try {
-        const result = await Product.GetStoreParameters(_id, 1, 1,1); // get the parameters, image, video, and rating of the store
+        const result = await Product.GetStoreParameters(_id, 1, 1,1,1); // get the parameters, image, video, and rating of the store
         if (!result) { //no product was found with this id
             return res.status(400).json({ message: 'No product found with that id address' });
         }
-        res.status(200).json({ message: 'Store parameters loaded successfully', parameters: result.parameters, productImage: result.productImage, productVideo: result.productVideo, rating: ((result.sum_ratings / (result.num_ratings || 1)).toFixed(2)) });
+        let calc_rating = result.num_ratings ? Number((result.sum_ratings / result.num_ratings).toFixed(2)) : null;
+        res.status(200).json({ message: 'Store parameters loaded successfully', parameters: result.parameters, productImage: result.productImage, productVideo: result.productVideo, rating: calc_rating, owner: result.owner});
         
     } catch (err) { // server error
         console.error(err);

@@ -11,4 +11,7 @@ router.post("/facebook", authController.facebookLogin); // redirects facebook lo
 router.post("/update-profile", authController.updateProfile); // redirects you to the update profile func
 router.get('/me', authController.getCurrentUser);
 router.post('/logout', authController.logout);
+
+router.post("/follow", authController.follow); // redirectes google login requests to google login func 
+router.post("/unfollow", authController.unfollow); // redirects facebook login requests to facebooklogin func
 module.exports = router; // exports the router  

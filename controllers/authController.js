@@ -255,6 +255,50 @@ exports.updateProfile = async (req,res) => {
         console.error("Update profile error:", err);
         res.status(500).json({ message: "Database update failed"});
     }
+}
 
+exports.follow = async (req, res) => {
+    let { owner} = req.body; // get the email and items from the request's body
+    if (!(req.session?.user?.mail)) { //if there is no user connected
+        return res.status(400).json({ message: 'Log in please' });
+    }
+    if (!owner) { //if there is no one to follow
+        return res.status(400).json({ message: 'The one to follow has to exist' });
+    }
+    let mail = req.session.user.mail;
+    try {
+        const result = await User.Follow(mail, owner);
+        if (result.matchedCount === 0) { //user had no cart
+            return res.status(400).json({ message: 'No user found with that email address' });
+        } else if (result.modifiedCount === 0) {//the items field didn't exist or was already deleted
+            return res.status(200).json({ message: 'User found, but the field stayed the same' });
+        }
+        res.status(200).json({ message: 'User changed successfully' });
+    } catch (err) { // server error
+        console.error(err);
+        res.status(500).json({ message: 'Something went wrong on the server' });
+    }
+}
 
+exports.unfollow = async (req, res) => {
+    let { owner} = req.body; // get the email and items from the request's body
+    if (!(req.session?.user?.mail)) { //if there is no user connected
+        return res.status(400).json({ message: 'Log in please' });
+    }
+    if (!owner) { //if there is no one to follow
+        return res.status(400).json({ message: 'The one to follow has to exist' });
+    }
+    let mail = req.session.user.mail;
+    try {
+        const result = await User.Unfollow(mail, owner);
+        if (result.matchedCount === 0) { //user had no cart
+            return res.status(400).json({ message: 'No user found with that email address' });
+        } else if (result.modifiedCount === 0) {//the items field didn't exist or was already deleted
+            return res.status(200).json({ message: 'User found, but the field stayed the same' });
+        }
+        res.status(200).json({ message: 'User changed successfully' });
+    } catch (err) { // server error
+        console.error(err);
+        res.status(500).json({ message: 'Something went wrong on the server' });
+    }
 }

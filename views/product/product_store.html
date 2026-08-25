@@ -19,7 +19,12 @@
         </div>
 
         <div class="product-details">
-            <span class="box" id="product-name">product name</span> <!--the product name-->
+            <div id="owner-section">
+                <span class="box" id="product-name">product name</span> <!--the product name-->
+
+                <button id="follow-owner-btn" class="follow-btn" onclick="follow_or_unfollow(this)">➕ Follow Owner</button>
+            </div>
+            
 
             <div class="middle-section">
                 <span class="box" id="product-description">product description</span><!--the product description-->
@@ -49,10 +54,10 @@
                         <input type="radio" onclick="check_or_uncheck(this,1)" name="star" id="star1"><label
                             for="star1">★</label>
                     </div>
-                    <button class="send-btn" onclick="send_review()">send</button>
+                    <button class="send-btn" onclick="send_review(this)">send</button>
                 </div>
 
-                <button class="box add-to-cart" onclick="add_to_cart()">add to cart</button><!--add to cart button-->
+                <button class="box add-to-cart" onclick="add_to_cart(this)">add to cart</button><!--add to cart button-->
             </div>
         </div>
     </div>
