@@ -6,7 +6,8 @@ function CreateStoreParameters(store_owner,params,img, vid){
         owner: store_owner,
         parameters: params,
         productImage: img,
-        productVideo: vid || null
+        productVideo: vid || null,
+        numVisitor: 0
     });
 }
 
@@ -22,7 +23,11 @@ function UpdateStoreVideo(id,vid){
     return getDb().collection('products').updateOne({_id: new ObjectId(id)},{ $set: { productVideo: vid }}); //updates the store video
 }
 
-function GetStoreParameters(id,img=0,vid=0,rating=0){
+function GetStoreParameters(id,img=0,vid=0,rating=0,add_visitor=0){
+    if(add_visitor){
+      const result = getDb().collection('products').updateOne({_id: new ObjectId(id)}, {$inc: {numVisitor: 1}}, {upsert: true});
+      if(result.matchedCount == 0) return false;
+    }
     return getDb().collection('products').findOne({_id: new ObjectId(id)},{parameters: 1, productImage: img, productVideo: vid, sum_ratings: rating, num_ratings: rating, _id: 0}); //gets the store parameters
 }
 
@@ -35,17 +40,7 @@ function findAllProducts() {
 }
 
 function AddReview(id, rating) {
-    console.log("here");
     return getDb().collection('products').updateOne({_id: new ObjectId(id)}, {$inc: { sum_ratings: rating, num_ratings: 1 }}, {upsert: true}); // adds a review to the product
-}
-
-function CreateStoreParameters(store_owner,params,img, vid){
-    return getDb().collection('products').insertOne({
-        owner: store_owner,
-        parameters: params,
-        productImage: img,
-        productVideo: vid || null
-    });
 }
 
 async function searchProductsGrouped({ query = '', maxPrice = 1000, minDiscount = 0, minStars = 0 } = {}) {

@@ -5,6 +5,7 @@ let show_img = true;
 let product_id = null;
 let product_name = null;
 let product_price = -1;
+let can_review = false;
 
 function get_product_id() { //extracting the store id from the url
     const cleanUrl = window.location.pathname.replace(/\/+$/, '');

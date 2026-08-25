@@ -111,7 +111,7 @@ exports.show_store = async (req, res) => {
     }
 
     try {
-        const result = await Product.GetStoreParameters(_id, 1, 1,1); // get the parameters, image, video, and rating of the store
+        const result = await Product.GetStoreParameters(_id, 1, 1,1, 1); // get the parameters, image, video, and rating of the store
         if (!result) { //no product was found with this id
             return res.status(400).json({ message: 'No product found with that id address' });
         }
