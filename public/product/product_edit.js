@@ -87,10 +87,24 @@ function validate_data() { //to validate the data before sending it to the serve
     if (parameters["product-name"].length < 1 || parameters["product-name"].length > 100) { return false }
     if (parameters["product-description"].length < 1 || parameters["product-description"].length > 500) { return false }
     if (isNaN(parameters["product-price"]) || parameters["product-price"] < 0 || parameters["product-price"] > 1000) { return false }
-    if (isNaN(parameters["product-stock"]) || parameters["product-stock"] < 0 || parameters["product-stock"] > 10000) { return false }
-    if (isNaN(parameters["product-discount"]) || parameters["product-discount"] < 0 || parameters["product-discount"] > 100) { return false }
-    if(!editing && !(document.getElementById('product-image').files[0])) {return false}
-    return true;
+    if (isNaN(parameters["product-stock"]) || parameters["product-stock"] < 0 || parameters["product-stock"] > 1000000000) { return false }
+    if (isNaN(parameters["product-discount"]) || parameters["product-discount"] <= 0 || parameters["product-discount"] >= 100) { return false }
+    if(!editing && !(document.getElementById('product-image')?.files[0])) {return false}
+    const img = document.getElementById("product-image");
+    if(img.files[0]){
+        const img_file = img.files[0];
+        if(vid_file.size / (1024) * (1024) > 1){
+            return false;
+        }
+    }
+    const vid = document.getElementById("product-video");
+    if(vid.files[0]){
+        const vid_file = vid.files[0];
+        if(vid_file.size / (1024) * (1024) > 8){
+            return false;
+        }
+    }
+    return true; //add pop ups to each check
 }
 
 function file_to_base64(file) { //to convert the file to base64 format

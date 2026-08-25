@@ -10,19 +10,21 @@
 
 <body>
     <div class="product-container">
-        <!-- Left Column -->
-        <div class="box product-image">
-            <canvas id="productCanvas"></canvas>
+        <div class="box product-media">
+            <canvas id="productImage"></canvas><!--the image canvas-->
+
+            <video id="productVideo" controls style="display: none;"></video><!--the video element-->
+
+            <button id="media-btn" class="send-btn" style="display: none; margin-top: 15px;" onclick="toggleMedia()">🎬Show Video </button> <!--button to switch between the image and video-->
         </div>
 
-        <!-- Right Column -->
         <div class="product-details">
-            <div class="box" id="product-name">product name</div>
+            <span class="box" id="product-name">product name</span> <!--the product name-->
 
             <div class="middle-section">
-                <div class="box" id="product-description">product description</div>
+                <span class="box" id="product-description">product description</span><!--the product description-->
 
-                <div class="pricing-section">
+                <div class="pricing-section"><!--prices, stock and rating-->
                     <div class="box" id="product-price">original price</div>
                     <div class="box" id="product-discount">discount</div>
                     <div class="box" id="product-price-after-discount">price after discount</div>
@@ -31,27 +33,30 @@
                 </div>
             </div>
 
-            <!-- Updated Bottom Section -->
-            <div class="bottom-section">
-                <!-- Add Review Area -->
-                <div class="box review-box">
+            <div class="bottom-section"><!--bottom section for the buttons - add item to cart and send rating-->
+
+                <div class="box review-box"><!--add rating section-->
                     <span>add review:</span>
-                    <div class="stars">
-                        <input type="radio" onclick="check_or_uncheck(this,1)" name="star" id="star1"><label for="star1">★</label>
-                        <input type="radio" onclick="check_or_uncheck(this,2)" name="star" id="star2"><label for="star2">★</label>
-                        <input type="radio" onclick="check_or_uncheck(this,3)" name="star" id="star3"><label for="star3">★</label>
-                        <input type="radio" onclick="check_or_uncheck(this,4)" name="star" id="star4"><label for="star4">★</label>
-                        <input type="radio" onclick="check_or_uncheck(this,5)" name="star" id="star5"><label for="star5">★</label>
+                    <div class="stars"> <!--the clickable stars-->
+                        <input type="radio" onclick="check_or_uncheck(this,5)" name="star" id="star5"><label
+                            for="star5">★</label>
+                        <input type="radio" onclick="check_or_uncheck(this,4)" name="star" id="star4"><label
+                            for="star4">★</label>
+                        <input type="radio" onclick="check_or_uncheck(this,3)" name="star" id="star3"><label
+                            for="star3">★</label>
+                        <input type="radio" onclick="check_or_uncheck(this,2)" name="star" id="star2"><label
+                            for="star2">★</label>
+                        <input type="radio" onclick="check_or_uncheck(this,1)" name="star" id="star1"><label
+                            for="star1">★</label>
                     </div>
                     <button class="send-btn" onclick="send_review()">send</button>
                 </div>
 
-                <!-- Add to Cart Area -->
-                <button class="box add-to-cart" onclick="add_to_cart()">add to cart</button>
+                <button class="box add-to-cart" onclick="add_to_cart()">add to cart</button><!--add to cart button-->
             </div>
         </div>
     </div>
-    <script src="/product/product_store.js" ></script>
+    <script src="/product/product_store.js"></script>
 </body>
 
 </html>

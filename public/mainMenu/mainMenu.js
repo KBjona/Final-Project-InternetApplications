@@ -37,13 +37,14 @@ async function fetchDbCart() {
     const data = await res.json();
     if (data.items) {
       cart = data.items.map(item => ({
-        id: item.name,
-        name: item.name,
-        price: item.cost,
-        qty: item.quantity
+         id: item._id,
+         name: item.name,
+         price: item.price,
+         qty: item.quantity
       }));
       updateCartUI();
     }
+    console.log(cart);
   }
   catch (err) {
     console.error("Failed to load cart from DB:", err);
@@ -54,8 +55,9 @@ async function syncCartToDb() {
   if (!mail) return;
 
   const dbItems = cart.map(item => ({
+    _id: item.id,
     name: item.name,
-    cost: item.price,
+    price: item.price,
     quantity: item.qty
   }));
 

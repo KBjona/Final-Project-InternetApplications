@@ -28,8 +28,8 @@
                     <input type="text" name="product-price" id="product-price" min = "0" max = "1000" placeholder="Enter product price" value="0.00">
                 </div>
                 <div class="field-group">
-                    <label for="product-stock">Product Stock (max 10000):</label>
-                    <input type="number" name="product-stock" id="product-stock" min="0" max="10000" placeholder="Enter product quantity" value="0">
+                    <label for="product-stock">Product Stock :</label>
+                    <input type="number" name="product-stock" id="product-stock" min="0" max="1000000000" placeholder="Enter product quantity" value="0">
                 </div>
                 <div class="field-group">
                     <label for="product-discount">Product Discount in percentages:</label>
@@ -38,11 +38,11 @@
                 
                 <div class="field-group">
                     <div class="file-upload">
-                        <button type="button" onclick="upload_file('product-image')">Upload product image</button>
+                        <button type="button" onclick="upload_file('product-image')">Upload product image(max 1MB)</button>
                         <input type="file" name="product-image" id="product-image" class="hidden" accept="image/*">
                     </div>
                     <div class="file-upload">
-                        <button type="button" onclick="upload_file('product-video')">Upload product video(max 3MB)</button>
+                        <button type="button" onclick="upload_file('product-video')">Upload product video(max 8MB)</button>
                         <input type="file" name="product-video" id="product-video" class="hidden" accept="video/*">
                     </div>
                 </div>
