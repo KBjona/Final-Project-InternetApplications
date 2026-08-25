@@ -13,13 +13,13 @@ function UpdateItemsByMail(user_mail, new_items) {
   return getDb().collection('carts').updateOne({ mail: user_mail }, { $set: { items: new_items } }, { upsert: true });
 }
 
-async function IncrementCartItem(user_mail, p_id, p_name, p_price) {
+async function IncrementCartItem(user_mail, p_id, p_name, p_cost) {
   const result = await getDb().collection('carts').updateOne({ mail: user_mail, "items._id": p_id }, { $inc: {"items.$.quantity": 1} });
   if(result.matchedCount === 0){
     return await getDb().collection('carts').updateOne({ mail: user_mail }, { $push: { items: {
       _id: p_id,
       name: p_name,
-      price: p_price,
+      cost: p_cost,
       quantity: 1
     } } }, { upsert: true });
   }
