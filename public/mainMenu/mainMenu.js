@@ -178,6 +178,11 @@ function renderProducts(products) {
     const priceVal = product.parameters['product-price'] ?? 0;
     const priceFormatted = Number(priceVal).toFixed(2);
 
+    const numRatings = Number(product.num_ratings ?? product.parameters?.['num_ratings'] ?? 0);
+    const sumRatings = Number(product.sum_ratings ?? product.parameters?.['sum_ratings'] ?? 0);
+
+    const averageRating = numRatings > 0 ? (sumRatings / numRatings).toFixed(1) : null;
+
     let imageSrc = '/noImage.png';
 
     if (product.productImage) {
@@ -193,6 +198,9 @@ function renderProducts(products) {
         ✏️ Edit Product
       </button>
     ` : ''; // if so make an edit button
+    const ratingHtml = averageRating
+      ? `<span class="text-warning small">★ ${averageRating} <span class="text-muted">`
+      : `<span class="text-muted small">★ No reviews</span>`;
     card.innerHTML = `
     <a href="http://localhost:8080/product/${product._id}" class="product-link">
       <div class="product-image-wrap">
@@ -200,7 +208,7 @@ function renderProducts(products) {
       </div>
       <div class="product-info">
         <h5 class="product-name-class">${product.parameters['product-name'] || 'Untitled Product'}</h5>
-        <p class="text-success fw-bold">$${priceFormatted}</p>
+        <p class="text-success fw-bold">$${priceFormatted}  ${ratingHtml}</p>
       </div>
     </a>
     <div class="px-3 pb-3">
