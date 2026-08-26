@@ -167,8 +167,10 @@ function renderProducts(products) {
   productGrid.appendChild(addProductCard);
 
   if (!products || products.length === 0) {
-    productGrid.innerHTML = `<p class="text-muted text-center col-12">No products found in database.</p>`;
-    return;
+    const emptyMsg = document.createElement('p');
+    emptyMsg.className = 'text-muted text-center col-12 mt-3';
+    emptyMsg.textContent = 'No products found in database.';
+    productGrid.appendChild(emptyMsg);    return;
   }
 
   products.forEach(product => {
@@ -346,7 +348,7 @@ function search() {
     if (product.classList.contains("add-product-card")) return;
 
     console.log("itemName: " + itemName + " searchName: " + searchName);
-    if ((searchName.includes(searchQuery))) product.style.display = ""
+    if (!searchQuery || (searchName.includes(searchQuery))) product.style.display = ""
     else product.style.display = "none";
   });
 }
@@ -378,7 +380,7 @@ async function dbSearch() {
     const products = groupedData.flatMap(group => group.items || []);
 
     renderProducts(products);
-    search();
+    //search();
   }
   catch (err) {
     console.error("db search failed", err);

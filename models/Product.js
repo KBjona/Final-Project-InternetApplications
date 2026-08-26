@@ -58,7 +58,8 @@ async function searchProductsGrouped({ query = '', maxPrice = 1000, minDiscount 
       $or: [
         { name: { $regex: cleanQuery, $options: 'i' } },
         { 'parameters.product-name': { $regex: cleanQuery, $options: 'i' } },
-        { 'parameters.product-description': { $regex: cleanQuery, $options: 'i' } }
+        { 'parameters.product-description': { $regex: cleanQuery, $options: 'i' } },
+        { 'ownerDetails.fname' : { $regex: cleanQuery , $options: 'i'}}
       ]
     });
   }
@@ -89,7 +90,20 @@ async function searchProductsGrouped({ query = '', maxPrice = 1000, minDiscount 
     });
   }
 
-  const pipeline = [];
+  const pipeline = [{
+      $lookup: {
+        from: 'users',
+        localField: 'owner',
+        foreignField: 'mail',
+        as: 'ownerDetails'
+      }
+    },
+    {
+      $unwind: {
+        path: '$ownerDetails',
+        preserveNullAndEmptyArrays: true
+      }
+    }];
 
   if (matchConditions.length > 0) {
     pipeline.push({ $match: { $and: matchConditions } });
