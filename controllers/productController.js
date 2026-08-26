@@ -97,7 +97,8 @@ exports.load_store_parameters = async (req, res) => {
         if (!result) { //no product was found with this id
             return res.status(400).json({ message: 'No product found with that id address'});
         }
-        res.status(200).json({ message: 'Store parameters loaded successfully', parameters: result.parameters });
+        let calc_rating = result.num_ratings ? Number((result.sum_ratings / result.num_ratings).toFixed(2)) : null;
+        res.status(200).json({ message: 'Store parameters loaded successfully', parameters: result.parameters, rating: calc_rating });
     } catch (err) { // server error
         console.error(err);
         return res.status(500).json({ message: 'Something went wrong on the server' });
@@ -111,7 +112,7 @@ exports.show_store = async (req, res) => {
     }
 
     try {
-        const result = await Product.GetStoreParameters(_id, 1, 1,1,1); // get the parameters, image, video, and rating of the store
+        const result = await Product.GetStoreParameters(_id, 1,1,1); // get the parameters, image, video, and rating of the store
         if (!result) { //no product was found with this id
             return res.status(400).json({ message: 'No product found with that id address' });
         }

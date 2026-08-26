@@ -17,18 +17,18 @@
             <form id="form">
                 <div class="field-group">
                     <label for="product-name">Product Name:</label>
-                    <input type="text" name="product-name" id="product-name" placeholder="Enter product name" value="----">
+                    <input type="text" name="product-name" id="product-name" placeholder="Enter product name" value="----"><!--product name input-->
                 </div>
                 <div class="field-group">
                     <label for="product-description">Product Description:</label>
-                    <textarea name="product-description" id="product-description" placeholder="Enter product description"></textarea>
+                    <textarea name="product-description" id="product-description" placeholder="Enter product description"></textarea><!--product discription input-->
                 </div>
-                <div class="field-group">
+                <div class="field-group"><!--price, stock, discount inputs section-->
                     <label for="product-price">Product Price in dollars (max $1000):</label>
                     <input type="text" name="product-price" id="product-price" min = "0" max = "1000" placeholder="Enter product price" value="0.00">
                 </div>
                 <div class="field-group">
-                    <label for="product-stock">Product Stock :</label>
+                    <label for="product-stock">Product Stock:</label>
                     <input type="number" name="product-stock" id="product-stock" min="0" max="1000000000" placeholder="Enter product quantity" value="0">
                 </div>
                 <div class="field-group">
@@ -36,7 +36,7 @@
                     <input type="number" name="product-discount" id="product-discount" min="0" max="100" placeholder="Enter product discount percentage" value="0">
                 </div>
                 
-                <div class="field-group">
+                <div class="field-group"><!--media inputs section-->
                     <div class="file-upload">
                         <button type="button" onclick="upload_file('product-image')">Upload product image(max 1MB)</button>
                         <input type="file" name="product-image" id="product-image" class="hidden" accept="image/*">
@@ -47,7 +47,7 @@
                     </div>
                 </div>
 
-                <div class="color-pickers">
+                <div class="color-pickers"><!--colors section-->
                     <div class="field-group color-field">
                         <label for="background-firstly-color">Background Firstly Color</label>
                         <input type="color" name="background-firstly-color" id="background-firstly-color" value="#ffffff">
@@ -70,7 +70,12 @@
 
             </form>
         </div>
-
+        <div id="analytics-section">
+            <div id="graphs-section">
+                <div id="pie-chart"></div>
+                <div id="bar-chart"></div>
+            </div>
+        </div>
     </div>
     <script src="/product/product_edit.js"></script>
 </body>

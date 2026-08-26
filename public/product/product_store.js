@@ -56,6 +56,25 @@ function togglefollowing() {
     }
 }
 
+async function check_follow_state() {
+    const follow_btn = document.getElementById("follow-owner-btn");
+    if(!follow_btn || !owner_id) return;
+    const response = await fetch('/api/auth/check-follow', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ owner: owner_id })
+    });
+    const data = await response.json();
+    if (!response.ok) { //if we couldnt see if the user follows or not
+        //add popup
+        return;
+    }
+    follow_btn.disabled = false;
+    if (data.follow == 1) {
+        togglefollowing();
+    }
+}
+
 async function load_store() {  // send a request to the server to get the parameters using the store id
     get_product_id();
 
@@ -72,7 +91,12 @@ async function load_store() {  // send a request to the server to get the parame
     }
     else { //if the response is ok 
         product_name = data.parameters["product-name"];
-        owner_id = data.owner;
+
+        if (data.owner) {
+            owner_id = data.owner;
+            check_follow_state();
+        }
+
         const original_price = Number(data.parameters["product-price"]); //getting the prices and discount
         const discount = Number(data.parameters["product-discount"]);
         const new_price = original_price - discount / 100 * original_price;
@@ -205,15 +229,15 @@ function check_or_uncheck(element, star_number) { // to check or uncheck the sta
 }
 
 async function follow_or_unfollow(event) {
-    if(!owner_id) { return; }
+    if (!owner_id) { return; }
     event.disabled = true;
 
-    const fetch_address = !is_following ? '/api/auth/follow': '/api/auth/unfollow';
+    const fetch_address = !is_following ? '/api/auth/follow' : '/api/auth/unfollow';
 
     const response = await fetch(fetch_address, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({owner: owner_id })
+        body: JSON.stringify({ owner: owner_id })
     });
 
     if (!response.ok) { //if we couldnt follow or unfollow

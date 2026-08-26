@@ -1,6 +1,12 @@
+const { color } = require("d3");
+const { access } = require("node:fs");
+
 let parameters = { "product-name": "", "product-description": "", "product-price": "", "product-stock": "", "product-discount": 0, "background-firstly-color": "#ffffff", "background-secondary-color": "#cccccc", "name-color": "#000000", "description-color": "#000000" };
 let editing = window.location.pathname != '/product/create';
 let store_id = null;
+let rating = null;
+let facebook_page_id = null;
+let facebook_page_access_token = null;
 
 function get_store_id() { //extracting the store id from the url
     if (editing) {
@@ -52,6 +58,7 @@ async function load_store() {  // send a request to the server to get the parame
         return;
     }
     else { //if the response is ok 
+        rating = data.rating;
         for (const key in parameters) {
             if (data.parameters.hasOwnProperty(key)) { // if the key exists in the data, update the parameters object with the value from the data
                 parameters[key] = data.parameters[key];
@@ -116,6 +123,19 @@ function file_to_base64(file) { //to convert the file to base64 format
     });
 }
 
+function create_charts(){
+    if(!editing) { return; }
+    
+    if( rating == null) { return; }
+    const pie_chart_data = [ {label: "Rating", value: rating, color: "#32a852" }, {label: "Gap", value: 5-rating, color: "#1f96d1" } ];
+
+    const pie_width = 300;
+    const pie_height = 300;
+    const pie_radius = Math.min(pie_width, pie_height)/2;
+    const pie_svg = d3.select("#pie-chart").append("svg").attr("width", pie_width).attr("height", pie_height).append("g").attr("transform", `translate: (${pie_width/2},${pie_height/2})`);
+
+}
+
 const form = document.querySelector('#form');//to get the form element from the html
 
 form.addEventListener('submit', async function (event) {
@@ -170,3 +190,31 @@ form.addEventListener('submit', async function (event) {
     }
     return;
 });
+
+async function create_facebook_ad() {
+    const img = document.getElementById("facebook-img"); //getting the elements
+    const message = document.getElementById("facebook-msg");
+    if(!img || !message) return;
+
+    let image_base64 = null;
+    if(img.files[0]){ //converts the image file to base64
+        image_base64 = await file_to_base64(img.files[0]);
+    }
+
+    const response = await fetch('/api/auth/create-ad', { //sends a post request to the controller and there it sends a post request to facebook api
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({message: message.value, image_base64: image_base64})
+    });
+
+    let data = await response.json();
+    if (response.ok) { //if the store saved successfully redirect to the menu page
+        window.location.href = '/menu/';
+        //add popup
+    }
+    else {
+        //add popup
+        return;
+    }
+    return;
+}
