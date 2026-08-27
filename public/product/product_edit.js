@@ -1,6 +1,6 @@
 
 
-let parameters = { "product-name": "", "product-description": "", "product-price": "", "product-stock": "", "product-discount": 0, "background-firstly-color": "#ffffff", "background-secondary-color": "#cccccc", "name-color": "#000000", "description-color": "#000000" };
+let parameters = { "product-name": "", "product-description": "", "product-price": "", "product-stock": "", "product-discount": 0, "product-weather": null, "background-firstly-color": "#ffffff", "background-secondary-color": "#cccccc", "name-color": "#000000", "description-color": "#000000" };
 let editing = window.location.pathname != '/product/create';
 let store_id = null;
 let rating = null;
@@ -62,6 +62,13 @@ async function load_store() {  // send a request to the server to get the parame
             if (data.parameters.hasOwnProperty(key)) { // if the key exists in the data, update the parameters object with the value from the data
                 parameters[key] = data.parameters[key];
             }
+            if(key === "product-weather" && parameters[key]){
+                const weather_to_check = document.getElementById(parameters[key]);
+                if(weather_to_check){
+                    weather_to_check.checked = true;
+                }
+                continue;
+            }
             const c_param = document.getElementById(key); //to update the value of the input fields with the values from the parameters object
             if (c_param) { //if the input field exists and is not a file input, update the value of the input field with the value from the parameters object
                 c_param.value = parameters[key];
@@ -90,23 +97,24 @@ function upload_file(id) { //to use the file input indirectly when clicking on t
 }
 
 function validate_data() { //to validate the data before sending it to the server   
-    if (parameters["product-name"].length < 1 || parameters["product-name"].length > 100) { return false }
-    if (parameters["product-description"].length < 1 || parameters["product-description"].length > 500) { return false }
-    if (isNaN(parameters["product-price"]) || parameters["product-price"] < 0 || parameters["product-price"] > 1000) { return false }
-    if (isNaN(parameters["product-stock"]) || parameters["product-stock"] < 0 || parameters["product-stock"] > 1000000000) { return false }
-    if (isNaN(parameters["product-discount"]) || parameters["product-discount"] <= 0 || parameters["product-discount"] >= 100) { return false }
-    if(!editing && !(document.getElementById('product-image')?.files[0])) {return false}
+    if (parameters["product-name"].length < 1 || parameters["product-name"].length > 100) { return false; }
+    if (parameters["product-description"].length < 1 || parameters["product-description"].length > 500) { return false; }
+    if (isNaN(parameters["product-price"]) || parameters["product-price"] < 0 || parameters["product-price"] > 1000) { return false; }
+    if (isNaN(parameters["product-stock"]) || parameters["product-stock"] < 0 || parameters["product-stock"] > 1000000000) { return false; }
+    if (isNaN(parameters["product-discount"]) || parameters["product-discount"] <= 0 || parameters["product-discount"] >= 100) { return false; }
+    if (!(document.querySelector('#weather-picker input[type="radio"]:checked'))) { return false; }
+    if (!editing && !(document.getElementById('product-image')?.files[0])) {return false; }
     const img = document.getElementById("product-image");
     if(img.files[0]){
         const img_file = img.files[0];
-        if(vid_file.size / (1024) * (1024) > 1){
+        if(img_file.size / (1024 * 1024) > 1){
             return false;
         }
     }
     const vid = document.getElementById("product-video");
     if(vid.files[0]){
         const vid_file = vid.files[0];
-        if(vid_file.size / (1024) * (1024) > 8){
+        if(vid_file.size / (1024 * 1024) > 8){
             return false;
         }
     }
