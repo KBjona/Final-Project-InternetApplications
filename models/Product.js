@@ -48,7 +48,7 @@ function CreateStoreParameters(store_owner,params,img, vid){
     });
 }
 
-async function searchProductsGrouped({ query = '', maxPrice = 1000, minDiscount = 0, minStars = 0 } = {}) {
+async function searchProductsGrouped({ query = '', maxPrice = 1000, minDiscount = 0, minStars = 0, weatherCondition = null } = {}) {
   const cleanQuery = query ? String(query).trim() : '';
   const matchConditions = [];
 
@@ -82,11 +82,20 @@ async function searchProductsGrouped({ query = '', maxPrice = 1000, minDiscount 
     });
   }
 
-  if (Number(minStars) > 0) {
+if (Number(minStars) > 0) {
+   matchConditions.push({
+     $expr:
+      { $gte: [{ $cond: [{ $gt: [{ $toDouble: { $ifNull: ['$num_ratings', 0] } }, 0] }, { $divide: [{ $toDouble: { $ifNull: ['$sum_ratings', 0] } }, { $toDouble: { $ifNull:    ['$num_ratings', 0] } }] }, 0] }, Number(minStars)] }  
+     });
+   }
+
+  if (weatherCondition) {
     matchConditions.push({
-      $expr: {
-        $gte: [{ $toDouble: { $ifNull: ['$parameters.product-rating', 0] } }, Number(minStars)] // gte - greate than or equal
-      }
+      $or: [
+        { 'parameters.weather-tag': { $regex: weatherCondition, $options: 'i' } },
+        { 'parameters.suitable-weather': { $regex: weatherCondition, $options: 'i' } },
+        { weatherTags: weatherCondition }
+      ]
     });
   }
 

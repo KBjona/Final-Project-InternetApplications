@@ -1,6 +1,8 @@
 const { session } = require('passport');
 const Product = require('../models/Product');
 const { Binary } = require('mongodb');
+const { getLocalWeather } = require('../services/weatherService');
+const User = require('../models/User');
 
 
 exports.create_store = async (req, res) => {
@@ -186,13 +188,28 @@ exports.get_all_products = async (req, res) => {
 
 exports.search_products = async (req,res) => {
     try {
-        const {q = '', maxPrice, minDiscount ,minStars} = req.query;
+        const {q = '', maxPrice, minDiscount ,minStars, useWeather} = req.query;
+
+        let currentWeatherCondition = null;
+        
+    if (useWeather === 'true' && req.session?.user?.mail) {
+      const user = await getDb().collection('users').findOne(
+        { mail: req.session.user.mail },
+        { projection: { latitude: 1, longitude: 1 } }
+      );
+
+      if (user?.latitude && user?.longitude) {
+        const weatherData = await getLocalWeather(user.latitude, user.longitude);
+        currentWeatherCondition = weatherData?.conditionTag || null;
+      }
+    }
 
         const filters = {
             query: q,
             maxPrice: maxPrice ? Number(maxPrice) : null,
             minDiscount: minDiscount ? Number(minDiscount) : null,
             minStars: minStars ? Number(minStars) : null,
+            weatherCondition: currentWeatherCondition
         };
 
         const groupedResults = await Product.searchProductsGrouped(filters);

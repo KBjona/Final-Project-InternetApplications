@@ -360,16 +360,20 @@ async function dbSearch() {
 
   let minStars = 0;
   if (document.getElementById("stars5")?.checked) minStars = 5;
-  else if (document.getElementById("stars4")?.checked) minStars = 4;
-  else if (document.getElementById("stars3")?.checked) minStars = 3;
-  else if (document.getElementById("stars2")?.checked) minStars = 2;
-  else if (document.getElementById("stars1")?.checked) minStars = 1;
+  if (document.getElementById("stars4")?.checked) minStars = 4;
+  if (document.getElementById("stars3")?.checked) minStars = 3;
+  if (document.getElementById("stars2")?.checked) minStars = 2;
+  if (document.getElementById("stars1")?.checked) minStars = 1;
+
+  const weatherChecked = document.getElementById("ownWeather")?.checked || false;
+
 
   const queryParams = new URLSearchParams({
     q: searchQuery,
     maxPrice: maxPrice,
     minDiscount: minDiscount,
-    minStars: minStars
+    minStars: minStars,
+    useWeather: weatherChecked
   });
 
   try {
