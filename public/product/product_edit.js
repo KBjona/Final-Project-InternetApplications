@@ -218,3 +218,18 @@ async function create_facebook_ad() {
     }
     return;
 }
+
+function openFacebookModal() {
+    const modalElement = document.getElementById('facebookModal');
+    const modal = new bootstrap.Modal(modalElement);
+    modal.show();
+}
+
+function showSelectedFileName(input) {
+    const fileNameDisplay = document.getElementById('facebook-file-name');
+    if (input.files && input.files[0]) {
+        fileNameDisplay.textContent = `Selected: ${input.files[0].name}`;
+    } else {
+        fileNameDisplay.textContent = '';
+    }
+}
