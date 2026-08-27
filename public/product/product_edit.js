@@ -1,5 +1,4 @@
-const { color } = require("d3");
-const { access } = require("node:fs");
+
 
 let parameters = { "product-name": "", "product-description": "", "product-price": "", "product-stock": "", "product-discount": 0, "background-firstly-color": "#ffffff", "background-secondary-color": "#cccccc", "name-color": "#000000", "description-color": "#000000" };
 let editing = window.location.pathname != '/product/create';
@@ -214,6 +213,7 @@ async function create_facebook_ad() {
     }
     else {
         //add popup
+        alert(data.message || data.error || "Failed to create ad");
         return;
     }
     return;
