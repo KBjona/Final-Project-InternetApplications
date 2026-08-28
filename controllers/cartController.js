@@ -9,7 +9,7 @@ exports.load_items = async (req, res) => {
 
     try {
         const cart = await Cart.findCartByMail(mail); // finding thhe cart to load
-        if (!cart || !Array.isArray(cart.items) || cart.items.length === 0) { // in case the cart is empty
+        if (!cart || !Array.isArray(cart.items) || cart.items.length === 0) { // in case the cart is empty or doesnt exist
             return res.status(200).json({ message: 'Empty Cart', items: [] });
         }
         res.status(200).json({ message: 'Cart with items', items: cart.items }); // cart worked successfully
@@ -93,7 +93,7 @@ exports.get_sccn = async (req, res) => {
             return res.status(417).json({ message: 'No user with this mail'});
         }
         if (!user.sccn) { // if the user has no saved cc
-            return res.status(405).json({ message: 'No stored credit card'});
+            return res.status(201).json({ message: 'No stored credit card'});
         }
         res.status(200).json({ message: 'Cart with items', sccn: user.sccn });
     } catch (err) { // server error

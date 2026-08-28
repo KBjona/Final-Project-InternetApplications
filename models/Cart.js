@@ -6,7 +6,7 @@ function findCartByMail(user_mail) {
 }
 
 function DeleteItemsByMail(user_mail) {
-  return getDb().collection('carts').updateOne({ mail: user_mail }, { $set: { items: [] } });
+  return getDb().collection('carts').deleteOne({mail: user_mail});
 }
 
 function UpdateItemsByMail(user_mail, new_items) {
@@ -27,29 +27,7 @@ async function IncrementCartItem(user_mail, p_id, p_name, p_cost) {
 }
 
 
+
+
 module.exports = { findCartByMail, DeleteItemsByMail, UpdateItemsByMail, IncrementCartItem };
 
-/*
-
-{
-  "mail": "Jona10112010@gmail.com",
-  "items": [
-    {
-      "name": "Wireless Mouse",
-      "cost": 25.99,
-      "quantity": 1
-    },
-    {
-      "name": "Mechanical Keyboard",
-      "cost": 89.5,
-      "quantity": 2
-    },
-    {
-      "name": "USB-C Cable",
-      "cost": 12,
-      "quantity": 3
-    }
-  ]
-}
-
-*/

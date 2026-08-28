@@ -97,7 +97,8 @@ exports.load_store_parameters = async (req, res) => {
         if (!result) { //no product was found with this id
             return res.status(400).json({ message: 'No product found with that id address'});
         }
-        res.status(200).json({ message: 'Store parameters loaded successfully', parameters: result.parameters });
+        let calc_rating = result.num_ratings ? Number((result.sum_ratings / result.num_ratings).toFixed(2)) : null;
+        res.status(200).json({ message: 'Store parameters loaded successfully', parameters: result.parameters, rating: calc_rating });
     } catch (err) { // server error
         console.error(err);
         return res.status(500).json({ message: 'Something went wrong on the server' });
@@ -115,7 +116,8 @@ exports.show_store = async (req, res) => {
         if (!result) { //no product was found with this id
             return res.status(400).json({ message: 'No product found with that id address' });
         }
-        res.status(200).json({ message: 'Store parameters loaded successfully', parameters: result.parameters, productImage: result.productImage, productVideo: result.productVideo, rating: ((result.sum_ratings / (result.num_ratings || 1)).toFixed(2)) });
+        let calc_rating = result.num_ratings ? Number((result.sum_ratings / result.num_ratings).toFixed(2)) : null;
+        res.status(200).json({ message: 'Store parameters loaded successfully', parameters: result.parameters, productImage: result.productImage, productVideo: result.productVideo, rating: calc_rating, owner: result.owner});
         
     } catch (err) { // server error
         console.error(err);
@@ -203,3 +205,27 @@ exports.search_products = async (req,res) => {
         res.status(500).json( {message: 'error searching products'});
     }
 };
+
+
+exports.complete_purchase = async (req, res) => {
+    let { items } = req.body; // get the email and items from the request's body
+    if (!items && items != []) { //if there is no email or null/ nonexistent items ([] is okay)
+        return res.status(400).json({ message: 'items has to exist' });
+    }
+    try {
+        items = items.filter(item => item.quantity > 0);
+        const result = await Product.CompletePurchase(items);
+        let items_not_purchased = [];
+        
+        result.forEach((item, index) => {
+            if((item.status === 'fulfilled' && !(item.value)) || item.status === 'rejected'){
+                items_not_purchased.push(items[index]);
+            }
+        });
+
+        return res.status(200).json({ message: 'Purchased successfully', items_not_purchased: items_not_purchased });
+    } catch (err) { // server error
+        console.error(err);
+        res.status(500).json({ message: 'Something went wrong on the server' });
+    }
+}

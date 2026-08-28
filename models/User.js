@@ -15,8 +15,8 @@ function linkGoogleAccount(mail, googleId) { // update the collection user to ad
 function findByFacebookId(facebookId) {
     return getDb().collection('users').findOne({ facebookId });
 }
-function linkFacebookAccount(mail, facebookId) {
-    return getDb().collection("users").updateOne({ mail }, { $set: { facebookId } });
+function linkFacebookAccount(mail, facebookId, facebookPages) {
+    return getDb().collection("users").updateOne({ mail }, { $set: { facebookId, facebookPages } });
 }
 // Saves a brand new user document into the "users" collection.
 function createUser(userData) {
@@ -30,7 +30,29 @@ function UpdateCCByMail(user_mail,new_sccn){
     return getDb().collection('users').updateOne({mail: user_mail},{ $set: { sccn: new_sccn  }});
 }
 
+function Follow(mail, tofollow){
+    return getDb().collection('users').updateOne({mail}, {$addToSet: {followings: tofollow}});
+}
 
 
-module.exports = { findByMail, findByGoogleId, linkGoogleAccount, findByFacebookId, linkFacebookAccount, createUser, UpdateCCByMail };
+function Unfollow(mail, tofollow){
+    return getDb().collection('users').updateOne({mail}, {$pull: {followings: tofollow}});
+}
 
+function CheckFollow(mail, tofollow){
+    return getDb().collection('users').countDocuments({mail: mail, followings: tofollow}, {limit: 1});
+}
+
+module.exports = {
+    findByMail,
+    findByGoogleId,
+    linkGoogleAccount,
+    findByFacebookId, 
+    linkFacebookAccount, 
+    createUser, 
+    updateUserProfile,
+    UpdateCCByMail,
+    Follow,
+    Unfollow,
+    CheckFollow
+ }; // export all the functions

@@ -100,4 +100,17 @@ async function searchProductsGrouped({ query = '', maxPrice = 1000, minDiscount 
   return await getDb().collection('products').aggregate(pipeline).toArray();
 }
 
-module.exports = {UpdateStoreParameters, GetStoreParameters, GetStoreOwner, findAllProducts, CreateStoreParameters, searchProductsGrouped, AddReview};
+async function CompletePurchase(items_purchased){
+  const items_promises = items_purchased.map((item) => {
+    return getDb().collection('products').findOneAndUpdate(
+      {_id: new ObjectId(item._id),  "parameters.product-stock" : {$gte: item.quantity} },
+      { $inc : { "parameters.product-stock": -(item.quantity) }},
+      { returnDocument: "after", projection: {_id: 1}}
+    )
+  });
+
+  const result = await Promise.allSettled(items_promises);
+  return result;
+}
+
+module.exports = {UpdateStoreParameters, UpdateStoreImage, UpdateStoreVideo, GetStoreParameters, GetStoreOwner, findAllProducts, CreateStoreParameters, searchProductsGrouped, AddReview, CompletePurchase};

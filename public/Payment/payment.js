@@ -1,11 +1,12 @@
 class Item {
-    constructor(name, cost, quantity) { //basic constructor 
+    constructor(id, name, cost, quantity) { //basic constructor 
+        this._id = id;
         this.name = name;
         this.cost = cost;
         this.quantity = quantity;
     }
     static item_to_entity(item) { // a "constructor" with the item
-        return new Item(item.name, item.cost, item.quantity);
+        return new Item(item._id, item.name, item.cost, item.quantity);
     }
 
     put_into_list(list, i) {
@@ -51,7 +52,7 @@ class Item {
 let mail = false;
 let sccn = '';
 let loaded_cc = false;
-const cc_regex = /^(?:4[0-9]{12}(?:[0-9]{3})?|[25][1-7][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35[0-9]{3})[0-9]{11})$/;
+const cc_regex = /^\d{13,19}$/;;
 const cvv_regex = /^\d{3,4}$/;
 let cart_items = [];
 
@@ -154,7 +155,7 @@ async function delete_cart_items(element) {
         return;
     } 
 
-    element.disabled = true;
+    if(element) element.disabled = true;
     const items_list = document.getElementById("products-list");
     const t_price = document.getElementById("total-price"); // gets the total price element
 
@@ -164,14 +165,14 @@ async function delete_cart_items(element) {
 
     const response = await fetch('api/cart/delete'); // send a get request to start the whole delete cart's items process
     if (!response.ok) { // if it couldn't delete successfully
-        element.disabled = false;
+        if(element) element.disabled = false;
         return;
     }
     items_list.innerHTML = ''; //removes the html items' elements
     cart_items = []; //clears the cart items
     items_list.dataset.is_empty = 'T';  //adds the is empty attributes so it wont have to send a request every time to the db
-    t_price.textContent = '0$';
-    element.disabled = false;
+    t_price.textContent = '0$'; // sets the total to zero
+    if(element) element.disabled = false;
 }
 
 async function update_items_quantity(element) {
@@ -179,8 +180,7 @@ async function update_items_quantity(element) {
         //add popup
         return;
     } 
-
-    element.disabled = true;
+    if(element) element.disabled = true;
     const items = cart_items;
 
     const response = await fetch('api/cart/update', { // send a post request to start the whole load cart process
@@ -193,7 +193,7 @@ async function update_items_quantity(element) {
         // add popup
         return;
     }
-    element.disabled = false;
+    if(element) element.disabled = false;
 }
 
 function openPayment() {
@@ -264,37 +264,79 @@ function useSavedCard() {
         cc_field.value = sccn; // update credit card number field to saved card number
 }
 
-function validatePurchase(){
-    if (!mail){
-        //add popup
-        return;
-    }  // if there is no mail we cannot complete the purchase
+function validatePurchase() {
+    if (!mail) {
+        return false;
+    }
 
     const cc_field = document.getElementById("paymentInformation");
-    if (!cc_field) return false; // if we can't get the cc to validate 
+    if (!cc_field) {
+        return false;
+    }
 
-    const new_sccn = cc_field.value.trim();
+    const cleaned_cc = cc_field.value.trim().replace(/[\s-]/g, '');
+    if (!cc_regex.test(cleaned_cc)) {
+        return false;
+    }
 
-    if (cc_regex.test(new_sccn)) return false; // if it is not a valid cc
-    
     const cvv = document.getElementById("paymentCVV");
-    if(!cvv) return false; // if  we can't get the cvv to validate 
-
-    if (!cvv_regex.test(cvv)) return false; // if it is not a valid cvv
+    if (!cvv || !cvv_regex.test(cvv.value.trim())) {
+        return false;
+    }
 
     const total_price = document.getElementById("total-price");
-        if(!total_price) return false; // if  we can't get the total price to make sure the purchase is valid 
+    if (!total_price) {
+        return false;
+    }
 
-    if (parseFloat((total_price.textContent).slice(0, -1)) == 0) return false; // if the total price is zero (nothing to buy)
-    if (parseFloat((total_price.textContent).slice(0, -1)) < 0) return false; // if the total price is negative
+    const cost = parseFloat(total_price.textContent.slice(0, -1));
+    if (isNaN(cost) || cost <= 0) {
+        return false;
+    }
 
+    return true;
 }
 
-async function complete_purchase() {
-    if (!validatePurchase()) return ; 
-    const to_save_cc = document.getElementById("savePaymentInformation");
-    if(to_save_cc && to_save_cc.checked){
-        await update_sccn();
+async function complete_purchase(event, element) {
+    if (event) event.preventDefault();
+    if (element) element.disabled = true;
+
+    if (!validatePurchase()) {
+        if (element) element.disabled = false;
+        return;
     }
-    return; // change to notifications entity
+
+    const to_save_cc = document.getElementById("savePaymentInformation");
+    if (to_save_cc && to_save_cc.checked) {
+        const cc_field = document.getElementById("paymentInformation");
+        if (cc_field) {
+            const cleaned_cc = cc_field.value.trim().replace(/[\s-]/g, '');
+            await update_sccn(cleaned_cc);
+        }
+    }
+
+    try {
+        const response = await fetch('/api/product/complete-purchase', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ items: cart_items })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            cart_items = data.items_not_purchased;
+
+            if (data.items_not_purchased.length === 0) {
+                await delete_cart_items(document.getElementById("delete-btn"));
+                if (element) element.disabled = false;
+                window.location.href = '/menu/';
+            } else {
+                await update_items_quantity(document.getElementById("update-btn"));
+            }
+        } 
+    } catch (err) {
+        return;
+    }
+
+    if (element) element.disabled = false;
 }

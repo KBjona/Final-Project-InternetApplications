@@ -1,6 +1,11 @@
-let parameters = { "product-name": "", "product-description": "", "product-price": "", "product-stock": "", "product-discount": 0, "background-firstly-color": "#ffffff", "background-secondary-color": "#cccccc", "name-color": "#000000", "description-color": "#000000" };
+
+
+let parameters = { "product-name": "", "product-description": "", "product-price": "", "product-stock": "", "product-discount": 0, "product-weather": null, "background-firstly-color": "#ffffff", "background-secondary-color": "#cccccc", "name-color": "#000000", "description-color": "#000000" };
 let editing = window.location.pathname != '/product/create';
 let store_id = null;
+let rating = null;
+let facebook_page_id = null;
+let facebook_page_access_token = null;
 
 function get_store_id() { //extracting the store id from the url
     if (editing) {
@@ -52,9 +57,17 @@ async function load_store() {  // send a request to the server to get the parame
         return;
     }
     else { //if the response is ok 
+        rating = data.rating;
         for (const key in parameters) {
             if (data.parameters.hasOwnProperty(key)) { // if the key exists in the data, update the parameters object with the value from the data
                 parameters[key] = data.parameters[key];
+            }
+            if(key === "product-weather" && parameters[key]){
+                const weather_to_check = document.getElementById(parameters[key]);
+                if(weather_to_check){
+                    weather_to_check.checked = true;
+                }
+                continue;
             }
             const c_param = document.getElementById(key); //to update the value of the input fields with the values from the parameters object
             if (c_param) { //if the input field exists and is not a file input, update the value of the input field with the value from the parameters object
@@ -84,23 +97,24 @@ function upload_file(id) { //to use the file input indirectly when clicking on t
 }
 
 function validate_data() { //to validate the data before sending it to the server   
-    if (parameters["product-name"].length < 1 || parameters["product-name"].length > 100) { return false }
-    if (parameters["product-description"].length < 1 || parameters["product-description"].length > 500) { return false }
-    if (isNaN(parameters["product-price"]) || parameters["product-price"] < 0 || parameters["product-price"] > 1000) { return false }
-    if (isNaN(parameters["product-stock"]) || parameters["product-stock"] < 0 || parameters["product-stock"] > 1000000000) { return false }
-    if (isNaN(parameters["product-discount"]) || parameters["product-discount"] <= 0 || parameters["product-discount"] >= 100) { return false }
-    if(!editing && !(document.getElementById('product-image')?.files[0])) {return false}
+    if (parameters["product-name"].length < 1 || parameters["product-name"].length > 100) { return false; }
+    if (parameters["product-description"].length < 1 || parameters["product-description"].length > 500) { return false; }
+    if (isNaN(parameters["product-price"]) || parameters["product-price"] < 0 || parameters["product-price"] > 1000) { return false; }
+    if (isNaN(parameters["product-stock"]) || parameters["product-stock"] < 0 || parameters["product-stock"] > 1000000000) { return false; }
+    if (isNaN(parameters["product-discount"]) || parameters["product-discount"] <= 0 || parameters["product-discount"] >= 100) { return false; }
+    if (!(document.querySelector('#weather-picker input[type="radio"]:checked'))) { return false; }
+    if (!editing && !(document.getElementById('product-image')?.files[0])) {return false; }
     const img = document.getElementById("product-image");
     if(img.files[0]){
         const img_file = img.files[0];
-        if(vid_file.size / (1024) * (1024) > 1){
+        if(img_file.size / (1024 * 1024) > 1){
             return false;
         }
     }
     const vid = document.getElementById("product-video");
     if(vid.files[0]){
         const vid_file = vid.files[0];
-        if(vid_file.size / (1024) * (1024) > 8){
+        if(vid_file.size / (1024 * 1024) > 8){
             return false;
         }
     }
@@ -114,6 +128,19 @@ function file_to_base64(file) { //to convert the file to base64 format
         reader.readAsDataURL(file);
         reader.onload = () => resolve(reader.result);
     });
+}
+
+function create_charts(){
+    if(!editing) { return; }
+    
+    if( rating == null) { return; }
+    const pie_chart_data = [ {label: "Rating", value: rating, color: "#32a852" }, {label: "Gap", value: 5-rating, color: "#1f96d1" } ];
+
+    const pie_width = 300;
+    const pie_height = 300;
+    const pie_radius = Math.min(pie_width, pie_height)/2;
+    const pie_svg = d3.select("#pie-chart").append("svg").attr("width", pie_width).attr("height", pie_height).append("g").attr("transform", `translate: (${pie_width/2},${pie_height/2})`);
+
 }
 
 const form = document.querySelector('#form');//to get the form element from the html
@@ -170,3 +197,47 @@ form.addEventListener('submit', async function (event) {
     }
     return;
 });
+
+async function create_facebook_ad() {
+    const img = document.getElementById("facebook-img"); //getting the elements
+    const message = document.getElementById("facebook-msg");
+    if(!img || !message) return;
+
+    let image_base64 = null;
+    if(img.files[0]){ //converts the image file to base64
+        image_base64 = await file_to_base64(img.files[0]);
+    }
+
+    const response = await fetch('/api/auth/create-ad', { //sends a post request to the controller and there it sends a post request to facebook api
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({message: message.value, image_base64: image_base64})
+    });
+
+    let data = await response.json();
+    if (response.ok) { //if the store saved successfully redirect to the menu page
+        window.location.href = '/menu/';
+        //add popup
+    }
+    else {
+        //add popup
+        alert(data.message || data.error || "Failed to create ad");
+        return;
+    }
+    return;
+}
+
+function openFacebookModal() {
+    const modalElement = document.getElementById('facebookModal');
+    const modal = new bootstrap.Modal(modalElement);
+    modal.show();
+}
+
+function showSelectedFileName(input) {
+    const fileNameDisplay = document.getElementById('facebook-file-name');
+    if (input.files && input.files[0]) {
+        fileNameDisplay.textContent = `Selected: ${input.files[0].name}`;
+    } else {
+        fileNameDisplay.textContent = '';
+    }
+}

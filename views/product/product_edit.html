@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product:----</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/product/product_edit.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 
 <body>
@@ -17,26 +19,31 @@
             <form id="form">
                 <div class="field-group">
                     <label for="product-name">Product Name:</label>
-                    <input type="text" name="product-name" id="product-name" placeholder="Enter product name" value="----">
+                    <input type="text" name="product-name" id="product-name" placeholder="Enter product name"
+                        value="----"><!--product name input-->
                 </div>
                 <div class="field-group">
                     <label for="product-description">Product Description:</label>
-                    <textarea name="product-description" id="product-description" placeholder="Enter product description"></textarea>
+                    <textarea name="product-description" id="product-description"
+                        placeholder="Enter product description"></textarea><!--product discription input-->
                 </div>
-                <div class="field-group">
+                <div class="field-group"><!--price, stock, discount inputs section-->
                     <label for="product-price">Product Price in dollars (max $1000):</label>
-                    <input type="text" name="product-price" id="product-price" min = "0" max = "1000" placeholder="Enter product price" value="0.00">
+                    <input type="text" name="product-price" id="product-price" min="0" max="1000"
+                        placeholder="Enter product price" value="0.00">
                 </div>
                 <div class="field-group">
-                    <label for="product-stock">Product Stock :</label>
-                    <input type="number" name="product-stock" id="product-stock" min="0" max="1000000000" placeholder="Enter product quantity" value="0">
+                    <label for="product-stock">Product Stock:</label>
+                    <input type="number" name="product-stock" id="product-stock" min="0" max="1000000000"
+                        placeholder="Enter product quantity" value="0">
                 </div>
                 <div class="field-group">
                     <label for="product-discount">Product Discount in percentages:</label>
-                    <input type="number" name="product-discount" id="product-discount" min="0" max="100" placeholder="Enter product discount percentage" value="0">
+                    <input type="number" name="product-discount" id="product-discount" min="0" max="100"
+                        placeholder="Enter product discount percentage" value="0">
                 </div>
-                
-                <div class="field-group">
+
+                <div class="field-group"><!--media inputs section-->
                     <div class="file-upload">
                         <button type="button" onclick="upload_file('product-image')">Upload product image(max 1MB)</button>
                         <input type="file" name="product-image" id="product-image" class="hidden" accept="image/*">
@@ -46,23 +53,54 @@
                         <input type="file" name="product-video" id="product-video" class="hidden" accept="video/*">
                     </div>
                 </div>
+                <label for="weather-picker">In which weather the product fits the best?</label>
+                <div class="field-group" id="weather-picker">
+                    <div class="weather-form-check">
+                        <input class="weather-input" type="radio" id="Hot" name="product-weather" value="Hot">
+                        <label class="weather-label" for="hot">Hot</label>
+                    </div>
+                    <div class="weather-form-check">
+                        <input class="weather-input" type="radio" id="Sunny" name="product-weather" value="Sunny">
+                        <label class="weather-label" for="sunny">Sunny</label>
+                    </div>
+                    <div class="weather-form-check">
+                        <input class="weather-input" type="radio" id="Rainy" name="product-weather" value="Rainy">
+                        <label class="weather-label" for="rainy">Rainy</label>
+                    </div>
+                    <div class="weather-form-check">
+                        <input class="weather-input" type="radio" id="Snowy" name="product-weather" value="Snowy">
+                        <label class="weather-label" for="snowy">Snowy</label>
+                    </div>
+                    <div class="weather-form-check">
+                        <input class="weather-input" type="radio" id="Cold" name="product-weather" value="Cold">
+                        <label class="weather-label" for="cold">Cold</label>
+                    </div>
+                    <div class="weather-form-check">
+                        <input class="weather-input" type="radio" id="Cloudy" name="product-weather" value="Cloudy">
+                        <label class="weather-label" for="cloudy">Cloudy</label>
+                    </div>
+                </div>
 
-                <div class="color-pickers">
+                <div class="color-pickers"><!--colors section-->
                     <div class="field-group color-field">
                         <label for="background-firstly-color">Background Firstly Color</label>
-                        <input type="color" name="background-firstly-color" id="background-firstly-color" value="#ffffff">
+                        <input type="color" name="background-firstly-color" id="background-firstly-color"
+                            value="#ffffff">
                     </div>
                     <div class="field-group color-field">
                         <label for="background-secondary-color">Background Secondary Color</label>
-                        <input type="color" name="background-secondary-color" id="background-secondary-color" value="#cccccc">
+                        <input type="color" name="background-secondary-color" id="background-secondary-color"
+                            value="#cccccc">
                     </div>
                     <div class="field-group color-field">
                         <label for="name-color">Name Text Color</label>
-                        <input type="color" name="name-color" id="name-color" placeholder="Enter name text color" value="#000000">
+                        <input type="color" name="name-color" id="name-color" placeholder="Enter name text color"
+                            value="#000000">
                     </div>
                     <div class="field-group color-field">
                         <label for="description-color">Description Text Color</label>
-                        <input type="color" name="description-color" id="description-color" placeholder="Enter description text color" value="#808080">
+                        <input type="color" name="description-color" id="description-color"
+                            placeholder="Enter description text color" value="#808080">
                     </div>
                 </div>
 
@@ -70,8 +108,48 @@
 
             </form>
         </div>
+        <div id="analytics-section">
+            <div id="graphs-section">
+                <div id="pie-chart"></div>
+                <div id="bar-chart"></div>
 
+                <div id="FacebookShare">
+                    <button class="btn btn-outline-light btn-primary" onclick="openFacebookModal()">Share on
+                        Facebook</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="facebookModal" data-bs-theme="dark" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold text-center w-100 ms-4">Create a new Ad for your product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body d-flex flex-column gap-3">
+                    <textarea class="form-control" id="facebook-msg" rows="3" placeholder="Post caption"></textarea>
+
+                    <div>
+                        <button type="button" class="btn btn-outline-secondary w-100"
+                            onclick="document.getElementById('facebook-img').click()">Upload Image</button>
+                        <input type="file" id="facebook-img" class="d-none" accept="image/*"
+                            onchange="showSelectedFileName(this)">
+                        <small id="facebook-file-name" class="text-muted d-block mt-1 text-center"></small>
+                    </div>
+                </div>
+
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-primary" onclick="create_facebook_ad()">Create</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
     </div>
     <script src="/product/product_edit.js"></script>
 </body>
+
 </html>
