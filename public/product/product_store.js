@@ -19,7 +19,7 @@ function toggleMedia() {
     const media_btn = document.getElementById("media-btn");
 
     if (!img || !vid || !media_btn) {
-        //add popup
+
         return;
     }
 
@@ -41,7 +41,7 @@ function togglefollowing() {
     const follow_btn = document.getElementById("follow-owner-btn");
 
     if (!follow_btn) {
-        //add popup
+
         return;
     }
 
@@ -68,13 +68,39 @@ async function check_follow_state() {
 
     const data = await response.json();
     if (!response.ok) { //if we couldnt see if the user follows or not
-        //add popup
+
         return;
     }
     follow_btn.disabled = false;
     if (data.follow == 1) { // if the user already follows this owner
         togglefollowing();
     }
+}
+
+async function load_map() {
+    const response = await fetch('/api/auth/location', { //sends a post request to get the owner's location
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ owner: owner_id })
+    });
+
+    if (!response.ok) { //if we couldnt get the location
+        return;
+    }
+    const data = await response.json();
+
+    //getting the owner's latitude and longitude
+    const lat = data.latitude;
+    const long = data.longitude;
+
+    const map = L.map('map').setView([lat, long], 12);//centers the map on the location we got and zooms 12
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; OpenStreetMap'}).addTo(map); //adds the visual location itself to the map
+    L.marker([lat, long]).addTo(map); //marks the specific location in the map
+
+
+
+
+    
 }
 
 async function load_store() {  // send a request to the server to get the parameters using the store id
@@ -88,7 +114,7 @@ async function load_store() {  // send a request to the server to get the parame
     const data = await response.json(); //get the data of the response from the server
     if (!response.ok) { //if we couldnt get the parameters
         window.location.href = '/menu/';
-        //add popup
+
         return;
     }
     else { //if the response is ok 
@@ -192,7 +218,7 @@ async function send_review(event) { //send the review to the server
     });
     const data = await response.json();
     if (!response.ok) { //if we couldnt send the review
-        //add popup
+
         event.disabled = false;
         return;
     }
@@ -221,7 +247,7 @@ async function add_to_cart(event) { //send the request to the server to add the 
     });
     const data = await response.json();
     if (!response.ok) { //if we couldnt add the product to the cart
-        //add popup
+
         event.disabled = false;
         return;
     }
@@ -252,7 +278,7 @@ async function follow_or_unfollow(event) {
     });
 
     if (!response.ok) { //if we couldnt follow or unfollow
-        //add popup
+
         event.disabled = false;
         return;
     }

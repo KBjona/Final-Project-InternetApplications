@@ -29,7 +29,7 @@ async function validate_owner() { //to check if the user is the owner of the sto
     const data = await response.json(); //get the data of the response from the server
     
     if (!data.is_owner) { // if the user is not the owner of the store, redirect to the menu page
-        //add popup
+
         return false;
     }
     return true;
@@ -62,7 +62,7 @@ async function load_store() {  // send a request to the server to get the parame
     const data = await response.json(); //get the data of the response from the server
     if (!response.ok) { //if we couldnt get the parameters
         window.location.href = '/menu/';
-        //add popup
+
         return;
     }
     else { //if the response is ok 
@@ -114,7 +114,7 @@ async function delete_store(element) {
     const data = await response.json(); //get the data of the response from the server
     if (response.ok) { //if we couldnt get the parameters
         window.location.href = '/menu/';
-        //add popup
+
         return;
     }
 }
@@ -235,7 +235,7 @@ form.addEventListener('submit', async function (event) {
     parameters = { ...parameters, ...Formdata }; //merges the parameters object with the form data object
 
     if (!validate_data()) { //to validate the data before sending it to the server
-        //add popup
+
         return;
     }
 
@@ -253,10 +253,10 @@ form.addEventListener('submit', async function (event) {
     let data = await response.json();
     if (response.ok) { //if the store saved successfully redirect to the menu page
         window.location.href = '/menu/';
-        //add popup
+
     }
     else {
-        //add popup
+
         return;
     }
     return;
@@ -281,10 +281,10 @@ async function create_facebook_ad() {
     let data = await response.json();
     if (response.ok) { //if the store saved successfully redirect to the menu page
         window.location.href = '/menu/';
-        //add popup
+
     }
     else {
-        //add popup
+
         return;
     }
     return;
