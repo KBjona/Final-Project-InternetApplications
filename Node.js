@@ -25,6 +25,7 @@ app.use(session({
 
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/scripts/d3',express.static(path.join(__dirname, 'node_modules', 'd3', 'dist'))); // giving the browser the d3 library
 
 app.get('/menu', (req, res) => {
   if (!req.session.user) {

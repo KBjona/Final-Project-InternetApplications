@@ -1,5 +1,3 @@
-
-
 let parameters = { "product-name": "", "product-description": "", "product-price": 0, "product-stock": 0, "product-discount": 0, "product-weather": null, "background-firstly-color": "#ffffff", "background-secondary-color": "#cccccc", "name-color": "#000000", "description-color": "#000000" };
 let editing = window.location.pathname != '/product/create';
 let store_id = null;
@@ -69,6 +67,10 @@ async function load_store() {  // send a request to the server to get the parame
     }
     else { //if the response is ok 
         rating = data.rating;
+        const pie_graph_text = document.getElementById("pie-graph-text");
+        if(pie_graph_text){
+            pie_graph_text.innerHTML += " "+rating.toFixed(2); 
+        }
         for (const key in parameters) {
             if (data.parameters.hasOwnProperty(key)) { // if the key exists in the data, update the parameters object with the value from the data
                 parameters[key] = data.parameters[key];
@@ -88,6 +90,11 @@ async function load_store() {  // send a request to the server to get the parame
                 }
             }
         }
+        const bar_graph_text = document.getElementById("bar-graph-text");
+        if(bar_graph_text){
+            bar_graph_text.innerText += " "+(Number(100-parameters["product-discount"]) / 100).toFixed(2);
+        }
+        create_charts();
     }
     return;
 }
@@ -168,13 +175,36 @@ function create_charts(){
     if(!editing) { return; }
     
     if( rating == null) { return; }
-    const pie_chart_data = [ {label: "Rating", value: rating, color: "#32a852" }, {label: "Gap", value: 5-rating, color: "#1f96d1" } ];
+    const pie_chart_data = [ {label: "Rating", value: rating, color: "#32a852" }, {label: "Gap", value: 5-rating, color: "#1f96d1" } ]; //sets the elements we will use for the pie chart
 
-    const pie_width = 300;
-    const pie_height = 300;
-    const pie_radius = Math.min(pie_width, pie_height)/2;
-    const pie_svg = d3.select("#pie-chart").append("svg").attr("width", pie_width).attr("height", pie_height).append("g").attr("transform", `translate: (${pie_width/2},${pie_height/2})`);
+    const pie_container = document.getElementById("pie-chart");
+    if(pie_container) pie_container.innerHTML = ""; //clearing the div to add the graph cleanly
+    const bar_container = document.getElementById("bar-chart");
+    if(bar_container) bar_container.innerHTML = ""; //clearing the div to add the graph cleanly
 
+    const base_size = 300; //initializing the sizes
+    const bar_height = 40;
+    const pie_radius = base_size / 2;
+
+    const pie_svg = d3.select("#pie-chart").append("svg").attr("viewBox", `0 0 ${base_size} ${base_size}`).attr("preserveAspectRatio", "xMidYMid meet").style("width","100%").style("height","100%").style("max-height", "150px").append("g").attr("transform", `translate(${base_size/2},${base_size/2})`); //creating the svg - the vector for the pie chart
+
+    const pie_generator = d3.pie().value(d => d.value).sort(null);
+    const arc_generator = d3.arc().innerRadius(pie_radius*0.3).outerRadius(pie_radius); //the drawing generator
+
+    const pie_data = pie_generator(pie_chart_data);
+
+    pie_svg.selectAll("path").data(pie_data).join("path").attr("d",arc_generator).attr("fill", d => d.data.color); //creating the pie chart
+
+
+    const bar_svg = d3.select("#bar-chart").append("svg").attr("viewBox", `0 0 ${base_size} ${bar_height}`).attr("preserveAspectRatio", "xMidYMid meet").style("width","100%").style("height","100%").style("max-height", "150px"); //creating the svg - the vector for the bar chart
+
+    const original_price = parseFloat(parameters["product-price"]) || 0; //calculating the prices
+    const discount = parseFloat(parameters["product-discount"]) || 0;
+    const new_price = original_price*(1-discount/100);
+    const ratio = original_price > 0 ? Math.min(new_price/original_price, 1) : 0;
+
+    bar_svg.append("rect").attr("x",0).attr("y",0).attr("width",base_size).attr("height",bar_height).attr("rx",8).attr("fill", "#1f96d1"); //adding the full price rectangle
+    bar_svg.append("rect").attr("x",0).attr("y",0).attr("width",base_size*ratio).attr("height",bar_height).attr("rx",8).attr("fill", "#32a852"); //adding the new price rectangle
 }
 
 const form = document.querySelector('#form');//to get the form element from the html
@@ -255,20 +285,19 @@ async function create_facebook_ad() {
     }
     else {
         //add popup
-        alert(data.message || data.error || "Failed to create ad");
         return;
     }
     return;
 }
 
-function openFacebookModal() {
-    const modalElement = document.getElementById('facebookModal');
+function openFacebookModal() { 
+    const modalElement = document.getElementById('facebookModal'); //opens the modal
     const modal = new bootstrap.Modal(modalElement);
     modal.show();
 }
 
 function showSelectedFileName(input) {
-    const fileNameDisplay = document.getElementById('facebook-file-name');
+    const fileNameDisplay = document.getElementById('facebook-file-name'); //shows the file selected for the ad
     if (input.files && input.files[0]) {
         fileNameDisplay.textContent = `Selected: ${input.files[0].name}`;
     } else {
