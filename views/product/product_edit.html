@@ -19,11 +19,13 @@
             <form id="form">
                 <div class="field-group">
                     <label for="product-name">Product Name:</label>
-                    <input type="text" name="product-name" id="product-name" placeholder="Enter product name" value="----" required><!--product name input-->
+                    <input type="text" name="product-name" id="product-name" placeholder="Enter product name"
+                        value="----" required><!--product name input-->
                 </div>
                 <div class="field-group">
                     <label for="product-description">Product Description:</label>
-                    <textarea name="product-description" id="product-description" placeholder="Enter product description" required></textarea><!--product discription input-->
+                    <textarea name="product-description" id="product-description"
+                        placeholder="Enter product description" required></textarea><!--product discription input-->
                 </div>
                 <div class="field-group"><!--price, stock, discount inputs section-->
                     <label for="product-price">Product Price in dollars (max $1000):</label>
@@ -43,15 +45,18 @@
 
                 <div class="field-group"><!--media inputs section-->
                     <div class="file-upload">
-                        <button type="button" onclick="upload_file('product-image')">Upload product image(max 1MB)</button>
+                        <button type="button" onclick="upload_file('product-image')">Upload product image(max
+                            1MB)</button>
                         <input type="file" name="product-image" id="product-image" class="hidden" accept="image/*">
                     </div>
                     <div class="file-upload">
-                        <button type="button" onclick="upload_file('product-video')">Upload product video(max 6MB)</button>
+                        <button type="button" onclick="upload_file('product-video')">Upload product video(max
+                            6MB)</button>
                         <input type="file" name="product-video" id="product-video" class="hidden" accept="video/*">
                     </div>
                 </div>
-                <label for="weather-picker">In which weather the product fits the best?</label> <!--the weather type for the product-->
+                <label for="weather-picker">In which weather the product fits the best?</label>
+                <!--the weather type for the product-->
                 <div class="field-group" id="weather-picker">
                     <div class="weather-form-check">
                         <input class="weather-input" type="radio" id="Hot" name="product-weather" value="Hot">
@@ -93,19 +98,26 @@
                             placeholder="Enter description text color" value="#808080">
                     </div>
                 </div>
-                <button class="hidden" id="delete-btn" onclick="delete_store(this)">Delete Product</button><!--delete button-->
+                <button class="hidden" id="delete-btn" onclick="delete_store(this)">Delete
+                    Product</button><!--delete button-->
                 <button type="submit" id="submit-btn">Save Product</button><!--submit button-->
 
             </form>
         </div>
         <div id="analytics-section">
-            <span style="display: flex; justify-self: center; font-size: x-large;"><b><u>Graphs And Marketing Section:</u></b></span>
+            <span style="display: flex; justify-self: center; font-size: x-large;"><b><u>Graphs And Marketing
+                        Section:</u></b></span>
             <div id="graphs-section">
-                <div class="graph"><u><span id="pie-graph-text">Rating out of 5:</span></u><div id="pie-chart"></div></div> <!--the pie chart section-->
-                <div class="graph"><u><span id="bar-graph-text">New price ratio to the original price:</span></u><div id="bar-chart"></div></div> <!--the bar chart section-->
+                <div class="graph"><u><span id="pie-graph-text">Rating out of 5:</span></u>
+                    <div id="pie-chart"></div>
+                </div> <!--the pie chart section-->
+                <div class="graph"><u><span id="bar-graph-text">New price ratio to the original price:</span></u>
+                    <div id="bar-chart"></div>
+                </div> <!--the bar chart section-->
 
                 <div id="FacebookShare">
-                    <button class="btn btn-outline-light btn-primary" onclick="openFacebookModal()">Share on Facebook</button><!--the facebook button to open the modal-->
+                    <button class="btn btn-outline-light btn-primary" onclick="openFacebookModal()">Share on
+                        Facebook</button><!--the facebook button to open the modal-->
                 </div>
             </div>
         </div>
@@ -116,15 +128,18 @@
 
                 <div class="modal-header border-0 pb-0">
                     <h5 class="modal-title fw-bold text-center w-100 ms-4">Create a new Ad for your product</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> <!--close button modal-->
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <!--close button modal-->
                 </div>
 
                 <div class="modal-body d-flex flex-column gap-3">
-                    <textarea class="form-control" id="facebook-msg" rows="3" placeholder="Post caption"></textarea><!--the text of the ad-->
+                    <textarea class="form-control" id="facebook-msg" rows="3"
+                        placeholder="Post caption"></textarea><!--the text of the ad-->
 
                     <div>
                         <button type="button" class="btn btn-outline-secondary w-100"
-                            onclick="document.getElementById('facebook-img').click()">Upload Image</button><!--the image input-->
+                            onclick="document.getElementById('facebook-img').click()">Upload
+                            Image</button><!--the image input-->
                         <input type="file" id="facebook-img" class="d-none" accept="image/*"
                             onchange="showSelectedFileName(this)">
                         <small id="facebook-file-name" class="text-muted d-block mt-1 text-center"></small>
@@ -132,12 +147,12 @@
                 </div>
 
                 <div class="modal-footer border-0 pt-0">
-                    <button type="button" class="btn btn-primary" onclick="create_facebook_ad()">Create</button><!--the create ad button-->
+                    <button type="button" class="btn btn-primary"
+                        onclick="create_facebook_ad()">Create</button><!--the create ad button-->
                 </div>
 
             </div>
         </div>
-    </div>
     </div>
     <script src="/product/product_edit.js"></script>
     <script src="/scripts/d3/d3.min.js"></script>
