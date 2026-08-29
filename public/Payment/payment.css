@@ -1,6 +1,5 @@
 @import url('/General-files/variables.css');
 @import url('https://fonts.googleapis.com/css2?family=Monoton&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap');
 
 body {
     display: flex;
@@ -19,13 +18,22 @@ h1{
     font-size: 2rem;
 }/*make the top text have a special font and big*/
 
-#main-div {
+#global-div{
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 30px;
+    width: 95vw;
+    max-width: 1000px;
+}
+
+#main-div, #search-div {
     padding: 30px 20px;
     display: flex;
     flex-direction: column;
     gap: 20px;
     align-items: center;
-    max-width: 400px;
     width: 100%;
     border-radius: 25px;
     box-shadow: 0 8px 30px var(--shadow-color-inverse);
@@ -33,6 +41,16 @@ h1{
     max-height: 700px;
     box-sizing: border-box;
 }/*designs the main container and order the components and adds a cool shadow*/
+
+#main-div{
+    flex: 2;
+    max-width: 450px;
+}
+
+#search-div{
+    flex: 1;
+    max-width: 350px;
+}
 
 #products-list {
     display: flex;
@@ -257,5 +275,25 @@ transform: scale(1.1);
 }
 .payment-modal,
 .payment-modal * {
-    font-family: 'Rubik', sans-serif;
-}
+    font-family: sans-serif;
+}/*setting the fonts for the payment modal*/
+
+
+.filter-group {
+  margin-bottom: 24px;
+  background-color: var(--bg-card);
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+}/*setting the filter group margin color padding and border*/
+
+.filter-group h5, 
+.filter-group .form-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+  display: block;
+}/*setting the text color, font size, font weight, and text attributes*/
