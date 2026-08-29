@@ -56,6 +56,32 @@ const cc_regex = /^\d{13,19}$/;;
 const cvv_regex = /^\d{3,4}$/;
 let cart_items = [];
 
+document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('cart-search-input');
+    if (searchInput) {
+        searchInput.addEventListener('input', filterCartItems);
+    }
+});
+
+function filterCartItems() {
+    const searchInput = document.getElementById('cart-search-input');
+    if (!searchInput) return;
+
+    const query = searchInput.value.toLowerCase().trim();
+    const productElements = document.querySelectorAll('#products-list .product');
+
+    productElements.forEach(product => {
+        const nameElement = product.querySelector('.product-name');
+        const name = nameElement ? nameElement.textContent.toLowerCase() : '';
+
+        if (name.includes(query)) {
+            product.style.display = ''; // Show item
+        } else {
+            product.style.display = 'none'; // Hide item
+        }
+    });
+}
+
 async function validate_entrence() {
     const response = await fetch('api/auth/me'); //sends a get request to get the user's information from cookies
     if (!response.ok) return;
@@ -103,6 +129,7 @@ async function load_items() {
     let total_cost = 0;
 
     list.dataset.is_empty = 'F';
+    list.innerHTML = '';
     cart_items = [];
     for (let i = 0; i < items_len; i++) { // creates an item element for each element and creates his html tags and puts it in the list
         c_item = Item.item_to_entity(items_arr[i]);
@@ -111,6 +138,8 @@ async function load_items() {
         c_item.put_into_list(list, i);
     }
     t_price.textContent = `${total_cost.toFixed(2)}$`;; //change the placeholder to the real cost
+
+    filterCartItems();
 }
 
 function change_item_qty(element, num) {
@@ -172,6 +201,9 @@ async function delete_cart_items(element) {
     cart_items = []; //clears the cart items
     items_list.dataset.is_empty = 'T';  //adds the is empty attributes so it wont have to send a request every time to the db
     t_price.textContent = '0$'; // sets the total to zero
+
+    const searchInput = document.getElementById('cart-search-input');
+    if (searchInput) searchInput.value = '';
     if(element) element.disabled = false;
 }
 
