@@ -59,7 +59,10 @@ let cart_items = [];
 document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('cart-search-input');
     if (searchInput) {
-        searchInput.addEventListener('input', filterCartItems);
+        searchInput.addEventListener('input', async (e) => {
+            const query = e.target.value.trim();
+            await load_items(query); 
+        });
     }
 });
 
@@ -96,25 +99,34 @@ async function validate_entrence() {
 
 }
 
-async function load_items() {
+async function load_items(searchQuery = '') {
     await validate_entrence();
-    if(!mail){
-        window.location.href = "/menu/";
+    if (!mail) {
+        await validate_entrence();
+        if (!mail) {
+            window.location.href = "/menu/";
+            return;
+        }
     }
+
     await load_sccn();
     const list = document.getElementById("products-list"); // gets the list element
     const t_price = document.getElementById("total-price"); // gets the total price element
 
-    if (!list) {
-        return;
-    }
-    const response = await fetch('api/cart/items'); // send a get request to start the whole load cart process
+    if (!list || !t_price) { return};
+
+    const url = searchQuery 
+        ? `api/cart/items?search=${encodeURIComponent(searchQuery)}`
+        : 'api/cart/items';
+
+    const response = await fetch(url); // send a get request to start the whole load cart process
     const response_json = await response.json(); // stores the response
 
     if (!response.ok) { //if the response status is not good we can't get the items so we return;
         return;
     }
     const items_arr = response_json.items;  // takes the items array
+    list.innerHTML = '';
 
     const items_len = items_arr.length;
     if (!t_price) {
@@ -139,7 +151,6 @@ async function load_items() {
     }
     t_price.textContent = `${total_cost.toFixed(2)}$`;; //change the placeholder to the real cost
 
-    filterCartItems();
 }
 
 function change_item_qty(element, num) {

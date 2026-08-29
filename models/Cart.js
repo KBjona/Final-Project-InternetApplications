@@ -26,8 +26,18 @@ async function IncrementCartItem(user_mail, p_id, p_name, p_cost) {
   return result
 }
 
+async function searchCartItems(user_mail, query) {
+  const result = await getDb().collection('carts').aggregate([
+    { $match: { mail: user_mail } },
+    { $unwind: '$items' },
+    { $match: { 'items.name': { $regex: query, $options: 'i' } } },
+    { $group: { _id: '$_id', items: { $push: '$items' } } }
+  ]).toArray();
+  console.log("arraydbsearchwhatever");
+  return result.length > 0 ? result[0].items : [];
+}
 
 
 
-module.exports = { findCartByMail, DeleteItemsByMail, UpdateItemsByMail, IncrementCartItem };
+module.exports = { findCartByMail, DeleteItemsByMail, UpdateItemsByMail, IncrementCartItem, searchCartItems };
 

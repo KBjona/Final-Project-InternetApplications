@@ -6,8 +6,15 @@ exports.load_items = async (req, res) => {
         return res.status(400).json({ message: 'Log in please' });
     }
     let mail = req.session.user.mail;
+    let searchQuery = req.query.search;
 
     try {
+        if(searchQuery){
+            const items = await Cart.searchCartItems(mail, searchQuery);
+            return res.status(200).json({message: 'Empty Cart', items});
+        }
+
+
         const cart = await Cart.findCartByMail(mail); // finding thhe cart to load
         if (!cart || !Array.isArray(cart.items) || cart.items.length === 0) { // in case the cart is empty or doesnt exist
             return res.status(200).json({ message: 'Empty Cart', items: [] });
