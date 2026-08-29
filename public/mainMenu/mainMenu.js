@@ -365,6 +365,11 @@ async function dbSearch() {
   if (document.getElementById("stars2")?.checked) minStars = 2;
   if (document.getElementById("stars1")?.checked) minStars = 1;
 
+  const selectedSeasons = [];
+  if (document.getElementById("spring")?.checked) selectedSeasons.push("spring");
+  if (document.getElementById("summer")?.checked) selectedSeasons.push("summer");
+  if (document.getElementById("fall")?.checked) selectedSeasons.push("fall");
+  if (document.getElementById("winter")?.checked) selectedSeasons.push("winter");
   const weatherChecked = document.getElementById("ownWeather")?.checked || false;
 
 
