@@ -8,6 +8,8 @@ router.post('/update',ProductController.edit_store_parameters); // sends a post 
 
 router.post('/load',ProductController.load_store_parameters); // sends a post request to load the store parameters
 
+router.post('/delete',ProductController.delete_store); // sends a post request to load the store parameters
+
 router.post('/validate',ProductController.validate_owner); // sends a post request to validate the owner of the store
 
 router.get('/search', ProductController.search_products); // routes the search fucntion to the controller search function.

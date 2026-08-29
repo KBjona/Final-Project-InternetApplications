@@ -19,28 +19,26 @@
             <form id="form">
                 <div class="field-group">
                     <label for="product-name">Product Name:</label>
-                    <input type="text" name="product-name" id="product-name" placeholder="Enter product name"
-                        value="----"><!--product name input-->
+                    <input type="text" name="product-name" id="product-name" placeholder="Enter product name" value="----" required><!--product name input-->
                 </div>
                 <div class="field-group">
                     <label for="product-description">Product Description:</label>
-                    <textarea name="product-description" id="product-description"
-                        placeholder="Enter product description"></textarea><!--product discription input-->
+                    <textarea name="product-description" id="product-description" placeholder="Enter product description" required></textarea><!--product discription input-->
                 </div>
                 <div class="field-group"><!--price, stock, discount inputs section-->
                     <label for="product-price">Product Price in dollars (max $1000):</label>
                     <input type="text" name="product-price" id="product-price" min="0" max="1000"
-                        placeholder="Enter product price" value="0.00">
+                        placeholder="Enter product price" value="0.00" required>
                 </div>
                 <div class="field-group">
                     <label for="product-stock">Product Stock:</label>
                     <input type="number" name="product-stock" id="product-stock" min="0" max="1000000000"
-                        placeholder="Enter product quantity" value="0">
+                        placeholder="Enter product quantity" value="0" required>
                 </div>
                 <div class="field-group">
                     <label for="product-discount">Product Discount in percentages:</label>
                     <input type="number" name="product-discount" id="product-discount" min="0" max="100"
-                        placeholder="Enter product discount percentage" value="0">
+                        placeholder="Enter product discount percentage" value="0" required>
                 </div>
 
                 <div class="field-group"><!--media inputs section-->
@@ -49,11 +47,11 @@
                         <input type="file" name="product-image" id="product-image" class="hidden" accept="image/*">
                     </div>
                     <div class="file-upload">
-                        <button type="button" onclick="upload_file('product-video')">Upload product video(max 8MB)</button>
+                        <button type="button" onclick="upload_file('product-video')">Upload product video(max 6MB)</button>
                         <input type="file" name="product-video" id="product-video" class="hidden" accept="video/*">
                     </div>
                 </div>
-                <label for="weather-picker">In which weather the product fits the best?</label>
+                <label for="weather-picker">In which weather the product fits the best?</label> <!--the weather type for the product-->
                 <div class="field-group" id="weather-picker">
                     <div class="weather-form-check">
                         <input class="weather-input" type="radio" id="Hot" name="product-weather" value="Hot">
@@ -103,8 +101,8 @@
                             placeholder="Enter description text color" value="#808080">
                     </div>
                 </div>
-
-                <button type="submit">Save Product</button>
+                <button class="hidden" id="delete-btn" onclick="delete_store(this)">Delete Product</button>
+                <button type="submit" id="submit-btn">Save Product</button>
 
             </form>
         </div>

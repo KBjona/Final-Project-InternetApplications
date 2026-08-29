@@ -57,12 +57,14 @@ body {
     background-color: linear-gradient(135deg, var(--background-secondary-color), var(--background-secondary-color));
     border: 1px solid rgba(--background-secondary-color, 0.1);
     box-shadow: 0 4px 6px rgba(--background-firstly-color, 0.5);
-    overflow: auto;
+    overflow: hidden;
 } /*setting a pretty background, border and aligning the media in the center*/
 
 #productImage {
     max-width: 100%;
-    max-height: 100%;
+    max-height: 80%;
+    width: auto;
+    height: auto;
     object-fit: contain;
     box-shadow: 0 4px 6px rgba(--background-secondary-color, 0.5);
     transition: transform 0.3s ease-in-out;
@@ -88,12 +90,13 @@ body {
     display: grid;
     grid-template-rows: auto 1fr auto;
     gap: 20px;
-}
+}/*divides the elements in the product detail container*/
+
 #owner-section{
     display: flex;
     gap: 10px;
     align-items: center;
-}
+}/*spaces the product name and follow button with a gap*/
 
 
 #product-name {
@@ -110,12 +113,23 @@ body {
     white-space: nowrap;
 }/*styling for the follow button*/
 
+.disabled-element{
+    pointer-events: none; 
+    opacity: 0.7;
+    cursor: default;
+}/*removes any new effects or transformations from hover for example of the element when disabled and make it look disabled*/
+
+button:disabled{
+    pointer-events: none;
+    transform: none;
+}/*removes any new effects or transformations and returns to the normal state the button when disabled*/
+
 .send-btn:hover, .follow-btn:hover {
     transform: scale(1.03);
     
 }/*change the size on hover*/
 
-.send-btn:active, .follow-btn:active {
+.send-btn:active, .follow-btn:active, .add-to-cart-btn:active {
     transform: scale(0.95);
     
 }/*change size when clicking it*/
@@ -193,7 +207,7 @@ body {
 }/*changes the color of all the stars in the left to the star you clicked included to yellow*/
 
 
-.add-to-cart {
+.add-to-cart-btn {
     background-color: var(--primary-color);
     color: white;
     justify-content: center;
@@ -202,10 +216,10 @@ body {
     font-weight: bold;
 }
 
-.add-to-cart:hover {
+.add-to-cart-btn:hover {
     background-color: var(--primary-color-darker);
     transform: scale(1.02);
     transform: translateY(-2px);
     transition: background-color 0.3s ease-in-out;
     transition: transform 0.2s ease-in-out;
-}
+} /* changes the size, place and colors on hover*/

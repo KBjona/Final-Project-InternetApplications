@@ -116,6 +116,11 @@ button {
 
 button:hover {
     opacity: 0.85;
+    transform: scale(1.03);
+}
+
+button:active {
+    transform: scale(0.95);
 }
 
 .file-upload {
@@ -129,9 +134,16 @@ button:hover {
     width: 100%;
 }
 
-.btn-submit {
+#submit-btn {
     background-color: var(--btn-secondary-bg);
     color: var(--btn-post-text);
+    margin-top: 5px;
+    padding: 14px;
+}
+
+#delete-btn {
+    background-color: red;
+    color: black;
     margin-top: 5px;
     padding: 14px;
 }
