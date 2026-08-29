@@ -11,4 +11,5 @@ router.post("/facebook", authController.facebookLogin); // redirects facebook lo
 router.post("/update-profile", authController.updateProfile); // redirects you to the update profile func
 router.get('/me', authController.getCurrentUser);
 router.post('/logout', authController.logout);
+router.delete('/delete-account', authController.delete_account); // go to delete function
 module.exports = router; // exports the router  

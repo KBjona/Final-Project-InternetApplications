@@ -304,6 +304,53 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   }
 
+  let isDeleteConfirmed = false;
+  let deleteTimer = null;
+
+  const deleteBtn = document.getElementById('delete-account-btn');
+
+  if (deleteBtn) { // if button clicked
+    deleteBtn.addEventListener('click', async () => {
+      if (!isDeleteConfirmed) {
+        isDeleteConfirmed = true;
+        deleteBtn.textContent = '⚠️ Click again to confirm deletion'; // change text for user to understand
+        deleteBtn.classList.remove('btn-outline-danger');
+        deleteBtn.classList.add('btn-danger');
+
+        deleteTimer = setTimeout(() => { // if no reclick after 4sec go back
+          isDeleteConfirmed = false;
+          deleteBtn.textContent = 'Delete Account';
+          deleteBtn.classList.remove('btn-danger');
+          deleteBtn.classList.add('btn-outline-danger');
+        }, 4000);
+
+      } else {
+        clearTimeout(deleteTimer);
+        deleteBtn.disabled = true;
+
+        try {
+          const response = await fetch('/api/auth/delete-account', { // try deleting account
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' }
+          });
+          const data = await response.json();
+          if (response.ok) {
+            window.location.href = ''; // Redirect to login page
+          } else {
+            console.error("Failed to delete acc");
+            isDeleteConfirmed = false;
+            deleteBtn.disabled = false;
+            deleteBtn.textContent = 'Delete Account';
+            deleteBtn.classList.remove('btn-danger');
+            deleteBtn.classList.add('btn-outline-danger');
+          }
+        } catch (err) {
+          console.error('Error deleting account:', err);
+          alert('Server error occurred while attempting to delete account.');
+        }
+      }
+    });
+  }
 });
 
 function openSettings() {

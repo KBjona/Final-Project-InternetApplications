@@ -213,11 +213,25 @@ exports.facebookLogin = async (req, res) => {
     }
 };
 
-exports.getCurrentUser = (req, res) => {
-    if (req.session && req.session.user) { //checks if user exists and is logged in
-        return res.json({ loggedIn: true, user: req.session.user }); // if yes return him
+exports.getCurrentUser = async (req, res) => {
+    if (!req.session?.user?.mail) {
+        return res.status(401).json({ loggedIn: false, message: "Not logged in" });
     }
-    return res.status(401).json({ loggedIn: false, message: "Not logged in" });
+
+    try {
+        const user = await User.findByMail(req.session.user.mail);
+        if (!user) {
+            return res.status(401).json({ loggedIn: false, message: "User not found" });
+        }
+
+        delete user.passwordHash;
+
+        return res.json({ loggedIn: true, user });
+    }
+     catch (err) {
+        console.error("getCurrentUser error:", err);
+        return res.status(500).json({ message: "Server error" });
+    }
 };
 
 exports.logout = (req, res) => { //LOGOUT function
@@ -233,7 +247,9 @@ exports.logout = (req, res) => { //LOGOUT function
 exports.updateProfile = async (req,res) => {
     if (!req.session || !req.session.user)
         return res.status(401).json({message: "not logged in"});
-
+    if (!req.session?.user?.mail) {
+        return res.status(401).json({ message: 'Unauthorized' });
+    }
     const {fname, lname, bday, password} = req.body;
     const mail = req.session.user.mail;
 
@@ -256,5 +272,33 @@ exports.updateProfile = async (req,res) => {
         res.status(500).json({ message: "Database update failed"});
     }
 
-
 }
+
+exports.delete_account = async (req, res) => {
+  if (!req.session?.user?.mail) { // check if user is logged in
+    return res.status(401).json({ message: 'You must be logged in.' });
+  }
+
+  const userMail = req.session.user.mail; // gets mail
+
+  try {
+    const result = await User.deleteUserByMail(userMail); // tried to delete
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ message: 'User account not found.' }); // if can't delete
+    }
+
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('Session destruction error:', err);
+        return res.status(500).json({ message: 'Account deleted, but session cleanup failed.' }); // show session error
+      }
+      res.clearCookie('connect.sid'); // disconnect cookies
+      return res.status(200).json({ message: 'Account deleted successfully.' });
+    });
+
+  } catch (err) {
+    console.error('Error deleting user:', err);
+    return res.status(500).json({ message: 'Internal server error.' });
+  }
+};

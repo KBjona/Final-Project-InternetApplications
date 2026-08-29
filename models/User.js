@@ -27,7 +27,9 @@ function createUser(userData) {
 function updateUserProfile(mail, updateData){
     return getDb().collection('users').updateOne({ mail }, {$set: updateData});
 }
-
+function deleteUserByMail(mail){
+    return getDb().collection('users').deleteOne({mail: mail});
+}
 
 module.exports = {
     findByMail,
@@ -36,5 +38,6 @@ module.exports = {
     findByFacebookId, 
     linkFacebookAccount, 
     createUser, 
-    updateUserProfile
+    updateUserProfile,
+    deleteUserByMail
  }; // export all the functions
