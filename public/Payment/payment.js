@@ -52,7 +52,7 @@ class Item {
 let mail = false;
 let sccn = '';
 let loaded_cc = false;
-const cc_regex = /^\d{13,19}$/;;
+const cc_regex = /^\d{13,19}$/;
 const cvv_regex = /^\d{3,4}$/;
 let cart_items = [];
 
@@ -60,11 +60,41 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('cart-search-input');
     if (searchInput) {
         searchInput.addEventListener('input', async (e) => {
-            const query = e.target.value.trim();
-            await load_items(query); 
+            await load_items(); // Let load_items grab the text and slider values automatically
+        });
+    }
+
+    // Slider for Price
+    const maxPrice = document.getElementById('maxPrice');
+    const priceVal = document.getElementById('priceVal');
+    if (maxPrice && priceVal) {
+        maxPrice.addEventListener('input', (e) => {
+            priceVal.textContent = `0$ - ${e.target.value}$`;
+        });
+    }
+
+    // Slider for Quantity
+    const maxQuantity = document.getElementById('max-Quantity');
+    const quantityVal = document.getElementById('quantityVal');
+    if (maxQuantity && quantityVal) {
+        maxQuantity.addEventListener('input', (e) => {
+            quantityVal.textContent = `0 - ${e.target.value}`;
+        });
+    }
+
+    // Slider for Length
+    const maxLength = document.getElementById('maxLength');
+    const lengthVal = document.getElementById('maxLengthVal');
+    if (maxLength && lengthVal) {
+        maxLength.addEventListener('input', (e) => {
+            lengthVal.textContent = `0 - ${e.target.value}`;
         });
     }
 });
+
+function triggerSearch() {
+    load_items();
+}
 
 function filterCartItems() {
     const searchInput = document.getElementById('cart-search-input');
@@ -99,7 +129,7 @@ async function validate_entrence() {
 
 }
 
-async function load_items(searchQuery = '') {
+async function load_items() {
     await validate_entrence();
     if (!mail) {
         await validate_entrence();
@@ -115,9 +145,22 @@ async function load_items(searchQuery = '') {
 
     if (!list || !t_price) { return};
 
-    const url = searchQuery 
-        ? `api/cart/items?search=${encodeURIComponent(searchQuery)}`
-        : 'api/cart/items';
+    const searchQuery = document.getElementById('cart-search-input')?.value.trim() || '';
+    const maxPrice = document.getElementById('maxPrice')?.value || '';
+    const maxQuantity = document.getElementById('max-Quantity')?.value || '';
+    const maxLength = document.getElementById('maxLength')?.value || '';
+
+    let url = 'api/cart/items';
+    const params = new URLSearchParams();
+
+    if (searchQuery) params.append('search', searchQuery);
+    if (maxPrice) params.append('maxPrice', maxPrice);
+    if (maxQuantity) params.append('maxQuantity', maxQuantity);
+    if (maxLength) params.append('maxLength', maxLength);
+
+    if (params.toString()) {
+        url += '?' + params.toString();
+    }
 
     const response = await fetch(url); // send a get request to start the whole load cart process
     const response_json = await response.json(); // stores the response

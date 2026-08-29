@@ -7,11 +7,15 @@ exports.load_items = async (req, res) => {
     }
     let mail = req.session.user.mail;
     let searchQuery = req.query.search;
+    let maxPrice = req.query.maxPrice;
+    let maxQuantity = req.query.maxQuantity;
+    let maxLength = req.query.maxLength;
 
     try {
-        if(searchQuery){
-            const items = await Cart.searchCartItems(mail, searchQuery);
-            return res.status(200).json({message: 'Empty Cart', items});
+        if(searchQuery || maxPrice || maxQuantity || maxLength){
+            const items = await Cart.searchCartItems(mail, {query: searchQuery, maxPrice, maxQuantity, maxLength});
+            
+            return res.status(200).json({message: 'Filtered Cart', items});
         }
 
 
