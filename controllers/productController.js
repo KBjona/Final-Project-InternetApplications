@@ -1,9 +1,9 @@
 const { session } = require('passport');
 const Product = require('../models/Product');
 const { Binary } = require('mongodb');
-const { getLocalWeather } = require('../services/weatherService');
+const { getCurrentSeason } = require('../services/weatherService');
 const User = require('../models/User');
-
+const { getDb } = require('../models/db');
 
 exports.create_store = async (req, res) => {
     let { parameters, image_base64, video_base64 } = req.body
@@ -188,28 +188,33 @@ exports.get_all_products = async (req, res) => {
 
 exports.search_products = async (req,res) => {
     try {
-        const {q = '', maxPrice, minDiscount ,minStars, useWeather} = req.query;
+        const {q = '', maxPrice, minDiscount ,minStars, useWeather, seasons, selectedSeasons} = req.query;
 
-        let currentWeatherCondition = null;
-        
-    if (useWeather === 'true' && req.session?.user?.mail) {
-      const user = await getDb().collection('users').findOne(
-        { mail: req.session.user.mail },
-        { projection: { latitude: 1, longitude: 1 } }
-      );
+        const rawSeasons = seasons || selectedSeasons || '';
+        const seasonsArray = typeof rawSeasons === 'string'
+        ? rawSeasons.split(',').filter(Boolean)
+        : Array.isArray(rawSeasons) ? rawSeasons : [];
 
-      if (user?.latitude && user?.longitude) {
-        const weatherData = await getLocalWeather(user.latitude, user.longitude);
-        currentWeatherCondition = weatherData?.conditionTag || null;
-      }
-    }
+        if (useWeather === 'true' && req.session?.user?.mail) {
+        const user = await getDb().collection('users').findOne(
+            { mail: req.session.user.mail },
+            { projection: { latitude: 1, longitude: 1 } }
+        );
+
+        if (user?.latitude && user?.longitude) {
+            const detectedSeason = await getCurrentSeason(user.latitude, user.longitude);
+            if (detectedSeason && !seasonsArray.includes(detectedSeason)) {
+            seasonsArray.push(detectedSeason);
+            }
+        }
+        }
 
         const filters = {
             query: q,
             maxPrice: maxPrice ? Number(maxPrice) : null,
             minDiscount: minDiscount ? Number(minDiscount) : null,
             minStars: minStars ? Number(minStars) : null,
-            weatherCondition: currentWeatherCondition
+            seasons: seasonsArray
         };
 
         const groupedResults = await Product.searchProductsGrouped(filters);

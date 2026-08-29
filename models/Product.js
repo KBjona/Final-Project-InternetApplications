@@ -48,7 +48,7 @@ function CreateStoreParameters(store_owner,params,img, vid){
     });
 }
 
-async function searchProductsGrouped({ query = '', maxPrice = 1000, minDiscount = 0, minStars = 0, weatherCondition = null } = {}) {
+async function searchProductsGrouped({ query = '', maxPrice = 1000, minDiscount = 0, minStars = 0, weatherCondition = null, seasons = [] } = {}) {
   const cleanQuery = query ? String(query).trim() : '';
   const matchConditions = [];
 
@@ -89,13 +89,11 @@ if (Number(minStars) > 0) {
      });
    }
 
-  if (weatherCondition) {
+  if (seasons.length > 0) {
     matchConditions.push({
-      $or: [
-        { 'parameters.weather-tag': { $regex: weatherCondition, $options: 'i' } },
-        { 'parameters.suitable-weather': { $regex: weatherCondition, $options: 'i' } },
-        { weatherTags: weatherCondition }
-      ]
+      $or: seasons.map(season => ({
+        'parameters.product-weather': { $regex: season, $options: 'i' }
+      }))
     });
   }
 

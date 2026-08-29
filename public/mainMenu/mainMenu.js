@@ -366,10 +366,10 @@ async function dbSearch() {
   if (document.getElementById("stars1")?.checked) minStars = 1;
 
   const selectedSeasons = [];
-  if (document.getElementById("spring")?.checked) selectedSeasons.push("spring");
-  if (document.getElementById("summer")?.checked) selectedSeasons.push("summer");
-  if (document.getElementById("fall")?.checked) selectedSeasons.push("fall");
-  if (document.getElementById("winter")?.checked) selectedSeasons.push("winter");
+  if (document.getElementById("Spring")?.checked) selectedSeasons.push("Warm");
+  if (document.getElementById("Summer")?.checked) selectedSeasons.push("Hot");
+  if (document.getElementById("Fall")?.checked) selectedSeasons.push("Cool");
+  if (document.getElementById("Winter")?.checked) selectedSeasons.push("Cold");
   const weatherChecked = document.getElementById("ownWeather")?.checked || false;
 
 
@@ -378,7 +378,8 @@ async function dbSearch() {
     maxPrice: maxPrice,
     minDiscount: minDiscount,
     minStars: minStars,
-    useWeather: weatherChecked
+    useWeather: weatherChecked,
+    selectedSeasons: selectedSeasons.join(',')
   });
 
   try {
