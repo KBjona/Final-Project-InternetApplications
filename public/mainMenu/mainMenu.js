@@ -16,10 +16,14 @@ async function load_mail() {
   const emailInput = document.getElementById('email');
   const fnameInput = document.getElementById('fname');
   const lnameInput = document.getElementById('lname');
+  const long = document.getElementById("long");
+  const lat = document.getElementById("lat")
 
   if (emailInput) emailInput.value = data.user.mail || '';
   if (fnameInput) fnameInput.value = data.user.fname || '';
   if (lnameInput) lnameInput.value = data.user.lname || '';
+  if (long) long.value = data.user.longitude || '';
+  if (lat) lat.value = data.user.latitude || '';
 
   await fetchDbCart();
 }
@@ -92,11 +96,16 @@ document.addEventListener('DOMContentLoaded', () => {
     accountForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
+      const longInput = document.getElementById('long')?.value;
+      const latInput = document.getElementById('lat')?.value;
+
       const payload = {
         fname: document.getElementById('fname')?.value,
         lname: document.getElementById('lname')?.value,
         bday: document.getElementById('bday')?.value,
         password: document.getElementById('pass')?.value,
+        longitude: longInput !== '' && longInput !== undefined ? parseFloat(longInput) : null,
+        latitude: latInput !== '' && latInput !== undefined ? parseFloat(latInput) : null,
       };
 
       try {

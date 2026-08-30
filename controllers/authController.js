@@ -250,7 +250,7 @@ exports.updateProfile = async (req,res) => {
     if (!req.session?.user?.mail) {
         return res.status(401).json({ message: 'Unauthorized' });
     }
-    const {fname, lname, bday, password} = req.body;
+    const {fname, lname, bday, password, longitude, latitude} = req.body;
     const mail = req.session.user.mail;
 
     try{
@@ -259,6 +259,12 @@ exports.updateProfile = async (req,res) => {
         if (lname) updateData.lname = lname;
         if (bday) updateData.bday = bday;
         if (password) updateData.passwordHash = await bcrypt.hash(password, 10);
+        if (longitude !== undefined && longitude !== null && longitude !== '') {
+            updateData.longitude = Number(longitude);
+        }
+        if (latitude !== undefined && latitude !== null && latitude !== '') {
+            updateData.latitude = Number(latitude);
+        }
 
         await User.updateUserProfile(mail, updateData);
 
