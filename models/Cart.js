@@ -19,7 +19,7 @@ async function IncrementCartItem(user_mail, p_id, p_name, p_cost) {
     return await getDb().collection('carts').updateOne({ mail: user_mail }, { $push: { items: {
       _id: p_id,
       name: p_name,
-      cost: p_cost,
+      price: p_cost,
       quantity: 1
     } } }, { upsert: true });
   }
@@ -36,7 +36,7 @@ const { query, maxPrice, maxQuantity, maxLength } = filters;
   }
 
   if (maxPrice !== undefined && maxPrice !== '') {
-    itemMatch['items.cost'] = { $lte: Number(maxPrice) }; // search price
+    itemMatch['items.price'] = { $lte: Number(maxPrice) }; // search price
   }
 
   if (maxQuantity !== undefined && maxQuantity !== '') {

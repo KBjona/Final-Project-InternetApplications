@@ -37,10 +37,8 @@ exports.delete_items = async (req, res) => {
     let mail = req.session.user.mail;
     try {
         const result = await Cart.DeleteItemsByMail(mail);
-        if (result.matchedCount === 0) { //user had no cart
+        if (result.deletedCount === 0) { //user had no cart
             return res.status(200).json({ message: 'No user found with that email address' });
-        } else if (result.modifiedCount === 0) {//the items field didn't exist or was already deleted
-            return res.status(200).json({ message: 'User found, but the field did not exist or was already removed' });
         }
         res.status(200).json({ message: 'Cart emptied successfully' });
     } catch (err) { // server error
