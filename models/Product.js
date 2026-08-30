@@ -31,7 +31,7 @@ function GetStoreOwner(id){
 }
 
 function findAllProducts() {
-    return getDb().collection('products').find({},{parameters: 1,productImage: 1, _id: 0}).toArray(); // returns all the products
+    return getDb().collection('products').find({},{parameters: 1,productImage: 1, _id: 1}).toArray(); // returns all the products
 }
 
 function AddReview(id, rating) {

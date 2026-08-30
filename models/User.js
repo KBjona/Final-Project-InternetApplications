@@ -2,7 +2,6 @@ const { getDb } = require('./db'); // getDb() gives us the "nozama" database you
 
 // Looks for one user with this exact username.
 function findByMail(mail) {
-    console.log("searched for user" + mail);
     return getDb().collection('users').findOne({ mail });
 }
 

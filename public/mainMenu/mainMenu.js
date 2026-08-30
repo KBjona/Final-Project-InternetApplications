@@ -69,7 +69,7 @@ async function syncCartToDb() {
     await fetch('/api/cart/update', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mail, items: dbItems })
+      body: JSON.stringify({ items: dbItems })
     });
   }
   catch (err) {
@@ -78,12 +78,13 @@ async function syncCartToDb() {
 }
 
 function addToCart(id, name, price) {
-  const existing = cart.find(item => item.id === id || item.name === name);
+  const safe_price = Number(price) || 0;
+  const existing = cart.find(item => item.id === id);
 
   if (existing) {
     existing.qty += 1;
   } else {
-    cart.push({ id, name, price, qty: 1 });
+    cart.push({ id, name, price: safe_price, qty: 1 });
   }
 
   updateCartUI();
@@ -185,9 +186,10 @@ function renderProducts(products) {
   products.forEach(product => {
     const card = document.createElement('div');
     card.className = 'product-card';
-
-    const priceVal = product.parameters['product-price'] ?? 0;
-    const priceFormatted = Number(priceVal).toFixed(2);
+    const raw_price = (Number(product.parameters['product-price'])) || 0;
+    const discount = Number(((product.parameters['product-discount'])/100).toFixed(2)) || 0;
+    const priceVal = raw_price*(1-discount) ;
+    const priceFormatted = (priceVal).toFixed(2);
 
     const numRatings = Number(product.num_ratings ?? product.parameters?.['num_ratings'] ?? 0);
     const sumRatings = Number(product.sum_ratings ?? product.parameters?.['sum_ratings'] ?? 0);
@@ -258,7 +260,7 @@ function updateCartUI() {
       li.innerHTML = `
         <div>
           <h6 class="my-0">${item.name}</h6>
-          <small class="text-muted">$${item.price.toFixed(2)} x ${item.qty}</small>
+          <small class="text-muted">$${Number(item.price).toFixed(2)} x ${item.qty}</small>
         </div>
         <span class="fw-bold">$${(item.price * item.qty).toFixed(2)}</span>
       `;

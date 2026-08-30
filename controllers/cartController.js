@@ -40,14 +40,14 @@ exports.delete_items = async (req, res) => {
 }
 
 exports.update_items_quantities = async (req, res) => {
-    let {mail, items } = req.body; // get the email and items from the request's body
+    let { items } = req.body; // get the email and items from the request's body
     if (!(req.session?.user?.mail)) { //if there is no user connected
         return res.status(400).json({ message: 'Log in please' });
     }
     if (!items && items != []) { //if there is no email or null/ nonexistent items ([] is okay)
         return res.status(400).json({ message: 'items has to exist' });
     }
-    let _mail = req.session.user.mail;
+    let mail = req.session.user.mail;
     try {
         items = items.filter(item => item.quantity > 0);
         const result = await Cart.UpdateItemsByMail(mail, items);
