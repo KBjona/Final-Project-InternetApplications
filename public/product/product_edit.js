@@ -1,6 +1,9 @@
-let parameters = { "product-name": "", "product-description": "", "product-price": "", "product-stock": "", "product-discount": 0, "background-firstly-color": "#ffffff", "background-secondary-color": "#cccccc", "name-color": "#000000", "description-color": "#000000" };
+let parameters = { "product-name": "", "product-description": "", "product-price": 0, "product-stock": 0, "product-discount": 0, "product-weather": null, "background-firstly-color": "#ffffff", "background-secondary-color": "#cccccc", "name-color": "#000000", "description-color": "#000000" };
 let editing = window.location.pathname != '/product/create';
 let store_id = null;
+let rating = null;
+let facebook_page_id = null;
+let facebook_page_access_token = null;
 
 function get_store_id() { //extracting the store id from the url
     if (editing) {
@@ -19,27 +22,38 @@ async function validate_owner() { //to check if the user is the owner of the sto
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ _id: store_id })
     });
+    if(!response.ok){
+        return false;
+    }
+
     const data = await response.json(); //get the data of the response from the server
+    
     if (!data.is_owner) { // if the user is not the owner of the store, redirect to the menu page
-        //add popup
+
         return false;
     }
     return true;
 }
 
 async function load_store() {  // send a request to the server to get the parameters using the store id
-    if (!editing) {
-        document.title = 'Creating a product';
+    if (!editing) { //if we are not editing we have nothing to load
+        document.title = 'Creating a store';
         return;
     }
-    else if (!(await validate_owner()) && editing) {
+    else if (!(await validate_owner()) && editing) { // if we are trying to edit a product that isnt ours
         window.location.href = '/menu/';
         return;
     }
-    if(store_id == null){
+    if(store_id == null){ //if we couldnt get the store id 
+        window.location.href = '/menu/';
         return;
     }
-    document.title = `Editing Product`;
+    //if we are editing our store
+    document.title = `Editing store`;
+    let delete_btn = document.getElementById("delete-btn");
+    if (delete_btn){
+        delete_btn.classList.remove("hidden");
+    }
     const response = await fetch('/api/product/load', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -48,21 +62,61 @@ async function load_store() {  // send a request to the server to get the parame
     const data = await response.json(); //get the data of the response from the server
     if (!response.ok) { //if we couldnt get the parameters
         window.location.href = '/menu/';
-        //add popup
+
         return;
     }
     else { //if the response is ok 
+        rating = data.rating;
+        const pie_graph_text = document.getElementById("pie-graph-text");
+        if(pie_graph_text){
+            pie_graph_text.innerHTML += " "+rating.toFixed(2); 
+        }
         for (const key in parameters) {
             if (data.parameters.hasOwnProperty(key)) { // if the key exists in the data, update the parameters object with the value from the data
                 parameters[key] = data.parameters[key];
             }
+            if(key === "product-weather" && parameters[key]){
+                const weather_to_check = document.getElementById(parameters[key]);
+                if(weather_to_check){
+                    weather_to_check.checked = true;
+                }
+                continue;
+            }
             const c_param = document.getElementById(key); //to update the value of the input fields with the values from the parameters object
             if (c_param) { //if the input field exists and is not a file input, update the value of the input field with the value from the parameters object
                 c_param.value = parameters[key];
+                if(key === "product-price" || key === "product-discount"){ // so you cant change the price or discount to match the vibe of this app which is the same price always
+                    c_param.disabled = true;
+                }
             }
         }
+        const bar_graph_text = document.getElementById("bar-graph-text");
+        if(bar_graph_text){
+            bar_graph_text.innerText += " "+(Number(100-parameters["product-discount"]) / 100).toFixed(2);
+        }
+        create_charts();
     }
     return;
+}
+
+async function delete_store(element) {
+    element.disabled = true;
+    if(!editing) {
+        return;
+    }
+
+    const response = await fetch('/api/product/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ _id: store_id })
+    });
+
+    const data = await response.json(); //get the data of the response from the server
+    if (response.ok) { //if we couldnt get the parameters
+        window.location.href = '/menu/';
+
+        return;
+    }
 }
 
 window.onload = load_store; //to get the store id and parameters when the page is loaded
@@ -84,13 +138,28 @@ function upload_file(id) { //to use the file input indirectly when clicking on t
 }
 
 function validate_data() { //to validate the data before sending it to the server   
-    if (parameters["product-name"].length < 1 || parameters["product-name"].length > 100) { return false }
-    if (parameters["product-description"].length < 1 || parameters["product-description"].length > 500) { return false }
-    if (isNaN(parameters["product-price"]) || parameters["product-price"] < 0 || parameters["product-price"] > 1000) { return false }
-    if (isNaN(parameters["product-stock"]) || parameters["product-stock"] < 0 || parameters["product-stock"] > 10000) { return false }
-    if (isNaN(parameters["product-discount"]) || parameters["product-discount"] < 0 || parameters["product-discount"] > 100) { return false }
-    if(!editing && !(document.getElementById('product-image').files[0])) {return false}
-    return true;
+    if (parameters["product-name"].length < 1 || parameters["product-name"].length > 100) { return false; }
+    if (parameters["product-description"].length < 1 || parameters["product-description"].length > 500) { return false; }
+    if (isNaN(parameters["product-price"]) || parameters["product-price"] < 0 || parameters["product-price"] > 1000) { return false; }
+    if (isNaN(parameters["product-stock"]) || parameters["product-stock"] < 0 || parameters["product-stock"] > 1000000000) { return false; }
+    if (isNaN(parameters["product-discount"]) || parameters["product-discount"] <= 0 || parameters["product-discount"] >= 100) { return false; }
+    if (!(document.querySelector('#weather-picker input[type="radio"]:checked'))) { return false; }
+    if (!editing && !(document.getElementById('product-image')?.files[0])) {return false; }
+    const img = document.getElementById("product-image");
+    if(img.files[0]){
+        const img_file = img.files[0];
+        if(img_file.size > 1024 * 1024){
+            return false;
+        }
+    }
+    const vid = document.getElementById("product-video");
+    if(vid.files[0]){
+        const vid_file = vid.files[0];
+        if(vid_file.size > 6 * 1024 * 1024){
+            return false;
+        }
+    }
+    return true; //add pop ups to each check
 }
 
 function file_to_base64(file) { //to convert the file to base64 format
@@ -100,6 +169,42 @@ function file_to_base64(file) { //to convert the file to base64 format
         reader.readAsDataURL(file);
         reader.onload = () => resolve(reader.result);
     });
+}
+
+function create_charts(){
+    if(!editing) { return; }
+    
+    if( rating == null) { return; }
+    const pie_chart_data = [ {label: "Rating", value: rating, color: "#32a852" }, {label: "Gap", value: 5-rating, color: "#1f96d1" } ]; //sets the elements we will use for the pie chart
+
+    const pie_container = document.getElementById("pie-chart");
+    if(pie_container) pie_container.innerHTML = ""; //clearing the div to add the graph cleanly
+    const bar_container = document.getElementById("bar-chart");
+    if(bar_container) bar_container.innerHTML = ""; //clearing the div to add the graph cleanly
+
+    const base_size = 300; //initializing the sizes
+    const bar_height = 40;
+    const pie_radius = base_size / 2;
+
+    const pie_svg = d3.select("#pie-chart").append("svg").attr("viewBox", `0 0 ${base_size} ${base_size}`).attr("preserveAspectRatio", "xMidYMid meet").style("width","100%").style("height","100%").style("max-height", "150px").append("g").attr("transform", `translate(${base_size/2},${base_size/2})`); //creating the svg - the vector for the pie chart
+
+    const pie_generator = d3.pie().value(d => d.value).sort(null);
+    const arc_generator = d3.arc().innerRadius(pie_radius*0.3).outerRadius(pie_radius); //the drawing generator
+
+    const pie_data = pie_generator(pie_chart_data);
+
+    pie_svg.selectAll("path").data(pie_data).join("path").attr("d",arc_generator).attr("fill", d => d.data.color); //creating the pie chart
+
+
+    const bar_svg = d3.select("#bar-chart").append("svg").attr("viewBox", `0 0 ${base_size} ${bar_height}`).attr("preserveAspectRatio", "xMidYMid meet").style("width","100%").style("height","100%").style("max-height", "150px"); //creating the svg - the vector for the bar chart
+
+    const original_price = parseFloat(parameters["product-price"]) || 0; //calculating the prices
+    const discount = parseFloat(parameters["product-discount"]) || 0;
+    const new_price = original_price*(1-discount/100);
+    const ratio = original_price > 0 ? Math.min(new_price/original_price, 1) : 0;
+
+    bar_svg.append("rect").attr("x",0).attr("y",0).attr("width",base_size).attr("height",bar_height).attr("rx",8).attr("fill", "#1f96d1"); //adding the full price rectangle
+    bar_svg.append("rect").attr("x",0).attr("y",0).attr("width",base_size*ratio).attr("height",bar_height).attr("rx",8).attr("fill", "#32a852"); //adding the new price rectangle
 }
 
 const form = document.querySelector('#form');//to get the form element from the html
@@ -130,7 +235,7 @@ form.addEventListener('submit', async function (event) {
     parameters = { ...parameters, ...Formdata }; //merges the parameters object with the form data object
 
     if (!validate_data()) { //to validate the data before sending it to the server
-        //add popup
+
         return;
     }
 
@@ -148,11 +253,54 @@ form.addEventListener('submit', async function (event) {
     let data = await response.json();
     if (response.ok) { //if the store saved successfully redirect to the menu page
         window.location.href = '/menu/';
-        //add popup
+
     }
     else {
-        //add popup
+
         return;
     }
     return;
 });
+
+async function create_facebook_ad() {
+    const img = document.getElementById("facebook-img"); //getting the elements
+    const message = document.getElementById("facebook-msg");
+    if(!img || !message) return;
+
+    let image_base64 = null;
+    if(img.files[0]){ //converts the image file to base64
+        image_base64 = await file_to_base64(img.files[0]);
+    }
+
+    const response = await fetch('/api/auth/create-ad', { //sends a post request to the controller and there it sends a post request to facebook api
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({message: message.value, image_base64: image_base64})
+    });
+
+    let data = await response.json();
+    if (response.ok) { //if the store saved successfully redirect to the menu page
+        window.location.href = '/menu/';
+
+    }
+    else {
+
+        return;
+    }
+    return;
+}
+
+function openFacebookModal() { 
+    const modalElement = document.getElementById('facebookModal'); //opens the modal
+    const modal = new bootstrap.Modal(modalElement);
+    modal.show();
+}
+
+function showSelectedFileName(input) {
+    const fileNameDisplay = document.getElementById('facebook-file-name'); //shows the file selected for the ad
+    if (input.files && input.files[0]) {
+        fileNameDisplay.textContent = `Selected: ${input.files[0].name}`;
+    } else {
+        fileNameDisplay.textContent = '';
+    }
+}

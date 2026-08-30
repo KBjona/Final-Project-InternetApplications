@@ -22,8 +22,12 @@ function UpdateStoreVideo(id,vid){
     return getDb().collection('products').updateOne({_id: new ObjectId(id)},{ $set: { productVideo: vid }}); //updates the store video
 }
 
-function GetStoreParameters(id,img=0,vid=0,rating=0){
-    return getDb().collection('products').findOne({_id: new ObjectId(id)},{parameters: 1, productImage: img, productVideo: vid, sum_rating: rating, num_ratings: rating, _id: 0}); //gets the store parameters
+function DeleteStore(id){
+    return getDb().collection('products').deleteOne({_id: new ObjectId(id)}); //updates the store image
+}
+
+function GetStoreParameters(id,img=0,vid=0,own=0){
+    return getDb().collection('products').findOne({_id: new ObjectId(id)},{parameters: 1, productImage: img, productVideo: vid, sum_ratings: 1, num_ratings: 1, owner: own, _id: 0}); //gets the store parameters
 }
 
 function GetStoreOwner(id){
@@ -35,16 +39,7 @@ function findAllProducts() {
 }
 
 function AddReview(id, rating) {
-    return getDb().collection('products').updateOne({_id: new ObjectId(id)}, {$inc: { sum_rating: rating, num_ratings: 1 }}, {upsert: true}); // adds a review to the product
-}
-
-function CreateStoreParameters(store_owner,params,img, vid){
-    return getDb().collection('products').insertOne({
-        owner: store_owner,
-        parameters: params,
-        productImage: img,
-        productVideo: vid || null
-    });
+    return getDb().collection('products').updateOne({_id: new ObjectId(id)}, {$inc: { sum_ratings: rating, num_ratings: 1 }}, {upsert: true}); // adds a review to the product
 }
 
 async function searchProductsGrouped({ query = '', maxPrice = 1000, minDiscount = 0, minStars = 0 } = {}) {
@@ -104,4 +99,4 @@ async function searchProductsGrouped({ query = '', maxPrice = 1000, minDiscount 
   return await getDb().collection('products').aggregate(pipeline).toArray();
 }
 
-module.exports = {UpdateStoreParameters, GetStoreParameters, GetStoreOwner, findAllProducts, CreateStoreParameters, searchProductsGrouped};
+module.exports = {UpdateStoreParameters, UpdateStoreImage, UpdateStoreVideo, DeleteStore, GetStoreParameters, GetStoreOwner, findAllProducts, CreateStoreParameters, searchProductsGrouped, AddReview};

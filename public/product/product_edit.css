@@ -5,7 +5,7 @@
     margin: 0;
     padding: 0;
     font-family: system-ui, sans-serif;
-}
+}/*settings general paddings margins and font and box sizing so the border will be in the box for all the elements*/
 
 body {
     background-color: var(--secondary-color);
@@ -15,9 +15,9 @@ body {
     align-items: center;
     min-height: 100vh;
     padding: 20px;
-}
+    overflow: auto;
+}/*aligning the container in the middle of the page and setting the background color*/
 
-/* Outer Main Container (Dark) */
 .product-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -27,11 +27,22 @@ body {
     border-radius: 40px;
     padding: 25px;
     width: 100%;
-    max-width: 900px;
-    height: 600px;
-}
+    height: 85vh;
+    max-width: 1000px;
+    min-height: 500px; 
+}/*dividing the elements inside the container evenly with dynamic height and width and pretty border for the container*/
 
-/* Left Section Outer Box (Dark) */
+@media (max-width: 700px){
+    .product-container{
+        grid-template-columns: 1fr;
+    }
+    #analytics-section{
+        display: none;
+    }
+} /*if the device is too thin it will only show the editing section*/
+
+
+
 #editing-section {
     background-color: var(--bg-container);
     border: 3px solid var(--border-color);
@@ -39,18 +50,18 @@ body {
     padding: 20px;
     overflow-y: auto;
     height: 100%;
-}
+}/*setting the color border and height of the editing section*/
 
-#editing-section::-webkit-scrollbar {
+#editing-section::-webkit-scrollbar, #analytics-section::-webkit-scrollbar {
     width: 6px;
 }/*sets the scrollbar width*/
 
-#editing-section::-webkit-scrollbar-thumb {
+#editing-section::-webkit-scrollbar-thumb, #analytics-section::-webkit-scrollbar-thumb {
     background-color: var(--btn-secondary-bg);
     border-radius: 7px;
 }/*sets the scrollbar thumb's color and radius*/
 
-#editing-section::-webkit-scrollbar-track {
+#editing-section::-webkit-scrollbar-track, #analytics-section::-webkit-scrollbar-track {
     background: none;
 }/*makes the scrollbar track's invisible*/
 
@@ -58,33 +69,32 @@ body {
     display: flex;
     align-items: top;
     justify-content: center;
-}
+}/*setting the title in the middle*/
 
 #edit-title{
     font-family: sans-serif;
     color: var(--text-main);
     font-size: x-large;
-}
+}/*setting the font attributes for the title*/
 
-/* Form Layout (Stacked) */
 form {
     display: flex;
     flex-direction: column;
     gap: 16px;
-}
+}/*the inputs form one on top of the other*/
 
 .field-group {
     display: flex;
     flex-direction: column;
     gap: 6px;
-}
+}/*stacking the inputs in the same field group one on top of the other*/
 
 label {
     font-size: 0.85rem;
     font-weight: 600;
     color: var(--text-main);
     letter-spacing: 0.5px;
-}
+}/*setting the labels attributes*/
 
 /* Inputs & Textarea */
 input[type="text"], 
@@ -97,14 +107,14 @@ textarea {
     border: 2px solid var(--border-color);
     border-radius: 10px;
     outline: none;
-}
+}/*setting the color background and border of text inputs numbers and text area*/
 
 textarea {
-    resize: vertical;
+    resize: none;
     min-height: 80px;
-}
+}/*setting the height and no resize*/
 
-/* Buttons */
+
 button {
     cursor: pointer;
     padding: 12px;
@@ -112,35 +122,41 @@ button {
     border-radius: 10px;
     font-weight: bold;
     transition: opacity 0.2s;
-}
+}/*setting the cursor type border font and transition duration for the buttons*/
 
 button:hover {
     opacity: 0.85;
-}
+    transform: scale(1.03);
+}/*scaling up on hover*/
+
+button:active {
+    transform: scale(0.95);
+}/*scaling down on click*/
 
 .file-upload {
     width: 100%;
     margin-bottom: 6px;
-}
+}/*setting the rules for the files input divs*/
 
-.btn-secondary {
-    background-color: var(--secondary-color);
-    color: var(--text-main);
-    width: 100%;
-}
-
-.btn-submit {
+#submit-btn {
     background-color: var(--btn-secondary-bg);
     color: var(--btn-post-text);
     margin-top: 5px;
     padding: 14px;
-}
+}/*setting the colors margin top and padding for the submit button*/
+
+#delete-btn {
+    background-color: red;
+    color: black;
+    margin-top: 5px;
+    padding: 14px;
+}/*setting the colors margin top and padding for the delete button*/
+
 
 .hidden {
     display: none;
-}
+}/*general class to hide elements*/
 
-/* Stacked Color Pickers Section */
 .color-pickers {
     display: flex;
     flex-direction: column;
@@ -148,11 +164,11 @@ button:hover {
     margin-top: 10px;
     border-top: 2px solid var(--border-color);
     padding-top: 15px;
-}
+}/*making the color pickings one on top of the other with gaps margins paddings and borders*/
 
 .color-field {
     width: 100%;
-}
+}/*making the colors inputs divs fill the whole width*/
 
 input[type="color"] {
     width: 100%;
@@ -162,20 +178,62 @@ input[type="color"] {
     cursor: pointer;
     background-color: var(--bg-main);
     padding: 4px;
-}
+}/*setting the color inputs sizes borders colors cursor and paddings*/
 
-/* Right Section Containers (Dark) */
 .right-section {
     display: flex;
     flex-direction: column;
     gap: 20px;
     height: 100%;
-}
+}/*making the right section elements stack one on top of the other*/
 
-.graph-placeholder {
+#analytics-section{
+    height: 100%;
+    overflow-y: auto;
+}/*making the anlytics section take the full height*/
+
+#graphs-section{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: 90%;
+    justify-content: space-between;
+}/*making the graphs take 90% of the height with a space between*/
+
+.graph {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     flex: 1;
     background-color: var(--bg-container);
-    border: 3px solid var(--border-color);
-    border-radius: 30px;
+    border: 3px, solid, var(--border-color);
+    border-radius: 20px;
+    padding: 10px;
+    height: 50%;
     width: 100%;
-}
+    margin: 0;
+}/*setting the dimensions of the graphs divs and aligning the text and graph itself one on top of the other in the center, setting the background color and border color*/
+
+#pie-chart, #bar-chart {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}/*ensures the graphs content themselves in the center and fill the whole width*/
+
+#pie-graph-text, #bar-graph-text{
+    color: #32a852;
+    font-weight: bold;
+}/*setting the pie and bar graphs' text green and bold*/
+
+
+#FacebookShare{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}/*making the facebook div fit the whole width and the content in the middle*/
+
+#FacebookShare button{
+    width: 90%;
+}/*making the button fit the whole width*/

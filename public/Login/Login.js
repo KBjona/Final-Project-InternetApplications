@@ -161,7 +161,7 @@ function loginWithFacebook(){
         else{
             console.log('User cancelled login or did not fully authorize.');
         }
-    }, { scope: 'public_profile,email' }); // request profile and email access
+    }, { scope: 'public_profile, email, pages_show_list, pages_manage_posts, pages_read_engagement' }); // request profile and email access
 }
 
 // Sends the token to the Express server for verification and database lookup
