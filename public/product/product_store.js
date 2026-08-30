@@ -20,7 +20,7 @@ function toggleMedia() {
     const media_btn = document.getElementById("media-btn");
 
     if (!img || !vid || !media_btn) {
-        //add popup
+
         return;
     }
 
@@ -42,7 +42,7 @@ function togglefollowing() {
     const follow_btn = document.getElementById("follow-owner-btn");
 
     if (!follow_btn) {
-        //add popup
+
         return;
     }
 
@@ -58,22 +58,50 @@ function togglefollowing() {
 }
 
 async function check_follow_state() {
-    const follow_btn = document.getElementById("follow-owner-btn");
-    if(!follow_btn || !owner_id) return;
-    const response = await fetch('/api/auth/check-follow', {
+    const follow_btn = document.getElementById("follow-owner-btn"); 
+    if(!follow_btn || !owner_id) return; // if we couldnt get the follow button or the owner id we cant follow or unfollow
+
+    const response = await fetch('/api/auth/check-follow', { // sends a post request to check whether the user already follows or doesn't follow the owner
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ owner: owner_id })
     });
+
     const data = await response.json();
     if (!response.ok) { //if we couldnt see if the user follows or not
-        //add popup
+
         return;
     }
     follow_btn.disabled = false;
-    if (data.follow == 1) {
+    if (data.follow == 1) { // if the user already follows this owner
         togglefollowing();
     }
+}
+
+async function load_map() {
+    const response = await fetch('/api/auth/location', { //sends a post request to get the owner's location
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ owner: owner_id })
+    });
+
+    if (!response.ok) { //if we couldnt get the location
+        return;
+    }
+    const data = await response.json();
+
+    //getting the owner's latitude and longitude
+    const lat = data.latitude;
+    const long = data.longitude;
+
+    const map = L.map('map').setView([lat, long], 12);//centers the map on the location we got and zooms 12
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; OpenStreetMap'}).addTo(map); //adds the visual location itself to the map
+    L.marker([lat, long]).addTo(map); //marks the specific location in the map
+
+
+
+
+    
 }
 
 async function load_store() {  // send a request to the server to get the parameters using the store id
@@ -87,7 +115,7 @@ async function load_store() {  // send a request to the server to get the parame
     const data = await response.json(); //get the data of the response from the server
     if (!response.ok) { //if we couldnt get the parameters
         window.location.href = '/menu/';
-        //add popup
+
         return;
     }
     else { //if the response is ok 
@@ -129,7 +157,7 @@ async function load_store() {  // send a request to the server to get the parame
             const ctx = img_canvas.getContext("2d");
             const img = new Image();
 
-            img.onload = function () {
+            img.onload = function () { //setting the canvas size
                 img_canvas.width = img.width;
                 img_canvas.height = img.height;
                 ctx.drawImage(img, 0, 0);
@@ -191,9 +219,18 @@ async function send_review(event) { //send the review to the server
     });
     const data = await response.json();
     if (!response.ok) { //if we couldnt send the review
-        //add popup
+
         event.disabled = false;
         return;
+    }
+
+    //makes the send button and stars disabled after sending the rating
+    event.innerText = "✓ Sent"; 
+    event.classList.add("disabled-element");
+
+    const stars_container = document.querySelector('.stars');
+    if (stars_container){
+        stars_container.classList.add("disabled-element");
     }
 }
 
@@ -211,7 +248,7 @@ async function add_to_cart(event) { //send the request to the server to add the 
     });
     const data = await response.json();
     if (!response.ok) { //if we couldnt add the product to the cart
-        //add popup
+
         event.disabled = false;
         return;
     }
@@ -219,11 +256,11 @@ async function add_to_cart(event) { //send the request to the server to add the 
 }
 
 function check_or_uncheck(element, star_number) { // to check or uncheck the star rating based on the user's selection
-    if (review === star_number) {
+    if (review === star_number) { //if he clicked on the same star again he wants to remove it
         review = null;
         element.checked = false;
     }
-    else {
+    else { // he wants to change the stars amount
         review = star_number;
 
     }
@@ -233,20 +270,20 @@ async function follow_or_unfollow(event) {
     if (!owner_id) { return; }
     event.disabled = true;
 
-    const fetch_address = !is_following ? '/api/auth/follow' : '/api/auth/unfollow';
+    const fetch_address = !is_following ? '/api/auth/follow' : '/api/auth/unfollow'; // to determinate if to follow or not to follow
 
-    const response = await fetch(fetch_address, {
+    const response = await fetch(fetch_address, { //sends a post request to follow the owner
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ owner: owner_id })
     });
 
     if (!response.ok) { //if we couldnt follow or unfollow
-        //add popup
+
         event.disabled = false;
         return;
     }
-    togglefollowing();
+    togglefollowing(); // change the button ui
     event.disabled = false;
 
 }

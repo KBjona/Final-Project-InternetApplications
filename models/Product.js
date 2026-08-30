@@ -23,12 +23,12 @@ function UpdateStoreVideo(id,vid){
     return getDb().collection('products').updateOne({_id: new ObjectId(id)},{ $set: { productVideo: vid }}); //updates the store video
 }
 
-function GetStoreParameters(id,img=0,vid=0,rating=0,add_visitor=0){
-    if(add_visitor){
-      const result = getDb().collection('products').updateOne({_id: new ObjectId(id)}, {$inc: {numVisitor: 1}}, {upsert: true});
-      if(result.matchedCount == 0) return false;
-    }
-    return getDb().collection('products').findOne({_id: new ObjectId(id)},{parameters: 1, productImage: img, productVideo: vid, sum_ratings: rating, num_ratings: rating, _id: 0}); //gets the store parameters
+function DeleteStore(id){
+    return getDb().collection('products').deleteOne({_id: new ObjectId(id)}); //updates the store image
+}
+
+function GetStoreParameters(id,img=0,vid=0,own=0){
+    return getDb().collection('products').findOne({_id: new ObjectId(id)},{parameters: 1, productImage: img, productVideo: vid, sum_ratings: 1, num_ratings: 1, owner: own, _id: 0}); //gets the store parameters
 }
 
 function GetStoreOwner(id){
@@ -113,4 +113,4 @@ async function CompletePurchase(items_purchased){
   return result;
 }
 
-module.exports = {UpdateStoreParameters, UpdateStoreImage, UpdateStoreVideo, GetStoreParameters, GetStoreOwner, findAllProducts, CreateStoreParameters, searchProductsGrouped, AddReview, CompletePurchase};
+module.exports = {UpdateStoreParameters, UpdateStoreImage, UpdateStoreVideo, DeleteStore, GetStoreParameters, GetStoreOwner, findAllProducts, CreateStoreParameters, searchProductsGrouped, AddReview, CompletePurchase};

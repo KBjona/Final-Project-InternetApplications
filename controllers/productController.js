@@ -15,6 +15,11 @@ exports.create_store = async (req, res) => {
         return res.status(400).json({ message: 'Log in please' });
     }
 
+    parameters["product-price"] = Number(parameters["product-price"]); //converting these fields into numbers from strings
+    parameters["product-stock"] = Number(parameters["product-stock"]);
+    parameters["product-discount"] = Number(parameters["product-discount"]);
+
+
     const owner = req.session.user.mail; // creating the owner as the user logged in
 
     const image_base64_data = image_base64.includes(',') ? image_base64.split(',')[1] : image_base64;
@@ -47,6 +52,10 @@ exports.edit_store_parameters = async (req, res) => {
     else if (!parameters) {//if there are no parameters
         return res.status(400).json({ message: 'parameters cannot be empty' });
     }
+
+    parameters["product-price"] = Number(parameters["product-price"]); //converting these fields into numbers from strings
+    parameters["product-stock"] = Number(parameters["product-stock"]);
+    parameters["product-discount"] = Number(parameters["product-discount"]);
 
     try {
         const params_result = await Product.UpdateStoreParameters(_id, parameters);
@@ -95,10 +104,28 @@ exports.load_store_parameters = async (req, res) => {
     try {
         const result = await Product.GetStoreParameters(_id);
         if (!result) { //no product was found with this id
-            return res.status(400).json({ message: 'No product found with that id address'});
+            return res.status(400).json({ message: 'No product found with that id address' });
         }
         let calc_rating = result.num_ratings ? Number((result.sum_ratings / result.num_ratings).toFixed(2)) : null;
         res.status(200).json({ message: 'Store parameters loaded successfully', parameters: result.parameters, rating: calc_rating });
+    } catch (err) { // server error
+        console.error(err);
+        return res.status(500).json({ message: 'Something went wrong on the server' });
+    }
+}
+
+exports.delete_store = async (req, res) => {
+    let { _id } = req.body;// get the id from the request's body
+    if (!_id) {//if there is no product id
+        return res.status(400).json({ message: 'product id cannot be empty' });
+    }
+
+    try {
+        const result = await Product.DeleteStore(_id);
+        if (!result) { //no product was found with this id
+            return res.status(400).json({ message: 'No product found with that id address' });
+        }
+        return res.status(200).json({ message: 'Store deleted successfully'});
     } catch (err) { // server error
         console.error(err);
         return res.status(500).json({ message: 'Something went wrong on the server' });
@@ -112,13 +139,13 @@ exports.show_store = async (req, res) => {
     }
 
     try {
-        const result = await Product.GetStoreParameters(_id, 1, 1,1, 1); // get the parameters, image, video, and rating of the store
+        const result = await Product.GetStoreParameters(_id, 1, 1, 1); // get the parameters, image, video, and owner of the store
         if (!result) { //no product was found with this id
             return res.status(400).json({ message: 'No product found with that id address' });
         }
         let calc_rating = result.num_ratings ? Number((result.sum_ratings / result.num_ratings).toFixed(2)) : null;
-        res.status(200).json({ message: 'Store parameters loaded successfully', parameters: result.parameters, productImage: result.productImage, productVideo: result.productVideo, rating: calc_rating, owner: result.owner});
-        
+        res.status(200).json({ message: 'Store parameters loaded successfully', parameters: result.parameters, productImage: result.productImage, productVideo: result.productVideo, rating: calc_rating, owner: result.owner });
+
     } catch (err) { // server error
         console.error(err);
         return res.status(500).json({ message: 'Something went wrong on the server' });
@@ -186,9 +213,9 @@ exports.get_all_products = async (req, res) => {
     }
 };
 
-exports.search_products = async (req,res) => {
+exports.search_products = async (req, res) => {
     try {
-        const {q = '', maxPrice, minDiscount ,minStars} = req.query;
+        const { q = '', maxPrice, minDiscount, minStars } = req.query;
 
         const filters = {
             query: q,
@@ -200,9 +227,9 @@ exports.search_products = async (req,res) => {
         const groupedResults = await Product.searchProductsGrouped(filters);
         res.status(200).json(groupedResults);
     }
-    catch (err){
+    catch (err) {
         console.error(err);
-        res.status(500).json( {message: 'error searching products'});
+        res.status(500).json({ message: 'error searching products' });
     }
 };
 
