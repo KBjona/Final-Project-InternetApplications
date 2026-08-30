@@ -8,6 +8,8 @@ router.post('/update',ProductController.edit_store_parameters); // sends a post 
 
 router.post('/load',ProductController.load_store_parameters); // sends a post request to load the store parameters
 
+router.post('/delete',ProductController.delete_store); // sends a post request to load the store parameters
+
 router.post('/validate',ProductController.validate_owner); // sends a post request to validate the owner of the store
 
 router.get('/search', ProductController.search_products); // routes the search fucntion to the controller search function.
@@ -17,5 +19,7 @@ router.post('/addreview',ProductController.add_review); // sends a post request 
 router.post('/show',ProductController.show_store); // sends a post request to show the store
 
 router.get('/getAll', ProductController.get_all_products); // sends a get request to get all the stores
+
+router.post('/complete-purchase', ProductController.complete_purchase)
 
 module.exports = router; // exports the router

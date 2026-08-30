@@ -19,12 +19,14 @@ app.use(session({
     cookie: {
         httpOnly: true, // Prevents client-side JS from stealing the cookie
         secure: false,
+        sameSite: 'strict', // to prevent cross site request forgery
         maxAge: 1000 * 60 * 15 // 15 minutes in milliseconds
     }
 }));
 
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/scripts/d3',express.static(path.join(__dirname, 'node_modules', 'd3', 'dist'))); // giving the browser the d3 library
 
 app.get('/menu', (req, res) => {
   if (!req.session.user) {

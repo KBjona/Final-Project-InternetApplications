@@ -22,8 +22,12 @@ function UpdateStoreVideo(id,vid){
     return getDb().collection('products').updateOne({_id: new ObjectId(id)},{ $set: { productVideo: vid }}); //updates the store video
 }
 
-function GetStoreParameters(id,img=0,vid=0,rating=0){
-    return getDb().collection('products').findOne({_id: new ObjectId(id)},{parameters: 1, productImage: img, productVideo: vid, sum_ratings: rating, num_ratings: rating, _id: 0}); //gets the store parameters
+function DeleteStore(id){
+    return getDb().collection('products').deleteOne({_id: new ObjectId(id)}); //updates the store image
+}
+
+function GetStoreParameters(id,img=0,vid=0,own=0){
+    return getDb().collection('products').findOne({_id: new ObjectId(id)},{parameters: 1, productImage: img, productVideo: vid, sum_ratings: 1, num_ratings: 1, owner: own, _id: 0}); //gets the store parameters
 }
 
 function GetStoreOwner(id){
@@ -35,18 +39,9 @@ function findAllProducts() {
 }
 
 function AddReview(id, rating) {
-    console.log("here");
     return getDb().collection('products').updateOne({_id: new ObjectId(id)}, {$inc: { sum_ratings: rating, num_ratings: 1 }}, {upsert: true}); // adds a review to the product
 }
 
-function CreateStoreParameters(store_owner,params,img, vid){
-    return getDb().collection('products').insertOne({
-        owner: store_owner,
-        parameters: params,
-        productImage: img,
-        productVideo: vid || null
-    });
-}
 
 async function searchProductsGrouped({ query = '', maxPrice = 1000, minDiscount = 0, minStars = 0, weatherCondition = null, seasons = [] } = {}) {
   const cleanQuery = query ? String(query).trim() : '';
@@ -126,4 +121,17 @@ if (Number(minStars) > 0) {
   return await getDb().collection('products').aggregate(pipeline).toArray();
 }
 
-module.exports = {UpdateStoreParameters, GetStoreParameters, GetStoreOwner, findAllProducts, CreateStoreParameters, searchProductsGrouped, AddReview};
+async function CompletePurchase(items_purchased){
+  const items_promises = items_purchased.map((item) => {
+    return getDb().collection('products').findOneAndUpdate(
+      {_id: new ObjectId(item._id),  "parameters.product-stock" : {$gte: item.quantity} },
+      { $inc : { "parameters.product-stock": -(item.quantity) }},
+      { returnDocument: "after", projection: {_id: 1}}
+    )
+  });
+
+  const result = await Promise.allSettled(items_promises);
+  return result;
+}
+
+module.exports = {UpdateStoreParameters, UpdateStoreImage, UpdateStoreVideo, DeleteStore, GetStoreParameters, GetStoreOwner, findAllProducts, CreateStoreParameters, searchProductsGrouped, AddReview, CompletePurchase};

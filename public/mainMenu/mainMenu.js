@@ -30,13 +30,9 @@ async function load_mail() {
 
 async function fetchDbCart() {
   if (!mail) return;
-
-  try {
-    const res = await fetch('/api/cart/items', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mail })
-    });
+  
+  try{
+    const res = await fetch('/api/cart/items');
     if (!res.ok) return;
     const data = await res.json();
     if (data.items) {

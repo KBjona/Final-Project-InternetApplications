@@ -5,8 +5,8 @@ const MongoStore = require('rate-limit-mongo');
 const router = express.Router();
 
 const limiter = rateLimit({
-  windowMs: 3 * 60 * 1000, // 3 minutes
-  max: 50, // 50 requests per IP per window
+  windowMs: 2 * 60 * 1000, // 3 minutes
+  max: 200, // 100 requests per IP per window
   store: new MongoStore({
     uri: process.env.MONGO_URI,
     expireTimeMs: 3 * 60 * 1000,
@@ -17,7 +17,7 @@ const limiter = rateLimit({
 });
 
 router.use(limiter);
-
+console.log("got here");
 router.use('/auth', require('./authRoutes')); // routes auth requests to authRoutes files
 
 router.use('/cart', require('./cartRoutes')); // routes cart requests to cartRoutes file
