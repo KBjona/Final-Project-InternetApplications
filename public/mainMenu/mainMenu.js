@@ -1,8 +1,8 @@
 let cart = [];
-
 let mail = '';
-
-
+let userFollowing = [];
+let currentProducts = [];
+let visiableCount = 5;
 
 async function load_mail() {
   const response = await fetch('/api/auth/me'); // request user information from cookies
@@ -12,14 +12,15 @@ async function load_mail() {
   if (!data.loggedIn) return; // throw back to login
 
   mail = data.user.mail; // update mail
+  userFollowing = data.user.followings || []; // save followings list
 
   const emailInput = document.getElementById('email');
   const fnameInput = document.getElementById('fname');
-  const lnameInput = document.getElementById('lname');
+  const lnameInput = document.getElementById('lname'); // get all account settings information
   const long = document.getElementById("long");
   const lat = document.getElementById("lat")
 
-  if (emailInput) emailInput.value = data.user.mail || '';
+  if (emailInput) emailInput.value = data.user.mail || ''; // if exists update
   if (fnameInput) fnameInput.value = data.user.fname || '';
   if (lnameInput) lnameInput.value = data.user.lname || '';
   if (long) long.value = data.user.longitude || '';
@@ -154,6 +155,11 @@ function get_base64_prefix(base64_string) {
 }
 
 function renderProducts(products) {
+  if(products){
+    currentProducts = products;
+    visiableCount = 5;
+  }
+
   const productGrid = document.getElementById('product-grid');
   productGrid.innerHTML = '';
 
@@ -172,14 +178,14 @@ function renderProducts(products) {
   `;
   productGrid.appendChild(addProductCard);
 
-  if (!products || products.length === 0) {
+  if (!currentProducts || currentProducts.length === 0) {
     const emptyMsg = document.createElement('p');
     emptyMsg.className = 'text-muted text-center col-12 mt-3';
     emptyMsg.textContent = 'No products found in database.';
     productGrid.appendChild(emptyMsg);    return;
   }
 
-  products.forEach(product => {
+  currentProducts.slice(0,visiableCount).forEach(product => {
     const card = document.createElement('div');
     card.className = 'product-card';
     const raw_price = (Number(product.parameters['product-price'])) || 0;
@@ -229,6 +235,9 @@ function renderProducts(products) {
     `;
     productGrid.appendChild(card);
   });
+
+  const loadMoreButton = document.getElementById("load-more-btn");
+  if(loadMoreButton) loadMoreButton.style.display = visiableCount >= currentProducts.length ? 'none' : 'inline block'; // Hide button if no more items to show
 }
 
 
@@ -311,6 +320,11 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   }
 
+  document.getElementById('load-more-btn')?.addEventListener('click', () => {
+    visiableCount += 5;
+    renderProducts();
+  });
+
   let isDeleteConfirmed = false;
   let deleteTimer = null;
 
@@ -358,6 +372,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
 });
 
 function openSettings() {
@@ -411,7 +426,7 @@ async function dbSearch() {
   const searchQuery = document.getElementById("store-search").value.toLowerCase().trim();
   const maxPrice = document.getElementById("maxPrice")?.value || 1000;
   const minDiscount = document.getElementById("minDiscount")?.value || 0;
-
+ 
   let minStars = 0;
   if (document.getElementById("stars5")?.checked) minStars = 5;
   if (document.getElementById("stars4")?.checked) minStars = 4;
@@ -424,8 +439,10 @@ async function dbSearch() {
   if (document.getElementById("Summer")?.checked) selectedSeasons.push("Hot");
   if (document.getElementById("Fall")?.checked) selectedSeasons.push("Cool");
   if (document.getElementById("Winter")?.checked) selectedSeasons.push("Cold");
-  const weatherChecked = document.getElementById("ownWeather")?.checked || false;
+  const weatherChecked = document.getElementById("ownWeather")?.checked || false; // check to see whice filters are selected
 
+  const mineOnly = document.getElementById("mineOnly")?.checked || false;
+  const followersOnly = document.getElementById("followersOnly")?.checked || false;
 
   const queryParams = new URLSearchParams({
     q: searchQuery,
@@ -433,7 +450,11 @@ async function dbSearch() {
     minDiscount: minDiscount,
     minStars: minStars,
     useWeather: weatherChecked,
-    selectedSeasons: selectedSeasons.join(',')
+    selectedSeasons: selectedSeasons.join(','),
+    mineOnly: mineOnly,
+    followersOnly: followersOnly,
+    userMail: mail,
+    following: userFollowing.join(',')
   });
 
   try {

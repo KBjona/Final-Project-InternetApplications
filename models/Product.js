@@ -43,11 +43,32 @@ function AddReview(id, rating) {
 }
 
 
-async function searchProductsGrouped({ query = '', maxPrice = 1000, minDiscount = 0, minStars = 0, weatherCondition = null, seasons = [] } = {}) {
+async function searchProductsGrouped({ 
+  query = '', 
+  maxPrice = 1000, 
+  minDiscount = 0, 
+  minStars = 0, 
+  weatherCondition = null, 
+  seasons = [], 
+  mineOnly = false,
+  followersOnly = false,
+  userMail = '',
+  following = [] } = {}) {
+
   const cleanQuery = query ? String(query).trim() : '';
   const matchConditions = [];
 
-  // 1. Text Search (only apply if query is not empty)
+  if (mineOnly && userMail) { // owenr filter 
+    matchConditions.push({ owner: userMail });
+  } else if (followersOnly) {
+    const followingList = Array.isArray(following) 
+      ? following 
+      : (typeof following === 'string' && following ? following.split(',') : []);
+      
+    matchConditions.push({ owner: { $in: followingList } });
+  }
+
+  // text Search (only apply if query is not empty)
   if (cleanQuery) {
     matchConditions.push({
       $or: [

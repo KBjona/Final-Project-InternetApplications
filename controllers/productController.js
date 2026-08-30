@@ -217,34 +217,47 @@ exports.get_all_products = async (req, res) => {
 
 exports.search_products = async (req, res) => {
     try {
-        const {q = '', maxPrice, minDiscount ,minStars, useWeather, seasons, selectedSeasons} = req.query;
+        const {q = '', maxPrice, minDiscount ,minStars, useWeather, seasons, selectedSeasons, mineOnly, followersOnly, userMail, following} = req.query; // ready everything
 
-        const rawSeasons = seasons || selectedSeasons || '';
+        const rawSeasons = seasons || selectedSeasons || ''; // get seasons
         const seasonsArray = typeof rawSeasons === 'string'
-        ? rawSeasons.split(',').filter(Boolean)
+        ? rawSeasons.split(',').filter(Boolean) // check for type
         : Array.isArray(rawSeasons) ? rawSeasons : [];
 
-        if (useWeather === 'true' && req.session?.user?.mail) {
+        const activeUserMail = req.session?.user?.mail || userMail || '';
+        let activeFollowings = [];
+
+        if (req.session?.user?.mail) { // if user is signed in
         const user = await getDb().collection('users').findOne(
             { mail: req.session.user.mail },
-            { projection: { latitude: 1, longitude: 1 } }
-        );
+            { projection: { latitude: 1, longitude: 1, followings: 1 } }
+            ); // find the current user and get latitude longitude and followings
 
-        if (user?.latitude && user?.longitude) {
-            const detectedSeason = await getCurrentSeason(user.latitude, user.longitude);
-            if (detectedSeason && !seasonsArray.includes(detectedSeason)) {
-            console.log("Detected season", detectedSeason);
-            seasonsArray.push(detectedSeason);
+            if (user) {
+                activeFollowings = user.followings || [];
+
+                if (useWeather === 'true' && user.latitude && user.longitude) {
+                    const detectedSeason = await getCurrentSeason(user.latitude, user.longitude); // call helper api function to get current season
+                    if (detectedSeason && !seasonsArray.includes(detectedSeason)) {
+                        seasonsArray.push(detectedSeason); // push it to detected seasons user wants
+                    }
+                }
             }
         }
+        else if (following) {
+            activeFollowings = typeof following === 'string' ? following.split(',').filter(Boolean) : following; // check if following cearin user
         }
 
-        const filters = {
+        const filters = { // make the filters for db itself 
             query: q,
             maxPrice: maxPrice ? Number(maxPrice) : null,
             minDiscount: minDiscount ? Number(minDiscount) : null,
             minStars: minStars ? Number(minStars) : null,
-            seasons: seasonsArray
+            seasons: seasonsArray,
+            mineOnly: mineOnly === 'true' || mineOnly === true,
+            followersOnly: followersOnly === 'true' || followersOnly === true,
+            userMail: activeUserMail,
+            following: activeFollowings
         };
 
         const groupedResults = await Product.searchProductsGrouped(filters);
