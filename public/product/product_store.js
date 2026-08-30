@@ -58,8 +58,8 @@ function togglefollowing() {
 }
 
 async function check_follow_state() {
-    const follow_btn = document.getElementById("follow-owner-btn"); 
-    if(!follow_btn || !owner_id) return; // if we couldnt get the follow button or the owner id we cant follow or unfollow
+    const follow_btn = document.getElementById("follow-owner-btn");
+    if (!follow_btn || !owner_id) return; // if we couldnt get the follow button or the owner id we cant follow or unfollow
 
     const response = await fetch('/api/auth/check-follow', { // sends a post request to check whether the user already follows or doesn't follow the owner
         method: 'POST',
@@ -79,6 +79,9 @@ async function check_follow_state() {
 }
 
 async function load_map() {
+    const map_div = document.getElementById('map');
+    if (!map_div) return;
+
     const response = await fetch('/api/auth/location', { //sends a post request to get the owner's location
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -95,13 +98,9 @@ async function load_map() {
     const long = data.longitude;
 
     const map = L.map('map').setView([lat, long], 12);//centers the map on the location we got and zooms 12
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; OpenStreetMap'}).addTo(map); //adds the visual location itself to the map
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map); //adds the visual location itself to the map
     L.marker([lat, long]).addTo(map); //marks the specific location in the map
-
-
-
-
-    
+    map_div.classList.remove("hidden");
 }
 
 async function load_store() {  // send a request to the server to get the parameters using the store id
@@ -120,7 +119,7 @@ async function load_store() {  // send a request to the server to get the parame
     }
     else { //if the response is ok 
         product_name = data.parameters["product-name"];
-
+        await load_map();
         if (data.owner) {
             owner_id = data.owner;
             check_follow_state();
@@ -201,6 +200,7 @@ async function load_store() {  // send a request to the server to get the parame
         }
 
     }
+
     return;
 }
 
@@ -225,11 +225,11 @@ async function send_review(event) { //send the review to the server
     }
 
     //makes the send button and stars disabled after sending the rating
-    event.innerText = "✓ Sent"; 
+    event.innerText = "✓ Sent";
     event.classList.add("disabled-element");
 
     const stars_container = document.querySelector('.stars');
-    if (stars_container){
+    if (stars_container) {
         stars_container.classList.add("disabled-element");
     }
 }

@@ -1,3 +1,4 @@
+const { ObjectId } = require('mongodb');
 const { getDb } = require('./db'); // getDb() gives us the "nozama" database your db.js already connects to
 
 // Looks for one user with this exact username.
@@ -5,8 +6,12 @@ function findByMail(mail) {
     return getDb().collection('users').findOne({ mail });
 }
 
+function findById(id) { // Looks for one user with this exact id.
+    return getDb().collection('users').findOne({ _id: new ObjectId(id) });
+}
+
 function findByGoogleId(googleId){ //Looks for one user wtih this exact google id.
-    return getDb().collection('users').findOne({ googleId })
+    return getDb().collection('users').findOne({ googleId });
 }
 
 function linkGoogleAccount(mail, googleId) { // update the collection user to add googleId to exisiting one without.
@@ -47,6 +52,7 @@ function CheckFollow(mail, tofollow){
 
 module.exports = {
     findByMail,
+    findById,
     findByGoogleId,
     linkGoogleAccount,
     findByFacebookId, 

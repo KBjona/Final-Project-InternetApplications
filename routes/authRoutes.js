@@ -8,6 +8,7 @@ router.post('/login', authController.login); //redirects login requets to authco
 router.post("/google", authController.googleLogin); // redirectes google login requests to google login func 
 router.post("/facebook", authController.facebookLogin); // redirects facebook login requests to facebooklogin func
 router.post("/create-ad", authController.create_facebook_ad); // redirects facebook login requests to facebooklogin func
+router.post("/location", authController.getUserLocation); // redirects loaction requests to get user location func
 
 router.post("/update-profile", authController.updateProfile); // redirects you to the update profile func
 router.get('/me', authController.getCurrentUser);

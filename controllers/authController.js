@@ -285,7 +285,7 @@ exports.updateProfile = async (req, res) => {
 }
 
 exports.follow = async (req, res) => {
-    let { owner } = req.body; // get the email and items from the request's body
+    let { owner } = req.body; // get the owner from the request's body
     if (!(req.session?.user?.mail)) { //if there is no user connected
         return res.status(400).json({ message: 'Log in please' });
     }
@@ -308,7 +308,7 @@ exports.follow = async (req, res) => {
 }
 
 exports.unfollow = async (req, res) => {
-    let { owner } = req.body; // get the email and items from the request's body
+    let { owner } = req.body; // get the owner from the request's body
     if (!(req.session?.user?.mail)) { //if there is no user connected
         return res.status(400).json({ message: 'Log in please' });
     }
@@ -331,7 +331,7 @@ exports.unfollow = async (req, res) => {
 }
 
 exports.check_follow = async (req, res) => {
-    let { owner } = req.body; // get the email and items from the request's body
+    let { owner } = req.body; // get the owner from the request's body
     if (!(req.session?.user?.mail)) { //if there is no user connected
         return res.status(400).json({ message: 'Log in please' });
     }
@@ -426,3 +426,23 @@ exports.delete_account = async (req, res) => {
     return res.status(500).json({ message: 'Internal server error.' });
   }
 }
+
+exports.getUserLocation = async (req, res) => {
+    if (!req.session?.user?.mail) {
+        return res.status(401).json({ message: "Not logged in" });
+    }
+    let { owner } = req.body; // get the owner from the request's body
+
+
+    try {
+        const user = await User.findById(owner);
+        if (!user) {
+            return res.status(401).json({message: "User not found" });
+        }
+
+        return res.json({ message: "Found user by id", latitude: user.latitude, longitude: user.longitude });
+    }
+     catch (err) {
+        return res.status(500).json({ message: "Server error" });
+    }
+};
