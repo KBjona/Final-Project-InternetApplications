@@ -77,7 +77,13 @@ exports.add_item_to_cart = async (req, res) => {
     let mail = req.session.user.mail;
 
     try {
-        const result = await Cart.IncrementCartItem(mail, _id, name,price);
+
+        const product = await Product.GetStoreParameters(_id);
+        if (!product) return res.status(400).json({ message: 'Product not found' });
+        const realPrice = product.parameters['product-price'] * (1 - (product.parameters['product-discount'] || 0) / 100);
+        
+        const result = await Cart.IncrementCartItem(mail, _id, product.parameters['product-name'], realPrice);
+
         res.status(200).json({ message: 'Cart changed successfully' });
     } catch (err) { // server error
         console.error(err);

@@ -54,6 +54,9 @@ exports.edit_store_parameters = async (req, res) => {
     else if (!parameters) {//if there are no parameters
         return res.status(400).json({ message: 'parameters cannot be empty' });
     }
+    else if (!(req.session?.user?.mail)) { //if there is no user connected
+        return res.status(400).json({ message: 'Log in please' });
+    }
 
     parameters["product-price"] = Number(parameters["product-price"]); //converting these fields into numbers from strings
     parameters["product-stock"] = Number(parameters["product-stock"]);
@@ -121,7 +124,9 @@ exports.delete_store = async (req, res) => {
     if (!_id) {//if there is no product id
         return res.status(400).json({ message: 'product id cannot be empty' });
     }
-
+    else if (!(req.session?.user?.mail)) { //if there is no user connected
+        return res.status(400).json({ message: 'Log in please' });
+    }
     try {
         const result = await Product.DeleteStore(_id);
         if (!result) { //no product was found with this id
@@ -162,6 +167,12 @@ exports.add_review = async (req, res) => {
     }
     else if (!rating) {//if there are no parameters
         return res.status(400).json({ message: 'rating cannot be null' });
+    }
+    else if (!(req.session?.user?.mail)) { //if there is no user connected
+        return res.status(400).json({ message: 'Log in please' });
+    }
+    else if (rating > 5 || rating < 0){
+        return res.status(400).json({ message: 'enter valid rating'}); // if invald rating entered
     }
 
     try {
@@ -274,6 +285,9 @@ exports.complete_purchase = async (req, res) => {
     let { items } = req.body; // get the email and items from the request's body
     if (!items && items != []) { //if there is no email or null/ nonexistent items ([] is okay)
         return res.status(400).json({ message: 'items has to exist' });
+    }
+    else if (!(req.session?.user?.mail)) { //if there is no user connected
+        return res.status(400).json({ message: 'Log in please' });
     }
     try {
         items = items.filter(item => item.quantity > 0);

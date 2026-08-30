@@ -2,6 +2,7 @@ const { getDb } = require('./db'); // getDb() gives us the "nozama" database you
 
 // Looks for one user with this exact username.
 function findByMail(mail) {
+    if (typeof mail !== 'string') return res.status(400).json({ message: 'Invalid email' });
     return getDb().collection('users').findOne({ mail });
 }
 
