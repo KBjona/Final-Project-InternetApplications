@@ -233,6 +233,7 @@ exports.search_products = async (req, res) => {
         if (user?.latitude && user?.longitude) {
             const detectedSeason = await getCurrentSeason(user.latitude, user.longitude);
             if (detectedSeason && !seasonsArray.includes(detectedSeason)) {
+            console.log("Detected season", detectedSeason);
             seasonsArray.push(detectedSeason);
             }
         }

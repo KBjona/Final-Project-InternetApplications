@@ -27,7 +27,7 @@ function updateUserProfile(mail, updateData){
 }
 function deleteUserByMail(mail){
     return getDb().collection('users').deleteOne({mail: mail});
-
+}
 function UpdateCCByMail(user_mail,new_sccn){
     return getDb().collection('users').updateOne({mail: user_mail},{ $set: { sccn: new_sccn  }});
 }
