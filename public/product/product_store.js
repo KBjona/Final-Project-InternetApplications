@@ -5,6 +5,7 @@ let show_img = true;
 let product_id = null;
 let product_name = null;
 let product_price = -1;
+let can_review = false;
 let owner_id = null;
 let is_following = false;
 

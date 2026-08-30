@@ -20,4 +20,6 @@ router.post('/show',ProductController.show_store); // sends a post request to sh
 
 router.get('/getAll', ProductController.get_all_products); // sends a get request to get all the stores
 
+router.post('/complete-purchase', ProductController.complete_purchase)
+
 module.exports = router; // exports the router

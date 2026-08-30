@@ -28,11 +28,7 @@ async function fetchDbCart() {
   if (!mail) return;
   
   try{
-    const res = await fetch('/api/cart/items', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mail })
-    });
+    const res = await fetch('/api/cart/items');
     if (!res.ok) return;
     const data = await res.json();
     if (data.items) {
@@ -65,7 +61,7 @@ async function syncCartToDb() {
     await fetch('/api/cart/update', {
       method: 'POST',
       headers: { 'Content-Type' : 'application/json'},
-      body: JSON.stringify({ mail, items:dbItems})
+      body: JSON.stringify({ items:dbItems})
     });
   }
   catch (err){

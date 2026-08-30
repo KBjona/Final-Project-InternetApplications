@@ -232,3 +232,27 @@ exports.search_products = async (req, res) => {
         res.status(500).json({ message: 'error searching products' });
     }
 };
+
+
+exports.complete_purchase = async (req, res) => {
+    let { items } = req.body; // get the email and items from the request's body
+    if (!items && items != []) { //if there is no email or null/ nonexistent items ([] is okay)
+        return res.status(400).json({ message: 'items has to exist' });
+    }
+    try {
+        items = items.filter(item => item.quantity > 0);
+        const result = await Product.CompletePurchase(items);
+        let items_not_purchased = [];
+        
+        result.forEach((item, index) => {
+            if((item.status === 'fulfilled' && !(item.value)) || item.status === 'rejected'){
+                items_not_purchased.push(items[index]);
+            }
+        });
+
+        return res.status(200).json({ message: 'Purchased successfully', items_not_purchased: items_not_purchased });
+    } catch (err) { // server error
+        console.error(err);
+        res.status(500).json({ message: 'Something went wrong on the server' });
+    }
+}

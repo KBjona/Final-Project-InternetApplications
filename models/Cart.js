@@ -6,50 +6,66 @@ function findCartByMail(user_mail) {
 }
 
 function DeleteItemsByMail(user_mail) {
-  return getDb().collection('carts').updateOne({ mail: user_mail }, { $set: { items: [] } });
+  return getDb().collection('carts').deleteOne({mail: user_mail});
 }
 
 function UpdateItemsByMail(user_mail, new_items) {
   return getDb().collection('carts').updateOne({ mail: user_mail }, { $set: { items: new_items } }, { upsert: true });
 }
 
-async function IncrementCartItem(user_mail, p_id, p_name, p_price) {
+async function IncrementCartItem(user_mail, p_id, p_name, p_cost) {
   const result = await getDb().collection('carts').updateOne({ mail: user_mail, "items._id": p_id }, { $inc: {"items.$.quantity": 1} });
   if(result.matchedCount === 0){
     return await getDb().collection('carts').updateOne({ mail: user_mail }, { $push: { items: {
       _id: p_id,
       name: p_name,
-      price: p_price,
+      price: p_cost,
       quantity: 1
     } } }, { upsert: true });
   }
   return result
 }
 
+async function searchCartItems(user_mail, filters = {}) {
+const { query, maxPrice, maxQuantity, maxLength } = filters;
 
-module.exports = { findCartByMail, DeleteItemsByMail, UpdateItemsByMail, IncrementCartItem };
+  const itemMatch = {};
 
-/*
+  if (query) {
+    itemMatch['items.name'] = { $regex: query, $options: 'i' }; // serach name
+  }
 
-{
-  "mail": "Jona10112010@gmail.com",
-  "items": [
-    {
-      "name": "Wireless Mouse",
-      "cost": 25.99,
-      "quantity": 1
-    },
-    {
-      "name": "Mechanical Keyboard",
-      "cost": 89.5,
-      "quantity": 2
-    },
-    {
-      "name": "USB-C Cable",
-      "cost": 12,
-      "quantity": 3
-    }
-  ]
+  if (maxPrice !== undefined && maxPrice !== '') {
+    itemMatch['items.price'] = { $lte: Number(maxPrice) }; // search price
+  }
+
+  if (maxQuantity !== undefined && maxQuantity !== '') {
+    itemMatch['items.quantity'] = { $lte: Number(maxQuantity) }; // serach quanitiy
+  }
+
+  if (maxLength !== undefined && maxLength !== '') {
+    itemMatch['$expr'] = { $lte: [{ $strLenCP: '$items.name' }, Number(maxLength)] }; // compare str len to max len to see if it fits
+  }
+
+  const pipeline = [
+    { $match: { mail: user_mail } },
+    { $unwind: '$items' }
+  ];
+
+  if (Object.keys(itemMatch).length > 0) {
+    pipeline.push({ $match: itemMatch });
+  }
+
+  pipeline.push({
+    $group: { _id: '$_id', items: { $push: '$items' } }
+  });
+
+  const result = await getDb().collection('carts').aggregate(pipeline).toArray();
+
+  return result.length > 0 ? result[0].items : [];
 }
 
-*/
+
+
+module.exports = { findCartByMail, DeleteItemsByMail, UpdateItemsByMail, IncrementCartItem, searchCartItems };
+

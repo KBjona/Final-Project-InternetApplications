@@ -2,7 +2,6 @@ const { getDb } = require('./db'); // getDb() gives us the "nozama" database you
 
 // Looks for one user with this exact username.
 function findByMail(mail) {
-    console.log("searched for user" + mail);
     return getDb().collection('users').findOne({ mail });
 }
 
@@ -21,11 +20,14 @@ function linkFacebookAccount(mail, facebookId, facebookPages) {
 }
 // Saves a brand new user document into the "users" collection.
 function createUser(userData) {
-    console.log("Added user to collection");
     return getDb().collection('users').insertOne(userData);
 }
 function updateUserProfile(mail, updateData){
     return getDb().collection('users').updateOne({ mail }, {$set: updateData});
+}
+
+function UpdateCCByMail(user_mail,new_sccn){
+    return getDb().collection('users').updateOne({mail: user_mail},{ $set: { sccn: new_sccn  }});
 }
 
 function Follow(mail, tofollow){
@@ -49,6 +51,7 @@ module.exports = {
     linkFacebookAccount, 
     createUser, 
     updateUserProfile,
+    UpdateCCByMail,
     Follow,
     Unfollow,
     CheckFollow
