@@ -62,24 +62,51 @@
       <div class="filter-group">
         <h5>Reviews</h5>
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="stars5">
+          <input class="form-check-input" type="radio" id="stars5" name="stars">
           <label class="form-check-label" for="stars5">5★ </label>
         </div>
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="stars4">
+          <input class="form-check-input" type="radio" id="stars4" name="stars">
           <label class="form-check-label" for="stars4">4★ & higher</label>
         </div>
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="stars3">
+          <input class="form-check-input" type="radio" id="stars3" name="stars">
           <label class="form-check-label" for="stars3">3★ & higher</label>
         </div>
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="stars2">
+          <input class="form-check-input" type="radio" id="stars2" name="stars">
           <label class="form-check-label" for="stars2">2★ & higher</label>
         </div>
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="stars1">
+          <input class="form-check-input" type="radio" id="stars1" name="stars">
           <label class="form-check-label" for="stars1">1★ & higher</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" id="all" name="stars">
+          <label class="form-check-label" for="all">All</label>
+        </div>
+      </div>
+      <div class="filter-group">
+        <h5>Weather</h5>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="ownWeather">
+          <label class="form-check-label" for="ownWeather">Own weather </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="Spring">
+          <label class="form-check-label" for="Spring">Warm</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="Summer">
+          <label class="form-check-label" for="Summer">Hot</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="Fall">
+          <label class="form-check-label" for="Fall">Cool</label>
+        </div>
+        <div>
+          <input class="form-check-input" type="checkbox" id="Winter">
+          <label class="form-check-label" for="Winter">Cold</label>
         </div>
       </div>
     </aside>
@@ -131,14 +158,22 @@
                 <label for="bday" id="bdayL" class="form-label">Date of birth</label>
                 <input type="date" id="bday" class="form-control">
 
+                <label for="long" id="longL" class="form-label">Longitude</label>
+                <input type="number" step="0.000001" id="long" class="form-control">
+
+                <label for="lat" id="latL" class="form-label">Latitude</label>
+                <input type="number" step="0.000001" id="lat" class="form-control">
+
                 <label for="pass" id="passL" class="form-label">Password</label>
                 <input type="password" id="pass" class="accountInfo form-control">
 
-                <div class="mt-4 text-end">
+                <div class="mt-4 d-flex justify-content-between align-items-center">
+                <button type="button" id="delete-account-btn" class="btn btn-outline-danger btn-sm"> Delete Account </button>
                 <button type="submit" id="update-account-btn" class="btn-update-data">
                   <span>Save Changes</span>
                 </button>
-              </div>
+                </div>
+                
             </form>
         </div>
     </div>

@@ -6,8 +6,7 @@ function CreateStoreParameters(store_owner,params,img, vid){
         owner: store_owner,
         parameters: params,
         productImage: img,
-        productVideo: vid || null,
-        numVisitor: 0
+        productVideo: vid || null
     });
 }
 
@@ -36,14 +35,15 @@ function GetStoreOwner(id){
 }
 
 function findAllProducts() {
-    return getDb().collection('products').find({},{parameters: 1,productImage: 1, _id: 0}).toArray(); // returns all the products
+    return getDb().collection('products').find({},{parameters: 1,productImage: 1, _id: 1}).toArray(); // returns all the products
 }
 
 function AddReview(id, rating) {
     return getDb().collection('products').updateOne({_id: new ObjectId(id)}, {$inc: { sum_ratings: rating, num_ratings: 1 }}, {upsert: true}); // adds a review to the product
 }
 
-async function searchProductsGrouped({ query = '', maxPrice = 1000, minDiscount = 0, minStars = 0 } = {}) {
+
+async function searchProductsGrouped({ query = '', maxPrice = 1000, minDiscount = 0, minStars = 0, weatherCondition = null, seasons = [] } = {}) {
   const cleanQuery = query ? String(query).trim() : '';
   const matchConditions = [];
 
@@ -53,7 +53,8 @@ async function searchProductsGrouped({ query = '', maxPrice = 1000, minDiscount 
       $or: [
         { name: { $regex: cleanQuery, $options: 'i' } },
         { 'parameters.product-name': { $regex: cleanQuery, $options: 'i' } },
-        { 'parameters.product-description': { $regex: cleanQuery, $options: 'i' } }
+        { 'parameters.product-description': { $regex: cleanQuery, $options: 'i' } },
+        { 'ownerDetails.fname' : { $regex: cleanQuery , $options: 'i'}}
       ]
     });
   }
@@ -76,15 +77,35 @@ async function searchProductsGrouped({ query = '', maxPrice = 1000, minDiscount 
     });
   }
 
-  if (Number(minStars) > 0) {
+if (Number(minStars) > 0) {
+   matchConditions.push({
+     $expr:
+      { $gte: [{ $cond: [{ $gt: [{ $toDouble: { $ifNull: ['$num_ratings', 0] } }, 0] }, { $divide: [{ $toDouble: { $ifNull: ['$sum_ratings', 0] } }, { $toDouble: { $ifNull:    ['$num_ratings', 0] } }] }, 0] }, Number(minStars)] }  
+     });
+   }
+
+  if (seasons.length > 0) {
     matchConditions.push({
-      $expr: {
-        $gte: [{ $toDouble: { $ifNull: ['$parameters.product-rating', 0] } }, Number(minStars)] // gte - greate than or equal
-      }
+      $or: seasons.map(season => ({
+        'parameters.product-weather': { $regex: season, $options: 'i' }
+      }))
     });
   }
 
-  const pipeline = [];
+  const pipeline = [{
+      $lookup: {
+        from: 'users',
+        localField: 'owner',
+        foreignField: 'mail',
+        as: 'ownerDetails'
+      }
+    },
+    {
+      $unwind: {
+        path: '$ownerDetails',
+        preserveNullAndEmptyArrays: true
+      }
+    }];
 
   if (matchConditions.length > 0) {
     pipeline.push({ $match: { $and: matchConditions } });

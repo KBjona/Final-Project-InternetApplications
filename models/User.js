@@ -25,6 +25,8 @@ function createUser(userData) {
 function updateUserProfile(mail, updateData){
     return getDb().collection('users').updateOne({ mail }, {$set: updateData});
 }
+function deleteUserByMail(mail){
+    return getDb().collection('users').deleteOne({mail: mail});
 
 function UpdateCCByMail(user_mail,new_sccn){
     return getDb().collection('users').updateOne({mail: user_mail},{ $set: { sccn: new_sccn  }});
@@ -51,6 +53,7 @@ module.exports = {
     linkFacebookAccount, 
     createUser, 
     updateUserProfile,
+    deleteUserByMail,
     UpdateCCByMail,
     Follow,
     Unfollow,

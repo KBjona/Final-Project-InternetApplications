@@ -12,6 +12,7 @@ router.post("/create-ad", authController.create_facebook_ad); // redirects faceb
 router.post("/update-profile", authController.updateProfile); // redirects you to the update profile func
 router.get('/me', authController.getCurrentUser);
 router.post('/logout', authController.logout);
+router.delete('/delete-account', authController.delete_account); // go to delete function
 
 router.post("/follow", authController.follow); // redirectes follow requests to follow func 
 router.post("/unfollow", authController.unfollow); // redirects unfollow requests to unfollow func

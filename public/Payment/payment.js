@@ -23,7 +23,7 @@ class Item {
         name_span.className = 'product-name';
         name_span.textContent = this.name;
 
-        const price_span = document.createElement('span'); // creates the cost span
+        const price_span = document.createElement('span'); // creates the price span
         price_span.className = 'product-price';
         price_span.textContent = `${this.price}$`;
 
@@ -181,19 +181,18 @@ async function load_items() {
     }
     //initializes the current item and total
     let c_item = null;
-    let total_cost = 0;
-
+    let total_price = 0;
+ 
     list.dataset.is_empty = 'F';
     list.innerHTML = '';
     cart_items = [];
     for (let i = 0; i < items_len; i++) { // creates an item element for each element and creates his html tags and puts it in the list
         c_item = Item.item_to_entity(items_arr[i]);
-        total_cost += c_item.price * c_item.quantity;
+        total_price += c_item.price*c_item.quantity;
         cart_items.push(c_item);
-        c_item.put_into_list(list, i);
-    }
-    t_price.textContent = `${total_cost.toFixed(2)}$`;; //change the placeholder to the real cost
-
+        c_item.put_into_list(list,i);
+    } 
+    t_price.textContent = `${total_price.toFixed(2)}$`;; //change the placeholder to the real price
 }
 
 function change_item_qty(element, num) {
@@ -214,8 +213,8 @@ function change_item_qty(element, num) {
 
     quantity.textContent = parseInt(quantity.textContent) + num;// adds or removes and item and change the quantity accordingly
     cart_items[i].quantity += num;
-    const c_total_price = parseFloat((total_price.textContent).slice(0, -1)); // to remove the dollar at the end of the string and parse it to float
-    total_price.textContent = `${(c_total_price + (num) * (cart_items[i].price)).toFixed(2)}$`;
+    const c_total_price = parseFloat((total_price.textContent).slice(0,-1)); // to remove the dollar at the end of the string and parse it to float
+    total_price.textContent = `${(c_total_price+(num)*(cart_items[i].price)).toFixed(2)}$`;
 
 
     const gp_element = p_element.parentElement;
