@@ -1,19 +1,12 @@
 const express = require('express');
 const { rateLimit } = require('express-rate-limit');
-const MongoStore = require('rate-limit-mongo');
 
 const router = express.Router();
-
 const limiter = rateLimit({
-  windowMs: 2 * 60 * 1000, // 3 minutes
-  max: 200, // 100 requests per IP per window
-  store: new MongoStore({
-    uri: process.env.MONGO_URI,
-    expireTimeMs: 3 * 60 * 1000,
-    errorHandler: console.error,
-  }),
-  standardHeaders: 'draft-8',
-  legacyHeaders: false,
+    windowMs: 2 * 60 * 1000,
+    max: 200,
+    standardHeaders: 'draft-8',
+    legacyHeaders: false,
 });
 
 router.use(limiter);
