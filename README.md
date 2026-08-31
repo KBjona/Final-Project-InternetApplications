@@ -22,7 +22,6 @@ We believe in making both the customer and the seller satisfied so we made creat
 \
 \
 \
-\
 
 # If you get problems with running this application try this:
 to look for demons:
