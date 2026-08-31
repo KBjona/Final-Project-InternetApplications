@@ -11,7 +11,7 @@
 </head>
 
 <body>
-    <div class="product-container">
+    <div id="product-container">
         <div id="editing-section">
             <div id="edit-title-div">
                 <span id="edit-title"><b><u>Editing Section:</u></b></span>
@@ -34,7 +34,7 @@
                 </div>
                 <div class="field-group">
                     <label for="product-stock">Product Stock:</label>
-                    <input type="number" name="product-stock" id="product-stock" min="0" max="1000000000"
+                    <input type="number" name="product-stock" id="product-stock" min="0" max="10000"
                         placeholder="Enter product quantity" value="0" required>
                 </div>
                 <div class="field-group">
@@ -104,7 +104,7 @@
 
             </form>
         </div>
-        <div id="analytics-section">
+        <div id="analytics-section" class="hidden">
             <span style="display: flex; justify-self: center; font-size: x-large;"><b><u>Graphs And Marketing
                         Section:</u></b></span>
             <div id="graphs-section">

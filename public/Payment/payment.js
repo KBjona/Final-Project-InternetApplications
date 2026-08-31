@@ -55,6 +55,7 @@ let loaded_cc = false;
 const cc_regex = /^\d{13,19}$/;
 const cvv_regex = /^\d{3,4}$/;
 let cart_items = [];
+let full_cart_items = [];
 
 document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('cart-search-input');

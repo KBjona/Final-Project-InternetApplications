@@ -1,5 +1,6 @@
 const Cart = require('../models/Cart');
 const User = require('../models/User');
+const Product = require('../models/Product');
 
 exports.load_items = async (req, res) => {
     if (!(req.session?.user?.mail)) { //if there is no user connected
@@ -12,10 +13,10 @@ exports.load_items = async (req, res) => {
     let maxLength = req.query.maxLength;
 
     try {
-        if(searchQuery || maxPrice || maxQuantity || maxLength){
-            const items = await Cart.searchCartItems(mail, {query: searchQuery, maxPrice, maxQuantity, maxLength});
-            
-            return res.status(200).json({message: 'Filtered Cart', items});
+        if (searchQuery || maxPrice || maxQuantity || maxLength) {
+            const items = await Cart.searchCartItems(mail, { query: searchQuery, maxPrice, maxQuantity, maxLength });
+
+            return res.status(200).json({ message: 'Filtered Cart', items });
         }
 
 
@@ -81,7 +82,7 @@ exports.add_item_to_cart = async (req, res) => {
         const product = await Product.GetStoreParameters(_id);
         if (!product) return res.status(400).json({ message: 'Product not found' });
         const realPrice = product.parameters['product-price'] * (1 - (product.parameters['product-discount'] || 0) / 100);
-        
+
         const result = await Cart.IncrementCartItem(mail, _id, product.parameters['product-name'], realPrice);
 
         res.status(200).json({ message: 'Cart changed successfully' });
@@ -100,12 +101,12 @@ exports.get_sccn = async (req, res) => {
     try {
         const user = await User.findByMail(mail);
         if (!user) { // if no user was found
-            return res.status(400).json({ message: 'No user with this mail'});
+            return res.status(400).json({ message: 'No user with this mail' });
         }
         if (!user.sccn) { // if the user has no saved cc
-            return res.status(201).json({ message: 'No stored credit card'});
+            return res.status(200).json({ message: 'No stored credit card', sccn: null });
         }
-        res.status(200).json({ message: 'Cart with items', sccn: user.sccn });
+        res.status(200).json({ message: 'Saved CC found', sccn: user.sccn });
     } catch (err) { // server error
         console.error(err);
         res.status(500).json({ message: 'Something went wrong on the server' });
@@ -120,13 +121,17 @@ exports.update_sccn = async (req, res) => {
     }
     let mail = req.session.user.mail;
 
-    if (!new_sccn || new_sccn == '') { //if there isn't a vaild cc
-        return res.status(400).json({ message: 'items have to exist' });
+    const cc_regex = /^\d{13,19}$/;
+    if (typeof new_sccn != 'string' || !cc_regex.test(new_sccn)) {
+        return false;
     }
 
     try {
-        const result = await User.UpdateCCByMail(mail,new_sccn);
-        res.status(200).json({ message: 'SCCN changed successfully'});
+        const result = await User.UpdateCCByMail(mail, new_sccn);
+        if (result.matchedCount === 0) { // if no user was found
+            return res.status(400).json({ message: 'No user with this email'});
+        }
+        res.status(200).json({ message: 'SCCN changed successfully' });
     } catch (err) { // server error
         console.error(err);
         res.status(500).json({ message: 'Something went wrong on the server' });

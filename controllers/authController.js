@@ -197,8 +197,6 @@ exports.facebookLogin = async (req, res) => {
             }
         }
 
-        console.log("User logged in using Facebook");
-
         req.session.user = {
             mail: mail,
             fname: fname,
@@ -230,6 +228,8 @@ exports.getCurrentUser = async (req, res) => {
         }
 
         delete user.passwordHash;
+        delete user.sccn
+        delete user.facebookPages
 
         return res.json({ loggedIn: true, user });
     }
@@ -265,10 +265,18 @@ exports.updateProfile = async (req, res) => {
         if (bday) updateData.bday = bday;
         if (password) updateData.passwordHash = await bcrypt.hash(password, 10);
         if (longitude !== undefined && longitude !== null && longitude !== '') {
-            updateData.longitude = Number(longitude);
+            const long = Number(longitude);
+            if(!Number.isFinite(long)){
+                return res.status(400).json({ message: 'Invalid longitude' });
+            }
+            updateData.longitude = long;
         }
         if (latitude !== undefined && latitude !== null && latitude !== '') {
-            updateData.latitude = Number(latitude);
+            const lat = Number(latitude);
+            if(!Number.isFinite(lat)){
+                return res.status(400).json({ message: 'Invalid latitude' });
+            }
+            updateData.latitude = lat;
         }
 
         await User.updateUserProfile(mail, updateData);
@@ -285,7 +293,7 @@ exports.updateProfile = async (req, res) => {
 }
 
 exports.follow = async (req, res) => {
-    let { owner } = req.body; // get the email and items from the request's body
+    let { owner } = req.body; // get the owner from the request's body
     if (!(req.session?.user?.mail)) { //if there is no user connected
         return res.status(400).json({ message: 'Log in please' });
     }
@@ -295,9 +303,9 @@ exports.follow = async (req, res) => {
     let mail = req.session.user.mail;
     try {
         const result = await User.Follow(mail, owner);
-        if (result.matchedCount === 0) { //user had no cart
+        if (result.matchedCount === 0) {//no user was found
             return res.status(400).json({ message: 'No user found with that email address' });
-        } else if (result.modifiedCount === 0) {//the items field didn't exist or was already deleted
+        } else if (result.modifiedCount === 0) {//if the following array didin't change
             return res.status(200).json({ message: 'User found, but the field stayed the same' });
         }
         res.status(200).json({ message: 'User changed successfully' });
@@ -308,7 +316,7 @@ exports.follow = async (req, res) => {
 }
 
 exports.unfollow = async (req, res) => {
-    let { owner } = req.body; // get the email and items from the request's body
+    let { owner } = req.body; // get the owner from the request's body
     if (!(req.session?.user?.mail)) { //if there is no user connected
         return res.status(400).json({ message: 'Log in please' });
     }
@@ -318,9 +326,9 @@ exports.unfollow = async (req, res) => {
     let mail = req.session.user.mail;
     try {
         const result = await User.Unfollow(mail, owner);
-        if (result.matchedCount === 0) { //user had no cart
+        if (result.matchedCount === 0) { //no user was found
             return res.status(400).json({ message: 'No user found with that email address' });
-        } else if (result.modifiedCount === 0) {//the items field didn't exist or was already deleted
+        } else if (result.modifiedCount === 0) {//if the following array didin't change
             return res.status(200).json({ message: 'User found, but the field stayed the same' });
         }
         res.status(200).json({ message: 'User changed successfully' });
@@ -331,7 +339,7 @@ exports.unfollow = async (req, res) => {
 }
 
 exports.check_follow = async (req, res) => {
-    let { owner } = req.body; // get the email and items from the request's body
+    let { owner } = req.body; // get the owner from the request's body
     if (!(req.session?.user?.mail)) { //if there is no user connected
         return res.status(400).json({ message: 'Log in please' });
     }
@@ -341,11 +349,31 @@ exports.check_follow = async (req, res) => {
     let mail = req.session.user.mail;
     try {
         const result = await User.CheckFollow(mail, owner);
-        if (result > 0) { //user had no cart
+        if (result > 0) { //if the user follows the owner
             return res.status(200).json({ message: 'User follows him', follow: 1 });
-        } else {//the items field didn't exist or was already deleted
+        } else {//if the user doesnt follow the owner
             return res.status(200).json({ message: 'User doesnt follow him', follow: 0 });
         }
+    } catch (err) { // server error
+        console.error(err);
+        res.status(500).json({ message: 'Something went wrong on the server' });
+    }
+}
+
+exports.getUserLocation = async (req, res) => {
+    let { owner } = req.body; // get the owner from the request's body
+    if (!owner) { //if there is no one to follow
+        return res.status(400).json({ message: 'The one to check for a follow has to exist' });
+    }
+    try {
+        const result = await User.findByMail(owner);
+        if(!result){
+            return res.status(404).json({ message: 'Couldnt find the owner' });
+        }
+        if( typeof result.latitude != 'number' || !Number.isFinite(result.latitude) || typeof result.longitude != 'number' || !Number.isFinite(result.longitude) ){
+            return res.status(400).json({ message: 'The user latitude or longtitude arent defined' });
+        }
+        return res.status(200).json({ message: 'Got the location', latitude: result.latitude, longitude: result.longitude });
     } catch (err) { // server error
         console.error(err);
         res.status(500).json({ message: 'Something went wrong on the server' });

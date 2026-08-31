@@ -6,7 +6,7 @@ let product_id = null;
 let product_name = null;
 let product_price = -1;
 let can_review = false;
-let owner_id = null;
+let owner_mail = null;
 let is_following = false;
 
 function get_product_id() { //extracting the store id from the url
@@ -59,12 +59,12 @@ function togglefollowing() {
 
 async function check_follow_state() {
     const follow_btn = document.getElementById("follow-owner-btn"); 
-    if(!follow_btn || !owner_id) return; // if we couldnt get the follow button or the owner id we cant follow or unfollow
+    if(!follow_btn || !owner_mail) return; // if we couldnt get the follow button or the owner id we cant follow or unfollow
 
     const response = await fetch('/api/auth/check-follow', { // sends a post request to check whether the user already follows or doesn't follow the owner
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ owner: owner_id })
+        body: JSON.stringify({ owner: owner_mail })
     });
 
     const data = await response.json();
@@ -82,7 +82,7 @@ async function load_map() {
     const response = await fetch('/api/auth/location', { //sends a post request to get the owner's location
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ owner: owner_id })
+        body: JSON.stringify({ owner: owner_mail })
     });
 
     if (!response.ok) { //if we couldnt get the location
@@ -93,6 +93,9 @@ async function load_map() {
     //getting the owner's latitude and longitude
     const lat = data.latitude;
     const long = data.longitude;
+    const map_div = document.getElementById("map");
+    if(!map_div) return;
+    map_div.classList.remove('hidden');
 
     const map = L.map('map').setView([lat, long], 12);//centers the map on the location we got and zooms 12
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; OpenStreetMap'}).addTo(map); //adds the visual location itself to the map
@@ -122,8 +125,9 @@ async function load_store() {  // send a request to the server to get the parame
         product_name = data.parameters["product-name"];
 
         if (data.owner) {
-            owner_id = data.owner;
-            check_follow_state();
+            owner_mail = data.owner;
+            await check_follow_state();
+            await load_map();
         }
 
         const original_price = Number(data.parameters["product-price"]); //getting the prices and discount
@@ -267,7 +271,7 @@ function check_or_uncheck(element, star_number) { // to check or uncheck the sta
 }
 
 async function follow_or_unfollow(event) {
-    if (!owner_id) { return; }
+    if (!owner_mail) { return; }
     event.disabled = true;
 
     const fetch_address = !is_following ? '/api/auth/follow' : '/api/auth/unfollow'; // to determinate if to follow or not to follow
@@ -275,7 +279,7 @@ async function follow_or_unfollow(event) {
     const response = await fetch(fetch_address, { //sends a post request to follow the owner
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ owner: owner_id })
+        body: JSON.stringify({ owner: owner_mail })
     });
 
     if (!response.ok) { //if we couldnt follow or unfollow

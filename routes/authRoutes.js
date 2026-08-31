@@ -17,5 +17,6 @@ router.delete('/delete-account', authController.delete_account); // go to delete
 router.post("/follow", authController.follow); // redirectes follow requests to follow func 
 router.post("/unfollow", authController.unfollow); // redirects unfollow requests to unfollow func
 router.post("/check-follow", authController.check_follow); // redirects check follow requests to check_follow func
+router.post("/location", authController.getUserLocation)
 
 module.exports = router; // exports the router  

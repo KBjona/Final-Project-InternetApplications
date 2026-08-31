@@ -21,6 +21,10 @@ exports.create_store = async (req, res) => {
     parameters["product-stock"] = Number(parameters["product-stock"]);
     parameters["product-discount"] = Number(parameters["product-discount"]);
 
+        if (isNaN(parameters["product-price"]) || parameters["product-price"] < 0 || parameters["product-price"] > 1000) { return res.status(400).json({ message: 'Invalid price' }); }
+    else if (isNaN(parameters["product-stock"]) || parameters["product-stock"] < 0 || parameters["product-stock"] > 10000) { return res.status(400).json({ message: 'Invalid stock' }); }
+    else if (isNaN(parameters["product-discount"]) || parameters["product-discount"] < 0 || parameters["product-discount"] > 100) { return res.status(400).json({ message: 'Invalid discount' }); }
+
 
     const owner = req.session.user.mail; // creating the owner as the user logged in
 
@@ -61,6 +65,10 @@ exports.edit_store_parameters = async (req, res) => {
     parameters["product-price"] = Number(parameters["product-price"]); //converting these fields into numbers from strings
     parameters["product-stock"] = Number(parameters["product-stock"]);
     parameters["product-discount"] = Number(parameters["product-discount"]);
+
+    if (isNaN(parameters["product-price"]) || parameters["product-price"] < 0 || parameters["product-price"] > 1000) { return res.status(400).json({ message: 'Invalid price' }); }
+    else if (isNaN(parameters["product-stock"]) || parameters["product-stock"] < 0 || parameters["product-stock"] > 10000) { return res.status(400).json({ message: 'Invalid stock' }); }
+    else if (isNaN(parameters["product-discount"]) || parameters["product-discount"] < 0 || parameters["product-discount"] > 100) { return res.status(400).json({ message: 'Invalid discount' }); }
 
     try {
         const params_result = await Product.UpdateStoreParameters(_id, parameters);
@@ -192,7 +200,6 @@ exports.add_review = async (req, res) => {
 
 
 exports.validate_owner = async (req, res) => {
-    console.log("entered validate owner in productController")
     let { _id } = req.body;// get the id from the request's body
     if (!_id) {//if there is no product id
         return res.status(400).json({ message: 'product id cannot be empty' });

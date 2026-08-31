@@ -18,7 +18,7 @@ body {
     overflow: auto;
 }/*aligning the container in the middle of the page and setting the background color*/
 
-.product-container {
+#product-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 25px;
@@ -33,7 +33,7 @@ body {
 }/*dividing the elements inside the container evenly with dynamic height and width and pretty border for the container*/
 
 @media (max-width: 700px){
-    .product-container{
+    #product-container{
         grid-template-columns: 1fr;
     }
     #analytics-section{
