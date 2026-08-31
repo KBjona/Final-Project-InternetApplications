@@ -1,9 +1,16 @@
 # Final-Project-InternetApplications
 
-First of all after downloading this project install these libraries in your IDE:
+First of all after downloading this project **Make sure you have already installed node and npm on their website** install these libraries in your IDE:
 ```
-npm install node express mongodb bcrypt express-session google-auth-library dotenv d3 express-rate-limit rate-limit-mongo
+npm install node express mongodb bcrypt express-session google-auth-library dotenv d3 express-rate-limit 
 ```
+
+if it makes problems or asks for rate-limit-mongo then try:
+```
+npm install rate-limit-mongo
+```
+
+
 # If you didn't get a .env file create a new one in the folder. It should include:
 **MONGO_URI**, \
 **PORT** (the port you'll run this in), \
