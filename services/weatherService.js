@@ -15,36 +15,49 @@ async function getCurrentSeason(lat, lon) {
     const times = archiveRes.daily?.time || [];
     const temps = archiveRes.daily?.temperature_2m_mean || [];
 
-    const historicalTempsForToday = temps.filter((temp, index) => {
-      return times[index]?.endsWith(todayMonthDay) && temp !== null;
-    });
+    const historicalTemps = temps.filter(temp => temp !== null);
 
-    let historicalAvgToday = null;
-    if (historicalTempsForToday.length > 0) {
-      historicalAvgToday = historicalTempsForToday.reduce((sum, val) => sum + val, 0) / historicalTempsForToday.length;
+    let historicalAvg = null;
+
+    if (historicalTemps.length > 0) {
+      historicalAvg =
+      historicalTemps.reduce((sum, temp) => sum + temp, 0) /
+      historicalTemps.length;
     }
 
-    const forecastUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m&timezone=auto`;
+    const forecastUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_mean&forecast_days=7&timezone=auto`;
     const forecastRes = await fetch(forecastUrl).then(res => res.json());
-    const currentTemp = forecastRes.current?.temperature_2m;
+    const dailyTemps = forecastRes.daily?.temperature_2m_mean || [];
+
+    if (dailyTemps.length === 0) {
+      console.error("No temperature data");
+      return null;
+    }
+
+    const currentTemp = dailyTemps.reduce((sum, temp) => sum + temp, 0) / dailyTemps.length;
 
     if (currentTemp === undefined || currentTemp === null) {
       console.error("No temp");
       return null;
     }
 
-    const tempDifference = historicalAvgToday !== null ? (currentTemp - historicalAvgToday) : 0;
+    const tempDifference = historicalAvg !== null ? (currentTemp - historicalAvg) : 0;
     
     const evaluatedTemp = currentTemp;
-
-    if (evaluatedTemp >= 25 || (tempDifference > 5 && evaluatedTemp > 18)) {
+    if (tempDifference > 5 && evaluatedTemp > 20) {
       return 'Hot';
     }
-    if (evaluatedTemp <= 10 || (tempDifference < -5 && evaluatedTemp < 15)) {
+    if (tempDifference < -5 && evaluatedTemp < 20){
       return 'Cold';
     }
-
+    if (tempDifference > 2 && evaluatedTemp > 15){
+      return 'Warm';
+    }
+    if (tempDifference < -2 && evaluatedTemp < 15){
+      return 'Cool';
+    }
     // Standard transitional season fallback based on calendar month
+
     const month = today.getMonth() + 1;
     if (month >= 3 && month <= 5) return isNorthern ? 'Warm' : 'Cool';
     if (month >= 6 && month <= 8) return isNorthern ? 'Hot' : 'Cold';

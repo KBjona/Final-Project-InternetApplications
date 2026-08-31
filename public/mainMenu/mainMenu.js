@@ -102,8 +102,8 @@ document.addEventListener('DOMContentLoaded', () => {
         lname: document.getElementById('lname')?.value,
         bday: document.getElementById('bday')?.value,
         password: document.getElementById('pass')?.value,
-        longitude: longInput !== '' && longInput !== undefined ? parseFloat(longInput) : null,
-        latitude: latInput !== '' && latInput !== undefined ? parseFloat(latInput) : null,
+        longitude: longInput,
+        latitude: latInput,
       };
 
       try {
