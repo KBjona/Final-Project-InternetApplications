@@ -123,7 +123,7 @@ exports.update_sccn = async (req, res) => {
 
     const cc_regex = /^\d{13,19}$/;
     if (typeof new_sccn != 'string' || !cc_regex.test(new_sccn)) {
-        return false;
+        return res.status(400).json({ message: 'Invalid credit card number format' });
     }
 
     try {

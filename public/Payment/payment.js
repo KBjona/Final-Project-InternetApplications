@@ -65,6 +65,24 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    const allProductsCheckbox = document.getElementById('allProducts');
+    if (allProductsCheckbox) {
+        allProductsCheckbox.addEventListener('change', async (e) => {
+            const isChecked = e.target.checked;
+            
+            if (searchInput) searchInput.disabled = isChecked;
+            const maxPrice = document.getElementById('maxPrice');
+            const maxQuantity = document.getElementById('max-Quantity');
+            const maxLength = document.getElementById('maxLength');
+            
+            if (maxPrice) maxPrice.disabled = isChecked;
+            if (maxQuantity) maxQuantity.disabled = isChecked;
+            if (maxLength) maxLength.disabled = isChecked;
+
+            await load_items(); // Reload the cart
+        });
+    }
+
     // Slider for Price
     const maxPrice = document.getElementById('maxPrice');
     const priceVal = document.getElementById('priceVal');
@@ -146,7 +164,8 @@ async function load_items() {
 
     if (!list || !t_price) { return};
 
-    const searchQuery = document.getElementById('cart-search-input')?.value.trim() || '';
+    const showAllProducts = document.getElementById('allProducts');
+    const isAllChecked = showAllProducts ? showAllProducts.checked : false;    const searchQuery = document.getElementById('cart-search-input')?.value.trim() || '';
     const maxPrice = document.getElementById('maxPrice')?.value || '';
     const maxQuantity = document.getElementById('max-Quantity')?.value || '';
     const maxLength = document.getElementById('maxLength')?.value || '';
@@ -154,10 +173,12 @@ async function load_items() {
     let url = 'api/cart/items';
     const params = new URLSearchParams();
 
-    if (searchQuery) params.append('search', searchQuery);
-    if (maxPrice) params.append('maxPrice', maxPrice);
-    if (maxQuantity) params.append('maxQuantity', maxQuantity);
-    if (maxLength) params.append('maxLength', maxLength);
+    if (!isAllChecked) {
+        if (searchQuery) params.append('search', searchQuery);
+        if (maxPrice) params.append('maxPrice', maxPrice);
+        if (maxQuantity) params.append('maxQuantity', maxQuantity);
+        if (maxLength) params.append('maxLength', maxLength);
+    }
 
     if (params.toString()) {
         url += '?' + params.toString();
