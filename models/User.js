@@ -21,6 +21,11 @@ function findByFacebookId(facebookId) {
 function linkFacebookAccount(mail, facebookId, facebookPages) {
     return getDb().collection("users").updateOne({ mail }, { $set: { facebookId, facebookPages } });
 }
+
+function updateFacebookPages(fb_id, fb_pages) {
+    return getDb().collection("users").updateOne({ facebookId: fb_id }, { $set: { facebookPages: fb_pages } });
+}
+
 // Saves a brand new user document into the "users" collection.
 function createUser(userData) {
     return getDb().collection('users').insertOne(userData);
@@ -39,7 +44,6 @@ function Follow(mail, tofollow){
     return getDb().collection('users').updateOne({mail}, {$addToSet: {followings: tofollow}});
 }
 
-
 function Unfollow(mail, tofollow){
     return getDb().collection('users').updateOne({mail}, {$pull: {followings: tofollow}});
 }
@@ -54,6 +58,7 @@ module.exports = {
     linkGoogleAccount,
     findByFacebookId, 
     linkFacebookAccount, 
+    updateFacebookPages,
     createUser, 
     updateUserProfile,
     deleteUserByMail,
