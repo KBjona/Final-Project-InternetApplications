@@ -436,3 +436,18 @@ transform: scale(1.1);
   transform: scale(1.1);
   background: rgba(56, 189, 248, 0.2);
 }
+.Account-content {
+    position: relative;
+}
+
+#logout-btn {
+    position: absolute;
+    top: 20px;
+    right: 50px;
+}
+
+#close-Account-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}

@@ -34,7 +34,6 @@ window.onload = function () {
 
 // runs automatically once Google authenticates the user
 async function handleCredentialResponse(response) {
-    console.log("Google Auth Response:", response);
 
     try {
         const res = await fetch("/api/auth/google", {
@@ -111,7 +110,6 @@ async function sendLoginRequest() {
     const mail = document.getElementById("mail").value.trim();
     const password = document.getElementById("passwordInput").value.trim();
     const errorText = document.getElementById("passwordError");
-    console.log("sent fetch request")
     try {
         // Send post request to /api/auth/login
         const response = await fetch('/api/auth/login', {
@@ -157,9 +155,6 @@ function loginWithFacebook(){
         if (response.authResponse){
             const accessToken = response.authResponse.accessToken;
             sendFacebookTokenToServer(accessToken);
-        }
-        else{
-            console.log('User cancelled login or did not fully authorize.');
         }
     }, { scope: 'public_profile, email, pages_show_list, pages_manage_posts, pages_read_engagement' }); // request profile and email access
 }

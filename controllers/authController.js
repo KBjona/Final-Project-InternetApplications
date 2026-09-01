@@ -63,7 +63,6 @@ exports.login = async (req, res) => {
             facebookPages: user.facebookPages || []
         };
 
-        console.log("User successfully logged in")
         res.json({ message: 'Logged in!' });
 
     } catch (err) {
@@ -121,7 +120,6 @@ exports.googleLogin = async (req, res) => {
                 });
             }
         }
-        console.log("User logged in using Google");
 
         req.session.user = {
             mail: mail,

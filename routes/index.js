@@ -10,7 +10,6 @@ const limiter = rateLimit({
 });
 
 router.use(limiter);
-console.log("got here");
 router.use('/auth', require('./authRoutes')); // routes auth requests to authRoutes files
 
 router.use('/cart', require('./cartRoutes')); // routes cart requests to cartRoutes file

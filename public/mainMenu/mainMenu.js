@@ -45,7 +45,6 @@ async function fetchDbCart() {
       }));
       updateCartUI();
     }
-    console.log(cart);
   }
   catch (err) {
     console.error("Failed to load cart from DB:", err);
@@ -279,7 +278,7 @@ function updateCartUI() {
 
 
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () =>{
   load_mail();
   fetchProductsFromDB();
 
@@ -324,6 +323,7 @@ document.addEventListener('DOMContentLoaded', () => {
     visiableCount += 5;
     renderProducts();
   });
+
 
   let isDeleteConfirmed = false;
   let deleteTimer = null;
@@ -377,7 +377,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function openSettings() {
   let currentTime = new Date();
-  console.log(currentTime.getFullYear());
 
   const modal = document.getElementById("Account-modal");
   if (modal)
@@ -388,9 +387,6 @@ function openSettings() {
   let bday = document.getElementById("bday");
   if (bday && bday.value != "")
     bday.disabled = true;
-  let bdayms = new Date(bday.value);
-  if ((currentTime < bdayms.getTime()) || currentTime.getFullYear() - bdayms.getFullYear() > 120)
-    console.log("invalid age");
 
 }
 
@@ -416,7 +412,6 @@ function search() {
 
     if (product.classList.contains("add-product-card")) return;
 
-    console.log("itemName: " + itemName + " searchName: " + searchName);
     if (!searchQuery || (searchName.includes(searchQuery))) product.style.display = ""
     else product.style.display = "none";
   });
@@ -470,4 +465,20 @@ async function dbSearch() {
   catch (err) {
     console.error("db search failed", err);
   }
+}
+async function logout() {
+  try{
+  const response = await fetch('/api/auth/logout', { method: 'POST' });
+    if (response.ok) {
+      window.location.href = '/'; // back to the register page
+    }
+    else {
+      console.error('Logout failed');
+      logoutBtn.disabled = false;
+    }
+    }
+    catch (err) {
+      console.error('Error logging out:', err);
+      logoutBtn.disabled = false;
+    }
 }
