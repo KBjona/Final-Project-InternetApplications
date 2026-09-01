@@ -173,8 +173,11 @@ exports.facebookLogin = async (req, res) => {
         // Try finding the user by Facebook ID first
         let user = await User.findByFacebookId(facebookId);
 
-        // If not found, check whether this email already exists
-        if (!user) {
+        
+        if(user){//if found, update the facebook pages in case they changed
+            await User.updateFacebookPages(facebookId, pages);
+        }
+        else {// If not found, check whether this email already exists
             if (mail) {
                 user = await User.findByMail(mail);
             }

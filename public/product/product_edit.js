@@ -259,15 +259,26 @@ form.addEventListener('submit', async function (event) {
 });
 
 async function create_facebook_ad() {
+    const create_ad_btn = document.getElementById("create-ad-btn");
+    if (create_ad_btn) {
+        create_ad_btn.disabled = true; //disable the button to prevent spamming clicks
+    }
+    else {
+        return;
+    }
+
     const img = document.getElementById("facebook-img"); //getting the elements
     const message = document.getElementById("facebook-msg");
-    if (!img || !message) return;
+    if (!img || !message) {
+        create_ad_btn.disabled = false;
+        return;
+    }
 
     let image_base64 = null;
-    if (img.files[0]) { //converts the image file to base64
-        image_base64 = await file_to_base64(img.files[0]);
-    }
     try {
+        if (img.files[0]) { //converts the image file to base64
+            image_base64 = await file_to_base64(img.files[0]);
+        }
         const response = await fetch('/api/auth/create-ad', { //sends a post request to the controller and there it sends a post request to facebook api
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -276,17 +287,21 @@ async function create_facebook_ad() {
 
         let data = await response.json();
         if (response.ok) { //if the store saved successfully redirect to the menu page
+            create_ad_btn.disabled = false;
             window.location.href = '/menu/';
 
         }
         else {
             const errorMessage = data.error?.message || data.error || data.message || "Failed to create Facebook ad.";
             alert(`Failed to create Facebook ad Error: ${errorMessage}`);
+            create_ad_btn.disabled = false;
             return;
         }
     } catch (error) {
         alert(`Network error occurred while sending the request or getting the response: ${error}`);
+        create_ad_btn.disabled = false;
     }
+    create_ad_btn.disabled = false;
     return;
 }
 

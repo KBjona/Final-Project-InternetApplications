@@ -18,12 +18,14 @@ async function load_mail() {
   const fnameInput = document.getElementById('fname');
   const lnameInput = document.getElementById('lname'); // get all account settings information
   const long = document.getElementById("long");
+  const bday = document.getElementById("bday");
   const lat = document.getElementById("lat")
 
   if (emailInput) emailInput.value = data.user.mail || ''; // if exists update
   if (fnameInput) fnameInput.value = data.user.fname || '';
   if (lnameInput) lnameInput.value = data.user.lname || '';
   if (long) long.value = data.user.longitude || '';
+  if (bday) bday.value = data.user.bday || '';
   if (lat) lat.value = data.user.latitude || '';
 
   await fetchDbCart();
