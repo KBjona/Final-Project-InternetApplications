@@ -21,7 +21,8 @@ exports.register = async (req, res) => {
 
         // hash the password
         const passwordHash = await bcrypt.hash(password, 10);
-
+        const longitude = null;
+        const latitude = null;
         // save the new user in MongoDB
 
         await User.createUser({
@@ -30,6 +31,8 @@ exports.register = async (req, res) => {
             bday,
             mail,
             passwordHash,
+            longitude,
+            latitude,
             createdAt: new Date() //store registration date!
         });        // tell the browser it worked
         res.status(201).json({ message: 'Account created!' });

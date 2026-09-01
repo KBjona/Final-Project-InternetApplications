@@ -6,11 +6,11 @@ function findCartByMail(user_mail) {
 }
 
 function DeleteItemsByMail(user_mail) {
-  return getDb().collection('carts').deleteOne({mail: user_mail});
+  return getDb().collection('carts').deleteOne({mail: user_mail}); // delete items for a given mail
 }
 
 function UpdateItemsByMail(user_mail, new_items) {
-  return getDb().collection('carts').updateOne({ mail: user_mail }, { $set: { items: new_items } }, { upsert: true });
+  return getDb().collection('carts').updateOne({ mail: user_mail }, { $set: { items: new_items } }, { upsert: true }); //
 }
 
 async function IncrementCartItem(user_mail, p_id, p_name, p_cost) {

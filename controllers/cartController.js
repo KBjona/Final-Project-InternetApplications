@@ -14,7 +14,7 @@ exports.load_items = async (req, res) => {
 
     try {
         if (searchQuery || maxPrice || maxQuantity || maxLength) {
-            const items = await Cart.searchCartItems(mail, { query: searchQuery, maxPrice, maxQuantity, maxLength });
+            const items = await Cart.searchCartItems(mail, { query: searchQuery, maxPrice, maxQuantity, maxLength }); // try filtering before loading
 
             return res.status(200).json({ message: 'Filtered Cart', items });
         }

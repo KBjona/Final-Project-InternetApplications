@@ -3,7 +3,6 @@ const dns = require('dns');
 dns.setServers(['8.8.8.8', '8.8.4.4']); // Bypasses local DNS SRV blocking
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
-// ... rest of your db.js code ...
 let dbInstance = null;
 
 async function connectDB() {

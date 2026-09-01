@@ -25,7 +25,8 @@ class Item {
 
         const price_span = document.createElement('span'); // creates the price span
         price_span.className = 'product-price';
-        price_span.textContent = `${this.price}$`;
+        if (Number.isFinite(this.price))
+            price_span.textContent = `${this.price.toFixed(2)}$`;
 
         const qty_span = document.createElement('span'); // creates the quantity span
         qty_span.dataset.index = i; // creates an index for the index of the array (just for optimization to make the lookup O(1))

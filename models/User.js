@@ -31,25 +31,22 @@ function createUser(userData) {
     return getDb().collection('users').insertOne(userData);
 }
 function updateUserProfile(mail, updateData){
-    return getDb().collection('users').updateOne({ mail }, {$set: updateData});
+    return getDb().collection('users').updateOne({ mail }, {$set: updateData}); // update by mail with the data sent
 }
 function deleteUserByMail(mail){
-    return getDb().collection('users').deleteOne({mail: mail});
+    return getDb().collection('users').deleteOne({mail: mail}); // delete by mail
 }
 function UpdateCCByMail(user_mail,new_sccn){
-    return getDb().collection('users').updateOne({mail: user_mail},{ $set: { sccn: new_sccn  }});
+    return getDb().collection('users').updateOne({mail: user_mail},{ $set: { sccn: new_sccn  }}); // save the sccn
 }
-
 function Follow(mail, tofollow){
-    return getDb().collection('users').updateOne({mail}, {$addToSet: {followings: tofollow}});
+    return getDb().collection('users').updateOne({mail}, {$addToSet: {followings: tofollow}}); // follow another user
 }
-
 function Unfollow(mail, tofollow){
-    return getDb().collection('users').updateOne({mail}, {$pull: {followings: tofollow}});
+    return getDb().collection('users').updateOne({mail}, {$pull: {followings: tofollow}}); // unfollow another user
 }
-
 function CheckFollow(mail, tofollow){
-    return getDb().collection('users').countDocuments({mail: mail, followings: tofollow}, {limit: 1});
+    return getDb().collection('users').countDocuments({mail: mail, followings: tofollow}, {limit: 1}); // checks if you follow someone
 }
 
 module.exports = {

@@ -6,7 +6,9 @@ function CreateStoreParameters(store_owner,params,img, vid){
         owner: store_owner,
         parameters: params,
         productImage: img,
-        productVideo: vid || null
+        productVideo: vid || null,
+        sum_ratings: 1,
+        num_ratings: 5
     });
 }
 
@@ -53,19 +55,19 @@ async function searchProductsGrouped({
   mineOnly = false,
   followersOnly = false,
   userMail = '',
-  following = [] } = {}) {
+  following = [] } = {}) { // get all the requirements/info
 
-  const cleanQuery = query ? String(query).trim() : '';
-  const matchConditions = [];
+  const cleanQuery = query ? String(query).trim() : ''; // cleaning the query
+  const matchConditions = []; // creating iflters
 
   if (mineOnly && userMail) { // owenr filter 
     matchConditions.push({ owner: userMail });
   } else if (followersOnly) {
     const followingList = Array.isArray(following) 
       ? following 
-      : (typeof following === 'string' && following ? following.split(',') : []);
+      : (typeof following === 'string' && following ? following.split(',') : []); // check to see if its in your following array if so add
       
-    matchConditions.push({ owner: { $in: followingList } });
+    matchConditions.push({ owner: { $in: followingList } }); // show only if in the following
   }
 
   // text Search (only apply if query is not empty)
@@ -73,48 +75,48 @@ async function searchProductsGrouped({
     matchConditions.push({
       $or: [
         { name: { $regex: cleanQuery, $options: 'i' } },
-        { 'parameters.product-name': { $regex: cleanQuery, $options: 'i' } },
-        { 'parameters.product-description': { $regex: cleanQuery, $options: 'i' } },
-        { 'ownerDetails.fname' : { $regex: cleanQuery , $options: 'i'}}
+        { 'parameters.product-name': { $regex: cleanQuery, $options: 'i' } }, // check if in the name
+        { 'parameters.product-description': { $regex: cleanQuery, $options: 'i' } }, // check if in the description
+        { 'ownerDetails.fname' : { $regex: cleanQuery , $options: 'i'}} // check if searching for owenr instead of product
       ]
     });
   }
 
-  // 2. Max Price Filter
+  //max Price Filter
   if (maxPrice) {
     matchConditions.push({
       $expr: {
-        $lte: [{ $toDouble: { $ifNull: ['$parameters.product-price', 0] } }, Number(maxPrice)] // lte - lower than or equal
+        $lte: [{ $toDouble: { $ifNull: ['$parameters.product-price', 0] } }, Number(maxPrice)] // lte - lower than or equal, filters by that
       }
     });
   }
 
-  // 3. Min Discount Filter (only apply if minDiscount > 0)
+  //min Discount Filter 
   if (Number(minDiscount) > 0) {
     matchConditions.push({
       $expr: {
-        $gte: [{ $toDouble: { $ifNull: ['$parameters.product-discount', 0] } }, Number(minDiscount)] // gte - greater than or equal
+        $gte: [{ $toDouble: { $ifNull: ['$parameters.product-discount', 0] } }, Number(minDiscount)] // gte - greater than or equal, filters by that
       }
     });
   }
-
+ // minimum starts filter
 if (Number(minStars) > 0) {
    matchConditions.push({
      $expr:
-      { $gte: [{ $cond: [{ $gt: [{ $toDouble: { $ifNull: ['$num_ratings', 0] } }, 0] }, { $divide: [{ $toDouble: { $ifNull: ['$sum_ratings', 0] } }, { $toDouble: { $ifNull:    ['$num_ratings', 0] } }] }, 0] }, Number(minStars)] }  
+      { $gte: [{ $cond: [{ $gt: [{ $toDouble: { $ifNull: ['$num_ratings', 0] } }, 0] }, { $divide: [{ $toDouble: { $ifNull: ['$sum_ratings', 0] } }, { $toDouble: { $ifNull:    ['$num_ratings', 0] } }] }, 0] }, Number(minStars)] }  // calculates the product avergae rating using sumratings/numbratings then filters by that
      });
    }
 
-  if (seasons.length > 0) {
+  if (seasons.length > 0) { // check if filtering for seasons
     matchConditions.push({
-      $or: seasons.map(season => ({
+      $or: seasons.map(season => ({ // if yes check wheatehr it is in the product
         'parameters.product-weather': { $regex: season, $options: 'i' }
       }))
     });
   }
 
-  const pipeline = [{
-      $lookup: {
+  const pipeline = [{ // build the db pipeline to search and organize products.
+      $lookup: { // get/search owner user info
         from: 'users',
         localField: 'owner',
         foreignField: 'mail',
@@ -122,32 +124,32 @@ if (Number(minStars) > 0) {
       }
     },
     {
-      $unwind: {
+      $unwind: { // conver the owner info user obj
         path: '$ownerDetails',
         preserveNullAndEmptyArrays: true
       }
     }];
 
-  if (matchConditions.length > 0) {
+  if (matchConditions.length > 0) { // apply the filters to all products
     pipeline.push({ $match: { $and: matchConditions } });
   }
 
   pipeline.push({
-    $group: {
-      _id: '$owner',
+    $group: { // group products in accordance to their owenr for easier viewing.
+      _id: '$owner', // use the owners email as the group id
       items: { $push: '$$ROOT' }
     }
   });
 
-  return await getDb().collection('products').aggregate(pipeline).toArray();
+  return await getDb().collection('products').aggregate(pipeline).toArray(); // finish running through the piepline and return the grouped products
 }
 
-async function CompletePurchase(items_purchased){
-  const items_promises = items_purchased.map((item) => {
+async function CompletePurchase(items_purchased){ 
+  const items_promises = items_purchased.map((item) => { 
     return getDb().collection('products').findOneAndUpdate(
-      {_id: new ObjectId(item._id),  "parameters.product-stock" : {$gte: item.quantity} },
-      { $inc : { "parameters.product-stock": -(item.quantity) }},
-      { returnDocument: "after", projection: {_id: 1}}
+      {_id: new ObjectId(item._id),  "parameters.product-stock" : {$gte: item.quantity} }, // filters the items by quanitity 
+      { $inc : { "parameters.product-stock": -(item.quantity) }}, // what to increment
+      { returnDocument: "after", projection: {_id: 1}} // what to reutrn
     )
   });
 

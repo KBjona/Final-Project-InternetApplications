@@ -71,6 +71,13 @@ async function load_store() {  // send a request to the server to get the parame
     }
     else { //if the response is ok 
         rating = data.rating;
+
+        if (rating || rating ===0){
+            const pie_graph_text = document.getElementById("pie-graph-text");
+            if (pie_graph_text)
+                pie_graph_text.innerHTML += " " + rating.toFixed(2);
+        }
+
         const pie_graph_text = document.getElementById("pie-graph-text");
         if (pie_graph_text) {
             pie_graph_text.innerHTML += " " + rating.toFixed(2);

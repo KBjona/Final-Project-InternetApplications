@@ -89,7 +89,9 @@ async function load_map() {
         return;
     }
     const data = await response.json();
-
+    if ((data.latitude == null && data.latitude !==0 ) || (data.longitude == null && data.longitude !== 0)){
+        return;
+    }
     //getting the owner's latitude and longitude
     const lat = data.latitude;
     const long = data.longitude;
@@ -101,10 +103,6 @@ async function load_map() {
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; OpenStreetMap'}).addTo(map); //adds the visual location itself to the map
     L.marker([lat, long]).addTo(map); //marks the specific location in the map
 
-
-
-
-    
 }
 
 async function load_store() {  // send a request to the server to get the parameters using the store id
