@@ -451,3 +451,8 @@ transform: scale(1.1);
     top: 20px;
     right: 20px;
 }
+.error-message {
+    color: #dc3545;
+    font-size: 0.85rem;
+    display: none;
+}

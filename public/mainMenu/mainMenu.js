@@ -95,6 +95,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const longInput = document.getElementById('long')?.value;
       const latInput = document.getElementById('lat')?.value;
+      const passwordInput = document.getElementById("pass");
+      const errorText = document.getElementById("passwordError");
+      const val = passwordInput?.value || '';
+
+      // Validate password only if it's being updated (not empty/disabled)
+      if (val.length > 0) {
+        const hasLetter = /[a-zA-Z]/.test(val);
+        const hasNumber = /[0-9]/.test(val);
+        const isTooShort = val.length < 8;
+
+        // If ANY rule fails, display the error and STOP execution
+        if (isTooShort || !hasLetter || !hasNumber) {
+          if (errorText) errorText.style.display = "block";
+          return; // <--- Prevents fetch from executing
+        }
+      }
+
+      // Hide error text if validation passes
+      if (errorText) errorText.style.display = "none";
 
       const payload = {
         fname: document.getElementById('fname')?.value,
