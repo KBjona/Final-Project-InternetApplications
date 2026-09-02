@@ -7,8 +7,8 @@ function CreateStoreParameters(store_owner,params,img, vid){
         parameters: params,
         productImage: img,
         productVideo: vid || null,
-        sum_ratings: 1,
-        num_ratings: 5
+        sum_ratings: 5,
+        num_ratings: 1
     });
 }
 
